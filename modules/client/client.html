@@ -1,20 +1,20 @@
 <section>
-      VmInclude:__BASE__/vmiis/Common-Code/grid/grid.html
+      VmInclude:__CURRENT_PATH__/grid/grid.v3.html
 </section>
 <script>
     function F__ID(){
         //-------------------------------------
-        VmInclude:__BASE__/vmiis/Common-Code/grid/grid.js
-        VmInclude:__BASE__/vmiis/Common-Code/style/ease-in-out.js
+        VmInclude:__COMPONENT__/grid/grid.v3.js
+        VmInclude:__COMPONENT__/style/ease-in-out.2.js
         //-------------------------------------
 //        _fields="_Form,_Date_Entry,Applicant ID|UID,Applicant Name|Applicant,Alias,Place_of_birth,Country,State,City,Area,Marriage Status,Date of Marriage/De facto|Date_of_Marriage,Email,Contact phone Number in your home country,Contact phone Number in Australia,Residential Address in your home country (including Postcode)|Residential_Address_home_country,Residential Address in Australia (including Postcode)|Residential_Address_Australia";
         _fields="_Form,Applications|_Job_schedule,_Documents,Client ID|UID,Givennames,Surname,File_Name,Visa_Expire_Date,Visa,Subclass,Visa_Grant_Date,Passport_No,Passport_Expire_Date,Passport_Commence_Date,Passport_Autority,DOB,Nationality,Street_Address,Suburb,Postcode,State,Country,Phone,Email,Branch,Notes";
         _fields_e="Client ID|UID,Givennames,Surname,File Name|File_Name,Visa Expire Date|Visa_Expire_Date,Visa,Subclass,Visa Grant Date|Visa_Grant_Date,Passport No|Passport_No,Passport Expire Date|Passport_Expire_Date,Passport Commence Date|Passport_Commence_Date,Passport Autority|Passport_Autority,DOB,Nationality,Street_Address,Suburb,Postcode,State,Country,Phone,Email,Branch,Notes";
         _fields+=",Submit Date|DateTime,Submitted by|Author,_Delete";
         //-------------------------------------
-        $("#title__ID").text('Clients');
-        $('#D__ID').on('load',function(){  _set_req(); _request_data();  })
-        $('#D__ID').on('back',function(){  _set_req(); _request_data();  })
+
+        $('#D__ID').on('load',function(){ $("#title__ID").text('Clients');$('#help__ID').html(help); _set_req(); _request_data();  })
+        $('#D__ID').on('back',function(){ $("#title__ID").text('Clients');$('#help__ID').html(help);_set_req(); _request_data();  })
         //-------------------------------------
         _cell_render=function(records,I,field,td,set_value,source){
             switch(field){
@@ -24,19 +24,19 @@
                     td.html(records[I].UID);
                     break;
                 case 'DOB':
-                    VmInclude:__BASE__/vmiis/Common-Code/grid/field_dob.js
+                    VmInclude:__COMPONENT__/grid/field_dob.js
                     break;
                 case 'Passport_Expire_Date':
                 case 'Passport_Commence_Date':
                 case 'Visa_Expire_Date':
                 case 'Visa_Grant_Date':
-                    VmInclude:__BASE__/vmiis/Common-Code/grid/field_date.js
+                    VmInclude:__COMPONENT__/grid/field_date.js
                     break;
                     case 'Suburb':
-                        VmInclude:__BASE__/vmiis/Common-Code/grid/field_suburb.js
+                        VmInclude:__COMPONENT__/grid/field_suburb.js
                     break;
                     case 'Postcode':
-                        VmInclude:__BASE__/vmiis/Common-Code/grid/field_postcode.js
+                        VmInclude:__COMPONENT__/grid/field_postcode.js
                     break;
 /*                    case '_Date_Entry':
                         records[I].vm_custom[field]=true;
@@ -79,10 +79,49 @@
             return true;
         };
         //-------------------------------------
+        var help='<div class="container">\
+        						<div class="row">\
+                                    <div class="col-sm-2 text-content text-left">\
+                                        <h4>Symbols in client list</h4>\
+                                        <p><i class="fa fa-pencil-square-o"></i> Edit / change details</p>\
+                                        <p><i class="fa fa-trash-o"></i> Delete client</p>\
+                                        <br>\
+                                    </div>\
+        							<div class="col-sm-2 text-content text-left">\
+        								<h4><i class="fa fa-plus"></i> = Add Client</h4>\
+                                        <p>Entry can be done directly in the grid</p>\
+        								<p>Click on <i class="fa fa-pencil-square-o"></i> to edit client record in other form</p>\
+                                        <p>REMEMBER Click on <i class="fa fa-upload"></i> to save the changes</p>\
+        								<br>\
+        							</div>\
+        							<div class="col-sm-2 text-content text-left">\
+        								<h4><i class="fa fa-upload"></i> = Save change</h4>\
+        								<p>This button will turn red when change has been made.<br>Click to save changes.</p>\
+        								<br>\
+        							</div>\
+                                    <div class="col-sm-2 text-content text-left">\
+        								<h4><i class="fa fa-search"></i> = Search </h4>\
+        								<p>If Keyword is empty reload client list.<br>\
+                                        Search for full words in Keyword from the client list.</p>\
+        								<br>\
+        							</div>\
+                                    <div class="col-sm-2 text-content text-left">\
+        								<h4><i class="fa fa-arrow-left"></i> = Previous</h4>\
+                                        <h4><i class="fa fa-arrow-right"></i> = Next Page</h4>\
+        								<p>If all clients don&apos;t fit into one page, these arrows can be used for paging </p>\
+        								<br>\
+        							</div>\
+                                    <div class="col-sm-2 text-content text-left">\
+        								<h4><i class="fa fa-download"></i> = Export</h4>\
+        								<p>Exporting the client list to excel format (.csv)</p>\
+        								<br>\
+        							</div>\
+        						</div>\
+        			</div>'
     }
 </script>
 <style>
-    VmInclude:__BASE__/vmiis/Common-Code/grid/grid.css
+    VmInclude:__COMPONENT__/grid/grid.v3.css
     #D__ID{
         overflow-x:auto;
         /*white-space: nowrap;*/

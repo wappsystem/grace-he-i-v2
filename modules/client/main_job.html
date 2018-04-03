@@ -1,5 +1,5 @@
 <section>
-      VmInclude:__BASE__/vmiis/Common-Code/grid/grid.html
+      VmInclude:__CURRENT_PATH__/grid/grid.v3.html
 </section>
 <script>
     function F__ID(){
@@ -7,8 +7,8 @@
         _fields="_Form,Date,visa_expire_date,open_file,offer,COE,pay_tuition,Additional_submitting,call_granting,student,tourist,485,189/190,spouse-first,spouse-second,parent,child,457,186/187,AAT,citizenship,provide_job,find_job,English_training,accounting_training,find_spouse,buy_property,rental_property,travel,other"
         _fields+=",Submit Date|DateTime,Submitted by|Author,_Delete";
         //-------------------------------------
-        VmInclude:__BASE__/vmiis/Common-Code/grid/grid.js
-        VmInclude:__BASE__/vmiis/Common-Code/style/ease-in-out.js
+        VmInclude:__COMPONENT__/grid/grid.v3.js
+        VmInclude:__COMPONENT__/style/ease-in-out.2.js
 //        Vm Include:__BASE__/wappsystem/grace-he-i/Modules/Control_panels/job_sub.js
         //-------------------------------------
         var client_tid=$vm.module_list[_app_id+'commission'].var.client_tid;
@@ -18,7 +18,7 @@
         _cell_render=function(records,I,field,td,set_value,source){
             switch(field){
                 case 'Date':
-                    VmInclude:__BASE__/vmiis/Common-Code/grid/field_date.js
+                    VmInclude:__COMPONENT__/grid/field_date.js
                     break;
             }
         }
@@ -35,7 +35,7 @@
     }
 </script>
 <style>
-    VmInclude:__BASE__/vmiis/Common-Code/grid/grid.css
+    VmInclude:__COMPONENT__/grid/grid.v3.css
     #D__ID{
         overflow-x:auto;
         /*white-space: nowrap;*/

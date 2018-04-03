@@ -1,5 +1,5 @@
 <section>
-      VmInclude:__BASE__/vmiis/Common-Code/grid/grid.html
+      VmInclude:__CURRENT_PATH__/grid/grid.v3.html
 </section>
 <script>
     function F__ID(){
@@ -7,8 +7,8 @@
         _fields="_Form,_Hidden|UID,PUID,Task,Staff,Date,Time From|StartTime,Time to|EndTime,Mins|Actual_Duration";
         _fields+=",Submit Date|DateTime,Submitted by|Author,_Delete";
         //-------------------------------------
-        VmInclude:__BASE__/vmiis/Common-Code/grid/grid.js
-        VmInclude:__BASE__/vmiis/Common-Code/style/ease-in-out.js
+        VmInclude:__COMPONENT__/grid/grid.v3.js
+        VmInclude:__COMPONENT__/style/ease-in-out.2.js
 //        Vm Include:__BASE__/wappsystem/grace-he-i/Modules/Control_panels/job_sub.js
         //-------------------------------------
         var timing_tid=$vm.module_list[_app_id+'timing_module'].var.timing_tid;
@@ -45,7 +45,7 @@
                     td.css('color','#888');
                     break;
                 case 'Date':
-                    VmInclude:__BASE__/vmiis/Common-Code/grid/field_date.js
+                    VmInclude:__COMPONENT__/grid/field_date.js
                     break;
                 case 'StartTime':
                 case 'EndTime':
@@ -117,7 +117,7 @@
     }
 </script>
 <style>
-    VmInclude:__BASE__/vmiis/Common-Code/grid/grid.css
+    VmInclude:__COMPONENT__/grid/grid.v3.css
     #D__ID{
         overflow-x:auto;
         /*white-space: nowrap;*/

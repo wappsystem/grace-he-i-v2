@@ -22,8 +22,8 @@
         _fields="_Form,File Name|job,Document,Last Modified|lastModified,Size,Description,Type,Checked";
         _fields+=",Submit Date|DateTime,Submitted by|Author,_Delete";
         //-------------------------------------
-        VmInclude:__BASE__/vmiis/Common-Code/grid/grid.js
-        VmInclude:__BASE__/vmiis/Common-Code/style/ease-in-out.js
+        VmInclude:__COMPONENT__/grid/grid.v3.js
+        VmInclude:__COMPONENT__/style/ease-in-out.2.js
         VmInclude:__BASE__/wappsystem/grace-he-i/Modules/Control_panels/client_sub.js
         //-------------------------------------
         var client_tid=$vm.module_list[_app_id+'client'].var.client_tid;
@@ -58,7 +58,7 @@
                     td.css('color','#888');
                     break;
                 case 'Document':
-                    VmInclude:__BASE__/vmiis/Common-Code/grid/field_file_with_size.js
+                    VmInclude:__COMPONENT__/grid/field_file_with_size.js
                 break;
                 case 'Size':
                     records[I].vm_custom[field]=true;
@@ -68,7 +68,7 @@
                 break;
                 case 'Checked':
                     td.html('<input type=checkbox />');
-                    VmInclude:__BASE__/vmiis/Common-Code/grid/field_checkbox.js
+                    VmInclude:__COMPONENT__/grid/field_checkbox.js
                 break;
                 case 'Type':
                     var sql="with tb as (select name=S1,value2=uid from  [TABLE-"+document_check_tid+"] where PUID=@I3)";
@@ -169,7 +169,7 @@
     }
 </script>
 <style>
-    VmInclude:__BASE__/vmiis/Common-Code/grid/grid.css
+    VmInclude:__COMPONENT__/grid/grid.v3.css
     #D__ID{
         overflow-x:auto;
         /*white-space: nowrap;*/

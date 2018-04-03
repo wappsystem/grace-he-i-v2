@@ -7,17 +7,44 @@
         VmInclude:__COMPONENT__/grid/grid.v3.js
         VmInclude:__COMPONENT__/style/ease-in-out.2.js
         //-------------------------------------
-        _fields="_Form,Document Type|Document_Type";
+        _fields="_Form,Task_Type,Rate";
         _fields+=",Submit Date|DateTime,Submitted by|Author,_Delete";
         //-------------------------------------
-        $('#D__ID').on('load',function(){ $("#title__ID").text('Document Type List');$('#help__ID').html(help);_set_req(); _request_data();} )
-        $('#D__ID').on('back',function(){ $("#title__ID").text('Document Type List');$('#help__ID').html(help);_set_req(); _request_data();} )
+        $('#D__ID').on('load',function(){ $("#title__ID").text('Task - Rate list');$('#help__ID').html(help);_set_req(); _request_data();} )
+        $('#D__ID').on('back',function(){ $("#title__ID").text('Task - Rate list');$('#help__ID').html(help);_set_req(); _request_data();} )
+        //-------------------------------------
+        var formatter = new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD',
+            minimumFractionDigits: 2,
+        });
         //-------------------------------------
         _cell_render=function(records,I,field,td,set_value,source){
+            switch(field){
+                case 'Task_Type':
+                    var html="<select style='border:0;'>\
+                    <option value='Normal_Visa'>Normal-Visa</option>\
+                    <option value='Normal_School'>Normal-School</option>\
+                    <option >Admin</option>\
+                    <option >Accounting</option>\
+                    <option >Other</option>\
+                    </select>\
+                    ";
+                    VmInclude:__COMPONENT__/grid/field_select.js
+                break;
+                case 'Rate':
+                    if(source=="grid") td.css("text-align","right").css('white-space','nowrap');
+                    if(records[I][field]!=='') td.html('$ '+parseInt(records[I][field]) );
+                    else td.html('') //add $ sign
+                 break;
+                }
+
         }
         //-------------------------------------
         _before_submit=function(record,dbv){
-            if(record.Document_Type!=='') dbv.S1=record.Document_Type;
+            if(record.Task_Type!=='') dbv.S1=record.Task_Type;
+            record.Rate=record.Rate.replace('$','');
+            if(record.Rate!=='') dbv.V1=record.Rate;
             return true;
         };
         //-------------------------------------
@@ -32,20 +59,19 @@
 
             }
 */        }
-
     //-------------------------------------
     var help='<div class="container">\
             <div class="row">\
                 <div class="col-sm-2 text-content text-left">\
-                    <h4>Symbols in document type list</h4>\
+                    <h4>Symbols in task type - rate list</h4>\
                     <p><i class="fa fa-pencil-square-o"></i> Edit / change details</p>\
-                    <p><i class="fa fa-trash-o"></i> Delete document type</p>\
+                    <p><i class="fa fa-trash-o"></i> Delete task type - rate</p>\
                     <br>\
                 </div>\
                 <div class="col-sm-2 text-content text-left">\
-                    <h4><i class="fa fa-plus"></i> = Add document type</h4>\
+                    <h4><i class="fa fa-plus"></i> = Add task type - rate</h4>\
                     <p>Entry can be done directly in the grid</p>\
-                    <p>Click on <i class="fa fa-pencil-square-o"></i> to edit document type record in other form</p>\
+                    <p>Click on <i class="fa fa-pencil-square-o"></i> to edit task type - rate record in other form</p>\
                     <p>REMEMBER Click on <i class="fa fa-upload"></i> to save the changes</p>\
                     <br>\
                 </div>\
@@ -56,19 +82,19 @@
                 </div>\
                 <div class="col-sm-2 text-content text-left">\
                     <h4><i class="fa fa-search"></i> = Search </h4>\
-                    <p>If Keyword is empty reload document type list.<br>\
-                    Search for full words in Keyword from the document type list.</p>\
+                    <p>If Keyword is empty reload task type - rate list.<br>\
+                    Search for full words in Keyword from the task type - rate list.</p>\
                     <br>\
                 </div>\
                 <div class="col-sm-2 text-content text-left">\
                     <h4><i class="fa fa-arrow-left"></i> = Previous</h4>\
                     <h4><i class="fa fa-arrow-right"></i> = Next Page</h4>\
-                    <p>If all document types don&apos;t fit into one page, these arrows can be used for paging </p>\
+                    <p>If all task type - rates don&apos;t fit into one page, these arrows can be used for paging </p>\
                     <br>\
                 </div>\
                 <div class="col-sm-2 text-content text-left">\
                     <h4><i class="fa fa-download"></i> = Export</h4>\
-                    <p>Exporting the document type list to excel format (.csv)</p>\
+                    <p>Exporting the task type - rate list to excel format (.csv)</p>\
                     <br>\
                 </div>\
             </div>\

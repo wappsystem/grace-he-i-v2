@@ -1,6 +1,8 @@
 <div>
-    <div id=toolbar__ID>
-        <a id=back__ID>Back</a> <a id=check_count__ID>Check</a><span class=tab__ID></span><span id=nav_link__ID></span>
+    <div id=toolbar__ID class="navbar navbar-default">
+    	<form class="form-inline">
+    		<button type=button id=check_count__ID class='btn btn-secondary'>Check</button>&nbsp;    	<span id=nav_link__ID></span>
+    	</form>
     </div>
     <div id=panel__ID style='clear:left;'>
         <div class='nav__ID'>
@@ -76,9 +78,8 @@
     //---------------------------------------------
     function F__ID(){
         //---------------------------------------------
-        VmInclude:__BASE__/vmiis/Common-Code/navigation/navigation.js
-        VmInclude:__BASE__/vmiis/Common-Code/style/ease-in-out.js
-        VmInclude:__BASE__/wappsystem/grace-he-i/modules/control_panels/main.js
+        VmInclude:__COMPONENT__/navigation/navigation.js
+        VmInclude:__COMPONENT__/style/ease-in-out.2.js
         //---------------------------------------------
         _set_li_permissions();
         //---------------------------------------------
@@ -92,8 +93,27 @@
     }
 </script>
 <style>
-    VmInclude:__BASE__/vmiis/Common-Code/navigation/navigation.css
+    VmInclude:__COMPONENT__/navigation/navigation.css
     #D__ID{
         background: url("__BASE__/vmiis/SaaS/images/fresh_snow.png");
     }
+    #toolbar__ID{
+		background-color:#ccc;
+		margin-bottom:0px;
+		overflow:hidden;
+        padding: 5px 0 5px 10px;
+	}
+    #toolbar__ID .form-inline > * {
+        margin-right:5px;
+    }
+	@media screen and (max-width:768px){
+		#toolbar__ID{
+			padding: 3px 10px;
+		}
+		#toolbar__ID div{
+			padding-left:3px;
+		}
+	}
 </style>
+wappsystem\grace-he-i-v2\modules\client\client.html
+wappsystem/grace-he-i-v2/modules/client/client.htm

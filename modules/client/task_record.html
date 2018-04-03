@@ -19,8 +19,8 @@
 <script>
     function F__ID(){
         //-------------------------------------
-        VmInclude:__BASE__/vmiis/Common-Code/grid/grid.js
-        VmInclude:__BASE__/vmiis/Common-Code/style/ease-in-out.js
+        VmInclude:__COMPONENT__/grid/grid.v3.js
+        VmInclude:__COMPONENT__/style/ease-in-out.2.js
 //        Vm Include:__BASE__/wappsystem/grace-he-i/Modules/Control_panels/job_sub.js
         //-------------------------------------
         _fields="_Form,_Hidden|job_uid,_Hidden|job_type_uid,File_Name,Job|job_type,_Documents,Task ID|UID,Staff,_Hidden|Task_uid,Task,Type|Task_Type,Status,Colour,Notes,Notes_Admin,Assigned Date|Date,Date_Completed,Due_Date,Time From|StartTime,Time To|EndTime,Mins|Actual_Duration,_Add_More_Times,Alloc. Minutes|Minutes,Total Duration|Total_Duration,Time gap|Time_gap";
@@ -104,7 +104,7 @@
                     break;
                 case 'Date':
                 case 'Due_Date':
-                    VmInclude:__BASE__/vmiis/Common-Code/grid/field_date.js
+                    VmInclude:__COMPONENT__/grid/field_date.js
                     break;
                 case 'StartTime':
                 case 'EndTime':
@@ -127,7 +127,7 @@
                 case 'Staff':
                     var sql="with tb as (select name=@('Staff'),value2=uid from [TABLE-"+staff_list_tid+"])";
                     sql+=" select top 10 name,value=name,value2 from tb where Name like '%'+@S1+'%' ";
-                    VmInclude:__BASE__/vmiis/Common-Code/grid/field_auto.js
+                    VmInclude:__COMPONENT__/grid/field_auto.js
                     break;
                 case 'Task':
                     var sql="with tb as (select name=@('Task'),value4=@('Task_Type'),value3=@('Hours')+':'+@('Minutes'),value2=uid from [TABLE-"+task_list_tid+"] where PUID="+job_type_uid+")";
@@ -346,7 +346,7 @@
     }
 </script>
 <style>
-    VmInclude:__BASE__/vmiis/Common-Code/grid/grid.css
+    VmInclude:__COMPONENT__/grid/grid.v3.css
     #D__ID{
         overflow-x:auto;
         /*white-space: nowrap;*/

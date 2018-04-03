@@ -1,5 +1,5 @@
 <section>
-      VmInclude:__BASE__/vmiis/Common-Code/grid/grid.html
+      VmInclude:__CURRENT_PATH__/grid/grid.v3.html
 </section>
 <script>
     function F__ID(){
@@ -7,8 +7,8 @@
         _fields="_Form,Number,Client|Client,_Hidden|Client_uid,File_Name,Date,Institute,Tuition,Commission,GST,Bonus,Total_Deduction,Net_Payment,Type,Paid_Date,Status,Note"
         _fields+=",Submit Date|DateTime,Submitted by|Author,_Delete";
         //-------------------------------------
-        VmInclude:__BASE__/vmiis/Common-Code/grid/grid.js
-        VmInclude:__BASE__/vmiis/Common-Code/style/ease-in-out.js
+        VmInclude:__COMPONENT__/grid/grid.v3.js
+        VmInclude:__COMPONENT__/style/ease-in-out.2.js
 //        Vm Include:__BASE__/wappsystem/grace-he-i/Modules/Control_panels/job_sub.js
         //-------------------------------------
         var client_tid=$vm.module_list[_app_id+'commission'].var.client_tid;
@@ -23,7 +23,7 @@
                     break;
                 case 'Date':
                 case 'Paid_Date':
-                    VmInclude:__BASE__/vmiis/Common-Code/grid/field_date.js
+                    VmInclude:__COMPONENT__/grid/field_date.js
                     break;
                 case 'Client':
                     var sql="with tb as (select name=@('Givennames')+' '+@('Surname'),value2=uid,value3=@('File_Name') from [TABLE-"+client_tid+"] )";
@@ -62,7 +62,7 @@
                     <option >Paid</option>\
                     </select>\
                     ";
-                    VmInclude:__BASE__/vmiis/Common-Code/grid/field_select.js
+                    VmInclude:__COMPONENT__/grid/field_select.js
                     break;
                 case 'Type':
                     var html="<select style='border:0;'>\
@@ -71,7 +71,7 @@
                     <option >Net</option>\
                     </select>\
                     ";
-                    VmInclude:__BASE__/vmiis/Common-Code/grid/field_select.js
+                    VmInclude:__COMPONENT__/grid/field_select.js
                     break;
             }
         }
@@ -93,7 +93,7 @@
     }
 </script>
 <style>
-    VmInclude:__BASE__/vmiis/Common-Code/grid/grid.css
+    VmInclude:__COMPONENT__/grid/grid.v3.css
     #D__ID{
         overflow-x:auto;
         /*white-space: nowrap;*/
