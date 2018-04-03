@@ -1,0 +1,219 @@
+<section>
+    <div id=toolbar__ID>
+        <a id=back__ID>Back</a> <a id=save__ID>Save</a>
+        <span class=tab__ID></span>
+        <span>Date:</span> <input type=text id=t1__ID placeholder="" style='width:80px;padding-left:3px' />
+        <select id=staff__ID></select>
+        <a id=query__ID >Query</a>
+        <a id=export__ID >Export</a>
+    	<span class=tab__ID></span><b>Daily Tasks</b> <span id=alloc_time></span>
+    </div>
+    <table id=grid__ID></table>
+</section>
+<script>
+    function F__ID(){
+        //-------------------------------------
+        _fields="_Form,_Hidden|applicant_uid,_Hidden|job_uid,_Hidden|job_type_uid,File_name,Job|job_type,_Documents,Task ID|UID,Staff,Task,Type|Task_Type,Status,Colour,Notes,Date,Date_Completed,_Hidden|Day1,Time From 1|StartTime1,Time To 1|EndTime1,_Hidden|Day2,Time From 2|StartTime2,Time To 2|EndTime2,_Hidden|Day3,Time From 3|StartTime3,Time To 3|EndTime3,_Hidden|Day4,Time From 4|StartTime4,Time To 4|EndTime4,_Hidden|Day5,Time From 5|StartTime5,Time To 5|EndTime5Alloc. Minutes|Minutes,Actual Time  in Minutes|Actual_Duration,Time gap|Time_gap";
+        //_fields+=",Submit Date|DateTime,Submitted by|Author,_Delete";
+        //-------------------------------------
+        $('#query__ID').on('click',function(){ _set_req(); _request_data(); })
+        //-------------------------------------
+        VmInclude:__BASE__/vmiis/Common-Code/grid/grid.js
+        VmInclude:__BASE__/vmiis/Common-Code/style/ease-in-out.js
+//        Vm Include:__BASE__/wappsystem/grace-he-i/Modules/Control_panels/job_sub.js
+        //-------------------------------------
+        var job_tid=$vm.module_list[_app_id+'task_record'].var.scheduler_tid;
+        var job_status_list_tid=$vm.module_list[_app_id+'task_record'].var.job_status_list_tid;
+        var task_list_tid=$vm.module_list[_app_id+'task_record'].var.task_list_tid;
+        var staff_list_tid=$vm.module_list[_app_id+'task_record'].var.staff_list_tid;
+        //-------------------------------------
+        var $List=$('#staff__ID');
+        $List.append(  $('<option>All</option>').val('').html(''))
+        sql="select staff=S1 from [TABLE-"+staff_list_tid+"] order by S1";
+        var req_data={cmd:'query_records',sql:sql};
+        $VmAPI.request({data:req_data,callback:function(res){
+            for(var i=0;i<res.records.length;i++){
+                var staff=res.records[i].staff;
+                $List.append(  $('<option></option>').html(staff))
+            }
+        }});
+        $List.val();
+       //-------------------------------------
+        $('#D__ID').on('load',function(){
+            var today = new Date();
+            $('#t1__ID').datepicker({dateFormat:'dd/mm/yy'});
+            $('#t1__ID').val($.datepicker.formatDate('dd/mm/yy', today));
+        })
+        //-------------------------------------
+        _set_req=_set_req_export=function(){
+            var sql="select Information,applicant_uid=GUID,UID,ID from [TABLE-"+_db_pid+"] where S1 like '%'+@S1+'%' and DT1=@T1 "
+            _req={cmd:'query_records',sql:sql,t1:$('#t1__ID').val(),s1:$('#staff__ID').val()}
+        }
+        //-------------------------------------
+        _data_process=function(){
+            var total_time=0;
+            for(var i=0;i<_records.length;i++){
+                total_time+=parseInt(_records[i].Minutes);
+            }
+            $('#alloc_time').html(' - Total Allocated Time: <b>'+total_time+'</b> mins ('+Math.floor(total_time/60)+' hours '+total_time%60+' mins)' )
+        }
+        //-------------------------------------
+        _cell_render=function(records,I,field,td,set_value,source){
+            switch(field){
+                case 'UID':
+                case 'applicant_uid':
+                case 'applicant':
+                case 'File_name':
+                case 'job_uid':
+                case 'job_type':
+                case 'job_type_uid':
+                case 'Date':
+                case 'Staff':
+                case 'Task':
+                case 'Minutes':
+                case 'Actual_Duration':
+                case 'Time_gap':
+                case 'Date_Completed':
+                case 'Task_Type':
+                    records[I].vm_readonly[field]=true;
+                    td.css('color','#888');
+                    break;
+                case 'Colour':
+                    records[I].vm_custom[field]=true;
+                    td.html('');
+                    td.css('background-color',records[I].Colour);
+                    break;
+                case 'StartTime1':
+                case 'StartTime2':
+                case 'StartTime3':
+                case 'StartTime4':
+                case 'StartTime5':
+                    td.on('dblclick',function(){
+                        var currentdate= new Date();
+                        var html=((currentdate.getHours() < 10)?"0":"") + currentdate.getHours()+":"+((currentdate.getMinutes() < 10)?"0":"")+ currentdate.getMinutes();
+                        td.html(html)
+                        var day=field.substr(field.length - 1);
+                        var dmy = records[I]['Date'].split('/');
+                        var taskdate=new Date(dmy[2], dmy[1]-1, dmy[0]);
+                        records[I]['Day'+day]=Math.floor((currentdate-taskdate)/(1000*60*60*24));
+                    })
+                    break;
+                case 'EndTime1':
+                case 'EndTime2':
+                case 'EndTime3':
+                case 'EndTime4':
+                case 'EndTime5':
+                    td.on('dblclick',function(){
+                        var currentdate= new Date();
+                        var html=((currentdate.getHours() < 10)?"0":"") + currentdate.getHours()+":"+((currentdate.getMinutes() < 10)?"0":"")+ currentdate.getMinutes();
+                        td.html(html)
+                    })
+                    break;
+                case 'Status':
+                    var sql="with tb as (select name=@('Job_status'),value3=@('Colour'),value2=uid from [TABLE-"+job_status_list_tid+"])";
+                    sql+=" select top 10 name,value=name,value2,value3 from tb where Name like '%'+@S1+'%' ";
+                    td.autocomplete({
+                        minLength:0,
+                        source:function(request,response){
+                            $VmAPI.request({data:{cmd:'auto',s1:request.term,sql:sql,minLength:0},callback:function(res){
+                                response($vm.autocomplete_list(res.table));
+                            }});
+                        },
+                        select: function(event,ui){
+                            records[I][field+'_uid']=ui.item.value2;
+                            records[I]['Colour']=ui.item.value3;
+                            if(ui.item.value=='Completed') {
+                                var today = new Date();
+                                var dd = today.getDate();
+                                var mm = today.getMonth()+1; //January is 0!
+                                var yyyy = today.getFullYear();
+                                if(dd<10){dd='0'+dd;}
+                                if(mm<10){mm='0'+mm;}
+                                var today = dd+'/'+mm+'/'+yyyy;
+                                set_value(today,records,I,'Date_Completed');
+                            }
+                            for(key in ui.item){
+                                if(key.indexOf('field_')!==-1){
+                                    var k=key.replace('field_','')
+                                    var v=ui.item[key];
+                                    set_value(v,records,I,k);
+                                    if(source=='grid'){
+                                        td.parent().find("td[data-id='"+k+"']").html(v);
+                                    }
+                                    else{
+                                        td.parent().parent().find("td[data-id='"+k+"']").html(v);
+                                    }
+                                }
+                            }
+                        }
+                    })
+                    td.focus(function(){td.autocomplete("search","");});
+                    break;
+                case '_Documents':
+                    records[I].vm_custom[field]=true;
+                    if(records[I].UID===undefined) return;
+                    var html="<u style='cursor:pointer'>Document..</u>";
+                    td.html(html);
+                    td.find('u').on('click',function(){
+                        $vm.load_module_by_name($vm.module_list[_app_id+'scheduler_record'].var.document_module,$vm.root_layout_content_slot,{applicant_uid:_records[I].applicant_uid});
+                    })
+                    break;
+            }
+        }
+        //-------------------------------------
+        _after_change=function(records,I,field,td,set_value,source){
+            switch(field){
+                case 'Status':
+                    _render(I);
+                    break;
+            }
+        }
+
+        //-------------------------------------
+        get_duration=function(StartTime,EndTime){
+            if(StartTime!='' && EndTime!=''){
+                var sparts=StartTime.split(':');
+                var smins=0;
+                if(sparts[0]!='' && sparts[1]!=''){
+                    smins=parseInt(sparts[0])*60+parseInt(sparts[1])
+                }
+                var eparts=EndTime.split(':');
+                var emins=0;
+                if(eparts[0]!='' && eparts[1]!=''){
+                    emins=parseInt(eparts[0])*60+parseInt(eparts[1])
+                }
+                return emins-smins;
+            }
+            else return 0
+        }
+        //-------------------------------------
+        _before_submit=function(record,dbv){
+            if(record.Minutes!==''){
+                var actual_duration=0;
+                actual_duration+=get_duration(record.StartTime1,record.EndTime1)
+                actual_duration+=get_duration(record.StartTime2,record.EndTime2)
+                actual_duration+=get_duration(record.StartTime3,record.EndTime3)
+                actual_duration+=get_duration(record.StartTime4,record.EndTime4)
+                actual_duration+=get_duration(record.StartTime5,record.EndTime5)
+                if(actual_duration!=0){
+                    record.Actual_Duration=actual_duration;
+                    record.Time_gap=actual_duration-parseInt(record.Minutes);
+                }
+                else {
+                    record.Actual_Duration='';
+                    record.Time_gap='';
+                }
+            }
+            if(record.Actual_Duration!=='') dbv.V1=record.Actual_Duration;
+            if(record.Time_gap!=='') dbv.V2=record.Time_gap;
+            if(record.Minutes!=='') dbv.V3=record.Minutes;
+            if(record.Status!=='') dbv.S3=record.Status;
+            if(record.Status=='Completed') dbv.B1='1';else dbv.B1='0';
+            return true;
+        };
+        //-------------------------------------
+    }
+</script>
+<style>
+    VmInclude:__BASE__/vmiis/Common-Code/grid/grid.css
+</style>

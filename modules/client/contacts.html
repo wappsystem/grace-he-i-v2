@@ -1,0 +1,57 @@
+<section>
+      VmInclude:__BASE__/vmiis/Common-Code/grid/grid.html
+</section>
+<script>
+    function F__ID(){
+        //-------------------------------------
+        _fields="_Form,Applicant ID|applicant_uid,Applicant|applicant"
+        _fields+=",<B>Do you have any personal contacts in Australia</b>|Personal_Contact,Name|PC_name,Gender|PC_Gender,Date of Birth|PC_DOB,Relationship to you|PC_Relationship";
+        _fields+=",<b>Your spouse/ De facto partner information</b>|Partner,Name|P_name,Alias (if applicable)|P_Alias,Date of Birth|P_DOB,Date of Decease (if applicable)|P_DOD,Place of birth|P_Place_of_Birth,Nationality|P_Nationality,Date of citizenship granted|P_Citizenship_Date,National ID|P_National_ID"
+        _fields+=",<b>Do you have any person accompanying you coming to Australia?</b>|Accompany,Name|A_name,Date of Birth|A_DOB,Nationality|A_Nationality,Relationship to you|A_Relationship"
+        _fields+=",Submit Date|DateTime,Submitted by|Author,_Delete";
+        //-------------------------------------
+        VmInclude:__BASE__/vmiis/Common-Code/grid/grid.js
+        VmInclude:__BASE__/vmiis/Common-Code/style/ease-in-out.js
+        VmInclude:__BASE__/wappsystem/grace-he-i/Modules/Control_panels/client_sub.js
+        //-------------------------------------
+        var applicant_tid=$vm.module_list[_app_id+'client'].var.client_tid;
+        //-------------------------------------
+        $('#D__ID').on('load',function(){_set_req(); _request_data();  })
+        //-------------------------------------
+        _cell_render=function(records,I,field,td,set_value,source){
+            switch(field){
+                case 'applicant':
+                case 'applicant_uid':
+                case 'Personal_Contact':
+                case 'Partner':
+                case 'Accompany':
+                    records[I].vm_readonly[field]=true;
+                    td.css('color','#888');
+                    break;
+                case 'P_Citizenship_Date':
+                    VmInclude:__BASE__/vmiis/Common-Code/grid/field_date.js
+                    break;
+                case 'PC_DOB':
+                case 'P_DOB':
+                case 'A_DOB':
+                case 'P_DOD':
+                    VmInclude:__BASE__/vmiis/Common-Code/grid/field_dob.js
+                    break;
+            }
+        }
+        //-------------------------------------
+        _before_submit=function(record,dbv){
+            dbv.PPID=applicant_tid;
+            if(record.applicant_uid!==undefined) dbv.PUID=record.applicant_uid;
+            return true;
+        };
+        //-------------------------------------
+    }
+</script>
+<style>
+    VmInclude:__BASE__/vmiis/Common-Code/grid/grid.css
+    #D__ID{
+        overflow-x:auto;
+        /*white-space: nowrap;*/
+    }
+</style>

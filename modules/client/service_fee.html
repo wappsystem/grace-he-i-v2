@@ -1,0 +1,83 @@
+<section>
+      VmInclude:__BASE__/vmiis/Common-Code/grid/grid.html
+</section>
+<script>
+    function F__ID(){
+        //-------------------------------------
+        _fields="_Form,Contract_Date,Client|Client,_Hidden|Client_uid,File_Name,Visa_Type,Installments,Service_Fee,Paid_Date,Amount_paid,Non_Refundable_Fee,Note,Contact_Details"
+        _fields+=",Submit Date|DateTime,Submitted by|Author,_Delete";
+        //-------------------------------------
+        VmInclude:__BASE__/vmiis/Common-Code/grid/grid.js
+        VmInclude:__BASE__/vmiis/Common-Code/style/ease-in-out.js
+//        Vm Include:__BASE__/wappsystem/grace-he-i/Modules/Control_panels/job_sub.js
+        //-------------------------------------
+        var client_tid=$vm.module_list[_app_id+'commission'].var.client_tid;
+        //-------------------------------------
+        $('#D__ID').on('load',function(){ _set_req(); _request_data();  })
+        //-------------------------------------
+        _cell_render=function(records,I,field,td,set_value,source){
+            switch(field){
+                case 'File_Name':
+                    records[I].vm_readonly[field]=true;
+                    td.css('color','#888');
+                    break;
+                case 'Contract_Date':
+                case 'Paid_Date':
+                    VmInclude:__BASE__/vmiis/Common-Code/grid/field_date.js
+                    break;
+                case 'Client':
+                    var sql="with tb as (select name=@('Givennames')+' '+@('Surname'),value2=uid,value3=@('File_Name') from [TABLE-"+client_tid+"] )";
+                    sql+=" select top 10 name,value=name,value2,value3 from tb where Name like '%'+@S1+'%' ";
+                    td.autocomplete({
+                        minLength:0,
+                        source:function(request,response){
+                            $VmAPI.request({data:{cmd:'auto',s1:request.term,sql:sql,minLength:0},callback:function(res){
+                                response($vm.autocomplete_list(res.table));
+                            }});
+                        },
+                        select: function(event,ui){
+                            records[I][field+'_uid']=ui.item.value2;
+                            records[I]['File_Name']=ui.item.value3;
+                            for(key in ui.item){
+                                if(key.indexOf('field_')!==-1){
+                                    var k=key.replace('field_','')
+                                    var v=ui.item[key];
+                                    set_value(v,records,I,k);
+                                    if(source=='grid'){
+                                        td.parent().find("td[data-id='"+k+"']").html(v);
+                                    }
+                                    else{
+                                        td.parent().parent().find("td[data-id='"+k+"']").html(v);
+                                    }
+                                }
+                            }
+                        }
+                    })
+                    td.focus(function(){td.autocomplete("search","");});
+                    break;
+            }
+        }
+        //-------------------------------------
+        _after_change=function(records,I,field,td,set_value,source){
+            switch(field){
+                case 'Client':
+                _render(I);
+                break;
+            }
+        }
+        //-------------------------------------
+        _before_submit=function(record,dbv){
+            dbv.PPID=client_tid;
+            if(record.Client_uid!=='') dbv.PUID=record.Client_uid;
+            return true;
+        };
+        //-------------------------------------
+    }
+</script>
+<style>
+    VmInclude:__BASE__/vmiis/Common-Code/grid/grid.css
+    #D__ID{
+        overflow-x:auto;
+        /*white-space: nowrap;*/
+    }    
+</style>

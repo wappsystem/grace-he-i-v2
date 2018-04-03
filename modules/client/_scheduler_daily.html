@@ -1,0 +1,130 @@
+<section>
+    <div id=toolbar__ID>
+        <a id=back__ID>Back</a> <a id=save__ID>Save</a>
+        <span class=tab__ID></span>
+        <span>Date:</span> <input type=text id=t1__ID placeholder="" style='width:80px;padding-left:3px' />
+        <a id=query__ID >Query</a>
+        <a id=export__ID >Export</a>
+    	<span class=tab__ID></span>Daily Jobs
+    </div>
+    <table id=grid__ID></table>
+</section>
+<script>
+    function F__ID(){
+        //-------------------------------------
+        _fields="_Form,_Task,Client ID|applicant_uid,Client|applicant,File name|File_Name,Date,_Hidden|job_type_uid,Job Type|job_type,Status,Colour";
+        //_fields+=",Submit Date|DateTime,Submitted by|Author,_Delete";
+        //-------------------------------------
+        $('#query__ID').on('click',function(){ _set_req(); _request_data();  })
+        //-------------------------------------
+        VmInclude:__BASE__/vmiis/Common-Code/grid/grid.js
+        VmInclude:__BASE__/vmiis/Common-Code/style/ease-in-out.js
+        VmInclude:__BASE__/wappsystem/grace-he-i/Modules/Control_panels/client_sub.js
+        //------------------------
+        var client_tid=$vm.module_list[_app_id+'scheduler_record'].var.client_tid;
+        var staff_tid=$vm.module_list[_app_id+'scheduler_record'].var.staff_list_tid;
+        var job_status_list_tid=$vm.module_list[_app_id+'scheduler_record'].var.job_status_list_tid;
+        var task_tid=$vm.module_list[_app_id+'scheduler_record'].var.task_tid;
+        //-------------------------------------
+/*        var $List=$('#staff__ID');
+        $List.append(  $('<option>All</option>').val('').html(''))
+        sql="select staff=S1 from [TABLE-"+staff_tid+"] order by S1";
+        var req_data={cmd:'query_records',sql:sql};
+        $VmAPI.request({data:req_data,callback:function(res){
+            for(var i=0;i<res.records.length;i++){
+                var staff=res.records[i].staff;
+                $List.append(  $('<option></option>').html(staff))
+            }
+        }});
+        $List.val();
+*/       //-------------------------------------
+        $('#D__ID').on('load',function(){
+            //-------------------------------------
+            var today = new Date();
+            $('#t1__ID').datepicker({dateFormat:'dd/mm/yy'});
+            $('#t1__ID').val($.datepicker.formatDate('dd/mm/yy', today));
+
+        })
+            //-------------------------------------
+            _set_req=_set_req_export=function(){
+                var sql=" \
+                        select Information,ID,UID,PUID,DateTime,Author from [TABLE-"+_db_pid+"] where DT1=@T1 "
+                _req={cmd:'query_records',sql:sql,t1:$('#t1__ID').val()}
+            }
+        //-------------------------------------
+        _cell_render=function(records,I,field,td,set_value,source){
+            switch(field){
+                case 'applicant_uid':
+                case 'applicant':
+                case 'File_Name':
+                case 'job_type':
+                case 'Date':
+                    records[I].vm_readonly[field]=true;
+                    td.css('color','#888');
+                    break;
+                case 'Colour':
+                    VmInclude:__BASE__/vmiis/Common-Code/grid/field_color.js
+                    break;
+                case 'Status':
+                    var sql="with tb as (select name=@('Job_status'),value3=@('Colour'),value2=uid from [TABLE-"+job_status_list_tid+"])";
+                    sql+=" select top 10 name,value=name,value2,value3 from tb where Name like '%'+@S1+'%' ";
+                    td.autocomplete({
+                        minLength:0,
+                        source:function(request,response){
+                            $VmAPI.request({data:{cmd:'auto',s1:request.term,sql:sql,minLength:0},callback:function(res){
+                                response($vm.autocomplete_list(res.table));
+                            }});
+                        },
+                        select: function(event,ui){
+                            records[I][field+'_uid']=ui.item.value2;
+                            records[I]['Colour']=ui.item.value3;
+                            for(key in ui.item){
+                                if(key.indexOf('field_')!==-1){
+                                    var k=key.replace('field_','')
+                                    var v=ui.item[key];
+                                    set_value(v,records,I,k);
+                                    if(source=='grid'){
+                                        td.parent().find("td[data-id='"+k+"']").html(v);
+                                    }
+                                    else{
+                                        td.parent().parent().find("td[data-id='"+k+"']").html(v);
+                                    }
+                                }
+                            }
+                        }
+                    })
+                    td.focus(function(){td.autocomplete("search","");});
+                    break;
+                case '_Task':
+                    records[I].vm_custom[field]=true;
+                    if(_records[I].UID===undefined) return;
+                    td.html("<u style='cursor:pointer'>Task..</u>");
+                    td.find('u').on('click',function(){
+                        $vm.load_module_by_name(_module.var.task_module,$vm.root_layout_content_slot,{
+                            rid:_records[I].ID,job_uid:_records[I].UID,job_type_uid:_records[I].job_type_uid,
+                            job_type:_records[I].job_type,applicant_uid:_records[I].applicant_uid,
+                            applicant:_records[I].applicant,filename:_records[I].File_Name
+                        });
+                    });
+                    break;
+            }
+        }
+        //-------------------------------------
+        _after_change=function(records,I,field,td,set_value,source){
+            switch(field){
+                case 'Status':
+                    _render(I);
+                    break;
+            }
+        }
+        //-------------------------------------
+        _before_submit=function(record,dbv){
+            if(record.Status!=='') dbv.S1=record.Status;
+            return true;
+        };
+        //-------------------------------------
+    }
+</script>
+<style>
+    VmInclude:__BASE__/vmiis/Common-Code/grid/grid.css
+</style>

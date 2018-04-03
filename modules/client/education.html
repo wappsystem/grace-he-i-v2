@@ -1,0 +1,58 @@
+<section>
+      VmInclude:__BASE__/vmiis/Common-Code/grid/grid.html
+</section>
+<script>
+    function F__ID(){
+        //-------------------------------------
+        _fields="_Form,Applicant ID|applicant_uid,Applicant|applicant";
+        _fields+=",<b>Education background after middle school</b>|education,Date from|Date_from,Date to|Date_to";
+        _fields+=",Country,Name of the institute and adress|Institute,Course Name|Course,Status";
+        _fields+=",Submit Date|DateTime,Submitted by|Author,_Delete";
+        //-------------------------------------
+        VmInclude:__BASE__/vmiis/Common-Code/grid/grid.js
+        VmInclude:__BASE__/vmiis/Common-Code/style/ease-in-out.js
+        VmInclude:__BASE__/wappsystem/grace-he-i/Modules/Control_panels/client_sub.js
+        //-------------------------------------
+        var applicant_tid=$vm.module_list[_app_id+'client'].var.client_tid;
+        //-------------------------------------
+        $('#D__ID').on('load',function(){ _set_req(); _request_data();  })
+        //-------------------------------------
+        _cell_render=function(records,I,field,td,set_value,source){
+            switch(field){
+                case 'applicant':
+                case 'applicant_uid':
+                case 'education':
+                    records[I].vm_readonly[field]=true;
+                    td.css('color','#888');
+                    break;
+                case 'Date_from':
+                case 'Date_to':
+                    VmInclude:__BASE__/vmiis/Common-Code/grid/field_date.js
+                    break;
+                case 'Status':
+                    var html="<select style='border:0;'>\
+                    <option value='' >---</option>\
+                    <option >Completed</option>\
+                    <option >Incompleted</option>\
+                    </select>\
+                    ";
+                    VmInclude:__BASE__/vmiis/Common-Code/grid/field_select.js
+                    break;
+            }
+        }
+        //-------------------------------------
+        _before_submit=function(record,dbv){
+            dbv.PPID=applicant_tid;
+            if(record.applicant_uid!==undefined) dbv.PUID=record.applicant_uid;
+            return true;
+        };
+        //-------------------------------------
+    }
+</script>
+<style>
+    VmInclude:__BASE__/vmiis/Common-Code/grid/grid.css
+    #D__ID{
+        overflow-x:auto;
+        /*white-space: nowrap;*/
+    }
+</style>

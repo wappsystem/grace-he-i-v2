@@ -1,0 +1,125 @@
+<section>
+      VmInclude:__CURRENT_PATH__/grid.v3.html
+</section>
+<script>
+    function F__ID(){
+        //-------------------------------------
+        VmInclude:__COMPONENT__/grid/grid.v3.js
+        //-------------------------------------
+        _fields="_Form,|_Print,No.|Invoice_Number,Client,Issue_Date,Due_Date,GST|GST_Amount,Amount|Total_Amount,Paid|Total_Payment,Balance";
+		_fields+=",_Hidden|invoice_items"
+		_fields+=",_Hidden|payment_items"
+        _fields+=",Submit Date|DateTime,Submitted by|Author,_Delete,_Hidden|Client_uid";
+        //-------------------------------------
+        var formatter = new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD',
+            minimumFractionDigits: 2,
+        });
+        //-------------------------------------
+        _cell_render=function(records,I,field,td,set_value,source){
+            switch(field){
+                case 'Invoice_Number':
+                    records[I].vm_readonly[field]=true;
+                break;
+                case 'Issue_Date':
+                case 'Due_Date':
+                    VmInclude:__COMPONENT__/grid/field_date.js
+                break;
+                case 'GST_Amount':
+                case 'Total_Amount':
+                case 'Total_Payment':
+                case 'Balance':
+                    records[I].vm_readonly[field]=true;
+                    if(source=="grid") td.css("text-align","right").css('white-space','nowrap');
+                    //td.html('$ '+parseFloat(records[I][field]).toFixed(2) ); //add $ sign
+                    td.html(formatter.format((records[I][field]))); //add $ sign
+                break;
+                case '_Print':
+                    records[I].vm_readonly[field]=true;
+                    if(records[I].UID===undefined) return;
+                    var html="<u style='cursor:pointer' ><i class='fa fa-print' title='Print'></i></u>";
+                    td.html(html);
+                    td.find('u').on('click',function(){
+                        var prefix="";//$vm.module_list[$vm.vm['__ID'].name].prefix;
+                        $vm.nav_load_module(prefix+'invoice-print',$vm.root_layout_content_slot,{record:records[I],invoice_uid:records[I].UID});
+                    })
+                break;
+            }
+        }
+        //-------------------------------------
+        _data_process=function(){
+            for(var i=0;i<_records.length;i++){
+                if(_records[i].Total_Payment===undefined) _records[i].Total_Payment=0;
+                if(_records[i].Total_Amount===undefined) _records[i].Total_Amount=0;
+                //_records[i].Balance=parseFloat(_records[i].Total_Payment)-parseFloat(_records[i].Total_Amount);
+                _records[i].Invoice_Number=_records[i].UID;
+            }
+        };
+        //-------------------------------------
+        _new_pre_data_process=function(){ //set issue and due date
+            _records[0].Issue_Date=$vm.date_to_string_dmy($vm.date_today());
+            _records[0].Due_Date=$vm.date_to_string_dmy($vm.date_today());
+            _records[0].GST_Amount=0;
+            _records[0].Total_Amount=0;
+            _records[0].Total_Payment=0;
+            _records[0].Balance=0;
+        };
+        //-------------------------------------
+        $('#D__ID').on('load',function(){  $('#title__ID').text('Invoices');$('#help__ID').html(help);_set_req(); _request_data(); })
+        $('#D__ID').on('back',function(){  _set_req(); _request_data(); })
+        //$('#help_botton__ID').on('click',function(){alert(1) })
+        //-------------------------------------
+        var help='<div class="container">\
+        						<div class="row">\
+                                    <div class="col-sm-2 text-content text-left">\
+                                        <h4>Symbols in invoice list</h4>\
+                                        <p><i class="fa fa-pencil-square-o"></i> Edit / change details in invoice</p>\
+                                        <p><i class="fa fa-print"></i> Print invoice</p>\
+                                        <p><i class="fa fa-trash-o"></i> Delete invoice</p>\
+                                        <br>\
+                                    </div>\
+        							<div class="col-sm-2 text-content text-left">\
+        								<h4><i class="fa fa-plus"></i> = Add Invoice</h4>\
+        								<p>Click on <i class="fa fa-pencil-square-o"></i> to add details to invoice</p>\
+        								<br>\
+        							</div>\
+        							<div class="col-sm-2 text-content text-left">\
+        								<h4><i class="fa fa-upload"></i> = Save change</h4>\
+        								<p>This button will turn red when change has been made.<br>Click to save changes.</p>\
+        								<br>\
+        							</div>\
+                                    <div class="col-sm-2 text-content text-left">\
+        								<h4><i class="fa fa-search"></i> = Search </h4>\
+        								<p>If Keyword is empty reload invoice list.<br>\
+                                        Search for full words in Keyword from the invoice list.</p>\
+        								<br>\
+        							</div>\
+                                    <div class="col-sm-2 text-content text-left">\
+        								<h4><i class="fa fa-arrow-left"></i> = Previous</h4>\
+                                        <h4><i class="fa fa-arrow-right"></i> = Next Page</h4>\
+        								<p>If all invoices don&apos;t fit into one page, these arrows can be used for paging </p>\
+        								<br>\
+        							</div>\
+                                    <div class="col-sm-2 text-content text-left">\
+        								<h4><i class="fa fa-download"></i> = Export</h4>\
+        								<p>Exporting the invoice list to excel format (.csv)</p>\
+        								<br>\
+        							</div>\
+        						</div>\
+        			</div>'
+    }
+</script>
+<style>
+    VmInclude:__COMPONENT__/grid/grid.v3.css
+    .ui-autocomplete.ui-menu{
+        font-size:12px;
+        background:#ddd;
+    }
+    .ui-autocomplete li:hover{
+        color:White;
+        background:#96B202;
+        font-weight:normal;
+        outline:none;
+    }
+</style>

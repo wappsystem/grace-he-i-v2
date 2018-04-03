@@ -1,0 +1,79 @@
+<section>
+    VmInclude:__CURRENT_PATH__/grid.v3.html
+</section>
+<script>
+    function F__ID(){
+        //-------------------------------------
+        VmInclude:__COMPONENT__/grid/grid.v3.js
+        //-------------------------------------
+        _fields="_Form,Search_word,Description,Unit_Price";
+        _fields+=",Submit Date|DateTime,Submitted by|Author,_Delete";
+        //-------------------------------------
+        _cell_render=function(records,I,field,td,set_value,source){
+            switch(field){
+                case 'Unit_Price':
+                    td.css("text-align","right").css('white-space','nowrap');
+                    td.html('$ '+parseFloat(records[I][field]).toFixed(2) ); //add $ sign
+                break;
+            }
+        }
+        //-------------------------------------
+        _after_change=function(records,I,field,td,set_value,source){
+            switch(field){
+                case 'Unit_Price':
+                    _cell_render(records,I,field,td,set_value,source);
+                    break;
+            }
+        }
+        //-------------------------------------
+        _before_submit=function(record,dbv){
+            dbv.S2=record.Search_word;
+            return true;
+        };
+        //-------------------------------------
+        $('#D__ID').on('load',function(){  $('#title__ID').text('Item List');$('#help__ID').html(help);_set_req(); _request_data(); })
+        //-------------------------------------
+        var help='<div class="container">\
+        						<div class="row">\
+                                    <div class="col-sm-2 text-content text-left">\
+                                        <h4>Symbols in item list</h4>\
+                                        <p><i class="fa fa-pencil-square-o"></i> Edit / change details</p>\
+                                        <p><i class="fa fa-trash-o"></i> Delete item</p>\
+                                        <br>\
+                                    </div>\
+        							<div class="col-sm-2 text-content text-left">\
+        								<h4><i class="fa fa-plus"></i> = Add item</h4>\
+                                        <p>Entry can be done directly in the grid</p>\
+        								<p>Click on <i class="fa fa-pencil-square-o"></i> to edit item record in other form</p>\
+                                        <p>REMEMBER Click on <i class="fa fa-upload"></i> to save the changes</p>\
+        								<br>\
+        							</div>\
+        							<div class="col-sm-2 text-content text-left">\
+        								<h4><i class="fa fa-upload"></i> = Save change</h4>\
+        								<p>This button will turn red when change has been made.<br>Click to save changes.</p>\
+        								<br>\
+        							</div>\
+                                    <div class="col-sm-2 text-content text-left">\
+        								<h4><i class="fa fa-search"></i> = Search </h4>\
+        								<p>If Keyword is empty reload item list.<br>\
+                                        Search for full words in Keyword from the item list.</p>\
+        								<br>\
+        							</div>\
+                                    <div class="col-sm-2 text-content text-left">\
+        								<h4><i class="fa fa-arrow-left"></i> = Previous</h4>\
+                                        <h4><i class="fa fa-arrow-right"></i> = Next Page</h4>\
+        								<p>If all items don&apos;t fit into one page, these arrows can be used for paging </p>\
+        								<br>\
+        							</div>\
+                                    <div class="col-sm-2 text-content text-left">\
+        								<h4><i class="fa fa-download"></i> = Export</h4>\
+        								<p>Exporting the item list to excel format (.csv)</p>\
+        								<br>\
+        							</div>\
+        						</div>\
+        			</div>'
+    }
+</script>
+<style>
+    VmInclude:__COMPONENT__/grid/grid.v3.css
+</style>

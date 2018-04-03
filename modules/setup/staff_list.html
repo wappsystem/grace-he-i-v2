@@ -1,0 +1,53 @@
+<section>
+      VmInclude:__BASE__/wappsystem/grace-he-i/Common-Code/grid.html
+</section>
+<script>
+    function F__ID(){
+        //-------------------------------------
+        VmInclude:__BASE__/vmiis/Common-Code/grid/grid.js
+        VmInclude:__BASE__/vmiis/Common-Code/style/ease-in-out.js
+        //-------------------------------------
+        _fields="_Form,Staff|Staff,Login Name|Login_name";
+        _fields+=",Submit Date|DateTime,Submitted by|Author,_Delete";
+        //-------------------------------------
+        $("#title__ID").text('Staff List');
+        //-------------------------------------
+        $('#D__ID').on('load',function(){ _set_req(); _request_data();} )
+        $('#D__ID').on('back',function(){ _set_req(); _request_data();} )
+        //-------------------------------------
+        _cell_render=function(records,I,field,td,set_value,source){
+        }
+        //-------------------------------------
+        _before_submit=function(record,dbv){
+            if(record.Staff!=='') dbv.S1=record.Staff;
+            if(record.Login_name!=='') dbv.S2=record.Login_name;
+            return true;
+        };
+        //-------------------------------------
+        _new_pre_data_process=function(){
+        };
+        //-------------------------------------
+        _after_change=function(records,I,field,td,set_value,source){
+/*            switch(field){
+                case 'Document_Type':
+                    _render(I);
+                break;
+
+            }
+*/        }
+//-------------------------------------
+    }
+</script>
+<style>
+    VmInclude:__BASE__/vmiis/Common-Code/grid/grid.css
+    .ui-autocomplete.ui-menu{
+        font-size:12px;
+        background:#ddd;
+    }
+    .ui-autocomplete li:hover{
+        color:White;
+        background:#96B202;
+        font-weight:normal;
+        outline:none;
+    }
+</style>

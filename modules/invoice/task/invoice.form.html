@@ -1,0 +1,358 @@
+<section>
+    <div id=toolbar__ID class="navbar navbar-default" style='margin-bottom:0px;'>
+    	<div class="navbar-form navbar-left">
+            <a class="col-"><button type="button" class='btn btn-info btn-sm ' data-toggle="collapse" data-target="#help__ID" title="Help - Intructions" ><i class="fa fa-info"></i></button></a>
+    		&nbsp;<button id=save__ID type=button class='btn btn-secondary btn-sm' title="Save" ><i class="fa fa-upload"></i></button>
+    	</div>
+    </div>
+    <div id=help__ID class="collapse"></div>
+	<form id=F__ID>
+        <div class="table-responsive">
+        <table id=tb__ID style='max-width:700px'>
+            <colgroup>
+				<col />
+                <col />
+            </colgroup>
+
+            <tr><td colspan=2 class='header__ID'>Invoice</td></tr>
+
+            <tr><td colspan=2 data-id=Client data-custom=1>
+                <input name=Client  id=Client__ID  type=text class=sel__ID placeholder='select a client...'/>
+                <input name=Client_uid id=Client_uid__ID type=text readonly style="width:50px;color:#ccc;" />
+                <u style='cursor:pointer' id=Client_r__ID title="Remove"><i class='fa fa-trash-o'></i></u>
+            </td></tr>
+<!--            <tr><td>Client Info (if not in Client List)</td><td data-id=Client_Info></td></tr> -->
+            <tr><td>Invoice Number</td><td data-id=Invoice_Number></td></tr>
+            <tr><td>Issue Date</td><td data-id=Issue_Date></td></tr>
+			<tr><td>Due Date</td><td data-id=Due_Date></td></tr>
+			<tr><td colspan=2 class='subheader__ID'>Invoice Items</td></tr>
+            <tr><td colspan=2>
+                <button id=add_an_item__ID type=button class='btn btn-secondary btn-sm' title="Add new" ><i class="fa fa-plus"></i></button>
+            <div class="table-responsive">
+                <table id=grid_item_a__ID></table>
+            </div>
+            <div class="table-responsive">
+                <table style='float:right;border-collapse: collapse;'>
+                    <colgroup><col style='width:120px' /><col /></colgroup>
+                    <tr><td>GST Amount</td><td data-id='GST_Amount' style='text-align:right;white-space:nowrap'></td></tr>
+                    <tr><td>Total Amount</td><td data-id='Total_Amount' style='text-align:right;white-space:nowrap'></td></tr>
+                </table>
+            </div>
+            </td></tr>
+			<tr><td colspan=2 class='subheader__ID'>Payments</td></tr>
+            <tr><td colspan=2>
+                <button id=add_an_item_b__ID type=button class='btn btn-secondary btn-sm' title="Add new" ><i class="fa fa-plus"></i></button>
+                <div class="table-responsive">
+                    <table id=grid_item_b__ID></table>
+                </div>
+                <div class="table-responsive">
+                <table style='float:right;border-collapse: collapse;'>
+					<colgroup><col style='width:120px' /><col /></colgroup>
+                    <tr><td>Total Payment</td><td data-id='Total_Payment' style='text-align:right;white-space:nowrap'></td></tr>
+					<tr><td>Balance</td><td data-id='Balance' style='text-align:right;white-space:nowrap'></td></tr>
+                </table>
+            </div>
+            </td></tr>
+        </table>
+    </div>
+    </form>
+</section>
+<script>
+    function F__ID(){
+        //----------------------------------
+        VmInclude:__COMPONENT__/grid/form.2.js
+		VmInclude:__CURRENT_PATH__/grid_item_a.2.js
+		VmInclude:__CURRENT_PATH__/grid_item_b.2.js
+        //-------------------------------------
+        var client_tid=$vm.module_list['client'].table_id;
+        //-------------------------------------
+        $('#Client__ID').autocomplete({
+            minLength:0,
+            source:function(request,response){
+                var sql="with tb as (select name=S3,value2=UID,value3=S1 from [TABLE-"+client_tid+"])";
+                sql+=" select top 10 name,value=name,value2,value3 from tb where Name like '%'+@S1+'%' ";
+                $VmAPI.request({data:{cmd:'auto',s1:request.term,sql:sql,minLength:0},callback:function(res){
+                    response($vm.autocomplete_list(res.table));
+                }});
+            },
+            select: function(event,ui){
+                $('#Client_uid__ID').val(ui.item.value2);
+                $('#save__ID').css('background','#E00');
+            }
+        })
+        $('#Client__ID').focus(function(){$('#Client__ID').autocomplete("search","");});
+        $('#Client_r__ID').on('click',function(){$('#Client__ID').val('');$('#Client_uid__ID').val('');})
+        //-------------------------------------
+        var _set_client_field=function(){
+        	/*
+            if($vm.vm['__ID'].op.from_grid==="1"){
+                $('#tr_client__ID').show();
+            }
+            else{
+                $('#tr_client__ID').hide();
+                _records[0].Client=_trigger_parameters.client;
+                _records[0].Client_uid=_trigger_parameters.client_uid;
+            }
+        	*/
+            $('#Client__ID').blur(function(){
+                _records[I].Client=$('#Client__ID').val();
+                _records[I].Client_uid=$('#Client_uid__ID').val();
+            })
+        }
+        //-------------------------------------
+        $('#D__ID').on('load',function(){
+            $('#help__ID').html(help);
+            _init();
+            _field_process();
+            _set_client_field();
+            custom_field_process();
+
+			$('#save__ID').show();
+            if(_save_style=='none') $('#save__ID').hide();
+
+            //-------item part
+			if(_records[I].invoice_items=='') _records[I].invoice_items=[];
+			if(_records[I].payment_items=='') _records[I].payment_items=[];
+			_item_a_records=_records[I].invoice_items; _item_a_render();
+			_item_b_records=_records[I].payment_items; _item_b_render();
+            //-------
+        })
+        //-------------------------------------
+        var help='<div class="container">\
+    					<div class="row">\
+                            <div class="col-sm-2 text-content text-left">\
+                                <h4>Symbol</h4>\
+                                <p><i class="fa fa-trash-o"></i> Delete entry</p>\
+                                <br>\
+                            </div>\
+    						<div class="col-sm-6 text-content text-left">\
+    							<h4>Edit Invoice - Instructions</h4>\
+                                <p>Select a client from list. Type in the beginning of the client&apos;s name and select from list.\
+                                <br>Client name can also be typed in if not in list.</p>\
+                                <p>Click on <i class="fa fa-plus"></i> to add Invoice Item.</p>\
+                                <p>Select Description from list. If item not in list type in the description.</p>\
+    						</div>\
+                            <div class="col-sm-4 text-content text-left">\
+                                <h4>&nbsp;</h4>\
+                                <p>Unit Price is price without GST. GST is automatically added if GST checkbox is ticked</p>\
+                                <p>Click on <i class="fa fa-plus"></i> to add Payment.</p>\
+                                <p>REMEMBER Click on <i class="fa fa-upload"></i> to save the changes</p>\
+    							<br>\
+    						</div>\
+    					</div>\
+        			</div>'
+        //----------------------------------
+        var custom_field_process=function(){
+            $('#tb__ID td[data-custom=1]').each(function(){
+                var field=$(this).attr('data-id');
+                switch(field){
+					case "Client":
+                        $(this).find("input[name='"+field+"']").val(_records[I].Client);
+                        $(this).find("input[name='"+field+"_uid']").val(_records[I].Client_uid);
+                    	break;
+					case "GST_Amount":
+                    alert(_records[I].GST_Amount)
+                        //$(this).css("text-align","right").css('white-space','nowrap');
+                        //td.html(formatter.format(_records[I].GST_Amount.replace('$','').replace(/,/g,''))); //add $ sign
+                        break;
+                }
+            })
+        }
+        //----------------------------------
+        _before_submit_form=function(record,dbv){
+            if(record.Client_uid!==undefined) dbv.PUID=record.Client_uid;
+            return true;
+        }
+        //----------------------------------
+
+
+		//----------------------------------
+        //item a part
+        _item_a_fields="Description,Unit_Price,Qty|Quantity,GST,Amount,|_Remove";
+        //----------------------------------
+        $('#add_an_item__ID').on('click',function(){ _item_a_add(); })
+        //----------------------------------
+		var item_list_tid=$vm.module_list["item-list"].table_id;
+        //-------------------------------------
+        var formatter = new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD',
+            minimumFractionDigits: 2,
+        });
+		//-------------------------------------
+        _item_a_cell_render=function(records,I,field,td,set_value,source){
+            switch(field){
+                case "Unit_Price":
+                    if(source=="grid") td.css("text-align","right").css('white-space','nowrap');
+                    td.html(formatter.format(records[I][field].replace('$','').replace(/,/g,''))); //add $ sign
+                    break;
+                case "Amount":
+                    records[I].vm_readonly[field]=true;
+                    if(source=="grid") td.css("text-align","right").css('white-space','nowrap');
+                    td.html(formatter.format(records[I][field].replace('$','').replace(/,/g,''))); //add $ sign
+                    break;
+				case "GST":
+					td.html('<input type=checkbox checked />');
+					records[I].vm_custom[field]=true;
+                    if($(this).prop("checked") == false)   set_value("0",records,I,field);
+                    else                                  set_value("1",records,I,field);
+					if(records[I][field]=="0") td.find('input').prop('checked', false);
+					td.find('input').on('click', function(){
+					    if($(this).prop("checked") == false)   set_value("0",records,I,field);
+					    else                                  set_value("1",records,I,field);
+						_item_a_after_change(records,I,field,td,set_value,source);
+					});
+                    break;
+                case 'Description':
+                    var sql="with tb as (select name=S2,Information from [TABLE-"+item_list_tid+"])";
+                    sql+=" select top 10 name,Information from tb where Name like '%'+@S1+'%' ";
+                    td.autocomplete({
+                        minLength:0,
+                        source:function(request,response){
+                            $VmAPI.request({data:{cmd:'auto',s1:request.term,sql:sql,minLength:0},callback:function(res){
+                                response($vm.autocomplete_list(res.table));
+                            }});
+                        },
+                        select: function(event,ui){
+                            var a=ui.item.Information;
+                            a=$.parseJSON(a);
+                            //alert(a.Description);
+                            records[I]['Description']=a.Description;
+                            records[I]['Unit_Price']=a.Unit_Price;
+                            _item_a_after_change(records,I,'Description',td,set_value,source);
+                            _item_a_after_change(records,I,'Unit_Price',td,set_value,source);
+                        }
+                    })
+                    td.focus(function(){td.autocomplete("search","");});
+                break;
+            }
+        }
+        //----------------------------------
+        _item_a_after_change=function(records,I,field,td,set_value,source){
+            switch(field){
+			    case "Unit_Price":
+                case "Quantity":
+				case "GST":
+                    cal();
+                    break;
+            }
+        }
+        //----------------------------------
+        _item_a_after_remove=function(){
+            cal();
+        }
+        //----------------------------------
+        _item_a_before_submit=function(record,dbv){
+            return true;
+        }
+        //----------------------------------
+        var cal=function(){
+            var total=0,gst=0;
+            for(var i=0;i<_item_a_records.length;i++){
+                var p=parseFloat(_item_a_records[i].Unit_Price.replace('$','').replace(/,/g,''));
+                var q=parseFloat(_item_a_records[i].Quantity);
+                if(_item_a_records[i].Unit_Price=='') p=0;
+                if(_item_a_records[i].Quantity=='') q=0;
+                var a=p*q;
+				if(_item_a_records[i].GST=='1'){
+					gst+=a*0.1;
+					a=a*1.1;
+				}
+                _item_a_records[i].Amount=a.toFixed(2);
+                _item_a_records[i].Unit_Price=p.toFixed(2);
+                total+=a;
+            }
+            _records[I].GST_Amount=gst.toFixed(2);
+            _records[I].Total_Amount=total.toFixed(2);
+			_records[I].Balance=(_records[I].Total_Payment-_records[I].Total_Amount).toFixed(2);
+            _field_process();
+            _cell_render();
+            _item_a_render();
+			_item_b_render();
+
+			_records[I].invoice_items=_item_a_records;
+        }
+        //----------------------------------
+
+		//----------------------------------
+        //item b part
+        _item_b_fields="Payment_Date,Method,Notes,Amount,|_Remove";
+        //----------------------------------
+        $('#add_an_item_b__ID').on('click',function(){ _item_b_add(); })
+        //----------------------------------
+        _item_b_cell_render=function(records,I,field,td,set_value,source){
+            switch(field){
+                case "Amount":
+                    if(source=="grid") td.css("text-align","right").css('white-space','nowrap');
+                    td.html(formatter.format(records[I][field].replace('$','').replace(/,/g,''))); //add $ sign
+                    break;
+				case "Payment_Date":
+					records[I].vm_custom[field]=true;
+					td.html('<input style="border:0; width:80px" />')
+					td.find('input').val(records[I][field])
+					var dateFormat='dd/mm/yy';
+					if(typeof _dateFormat!=='undefined') dateFormat=_dateFormat;
+					td.find('input').datepicker({dateFormat:dateFormat,changeMonth:true, changeYear:true,onClose:function(dateText) {
+					    set_value(dateText,records,I,field);
+						_item_b_after_change(records,I,field,td,set_value,source);
+					}});
+                    break;
+				case "Method":
+					var html="<select style='border:0;''>\
+                        <option value=''>---</option>\
+                        <option>Cash</option>\
+                        <option>Credit Card</option>\
+                        <option>Direct Credit</option>\
+                        </select>\
+                    ";
+					records[I].vm_custom[field]=true;
+					td.html(html)
+					td.find('select').val(records[I][field])
+					td.find('select').on('change', function(){
+					    set_value($(this).val(),records,I,field);
+						_item_b_after_change(records,I,field,td,set_value,source);
+					});
+					break;
+            }
+        }
+        //----------------------------------
+        _item_b_after_change=function(records,I,field,td,set_value,source){
+            switch(field){
+				case "Amount":
+				case "Notes":
+                    b_cal();
+                    break;
+            }
+        }
+        //----------------------------------
+        _item_b_after_remove=function(){
+            b_cal();
+        }
+        //----------------------------------
+        _item_b_before_submit=function(record,dbv){
+            return true;
+        }
+        //----------------------------------
+        var b_cal=function(){
+            var total=0;
+            for(var i=0;i<_item_b_records.length;i++){
+                var p=parseFloat(_item_b_records[i].Amount.replace('$','').replace(/,/g,''));
+                if(_item_b_records[i].Amount=='') p=0;
+                total+=p;
+            }
+            _records[I].Total_Payment=total.toFixed(2);
+			_records[I].Balance=(_records[I].Total_Payment-_records[I].Total_Amount).toFixed(2);
+            _field_process();
+			_item_a_render();
+            _item_b_render();
+
+			_records[I].paymount_items=_item_b_records;
+        }
+        //----------------------------------
+    }
+</script>
+<style>
+    VmInclude:__COMPONENT__/grid/form.css
+	VmInclude:__COMPONENT__/grid/grid_item_a.css
+	VmInclude:__COMPONENT__/grid/grid_item_b.css
+</style>

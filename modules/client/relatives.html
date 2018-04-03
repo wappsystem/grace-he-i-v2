@@ -1,0 +1,63 @@
+<section>
+      VmInclude:__BASE__/vmiis/Common-Code/grid/grid.html
+</section>
+<script>
+    function F__ID(){
+        //-------------------------------------
+        _fields="_Form,Applicant ID|applicant_uid,Applicant|applicant";
+        _fields+=",<b>Applicant’s Parents and Siblings</b>|relatives,Name,Relationship to you|Relationship,Date of birth|DOB,Place of birth|Place_of_birth";
+        _fields+=",Nationality,National ID|National_ID,Alias, Currrent residental address|Current_address";
+        _fields+=",Submit Date|DateTime,Submitted by|Author,_Delete";
+        //-------------------------------------
+        VmInclude:__BASE__/vmiis/Common-Code/grid/grid.js
+        VmInclude:__BASE__/vmiis/Common-Code/style/ease-in-out.js
+        VmInclude:__BASE__/wappsystem/grace-he-i/Modules/Control_panels/client_sub.js
+        //-------------------------------------
+        var applicant_tid=$vm.module_list[_app_id+'client'].var.client_tid;
+        //-------------------------------------
+        $('#D__ID').on('load',function(){ _set_req(); _request_data();  })
+        //-------------------------------------
+        _cell_render=function(records,I,field,td,set_value,source){
+            switch(field){
+                case 'applicant':
+                case 'applicant_uid':
+                case 'relatives':
+                    records[I].vm_readonly[field]=true;
+                    td.css('color','#888');
+                    break;
+                case 'DOB':
+                    VmInclude:__BASE__/vmiis/Common-Code/grid/field_dOB.js
+                    break;
+            case 'Relationship':
+                    var html="<select style='border:0;'>\
+                    <option value='' >---</option>\
+                    <option >Father</option>\
+                    <option >Mother</option>\
+                    <option >Brother</option>\
+                    <option >Sister</option>\
+                    <option >Step Father</option>\
+                    <option >Step Mother</option>\
+                    <option >Half Brother</option>\
+                    <option >Half Sister</option>\
+                    </select>\
+                    ";
+                    VmInclude:__BASE__/vmiis/Common-Code/grid/field_select.js
+                    break;
+            }
+        }
+        //-------------------------------------
+        _before_submit=function(record,dbv){
+            dbv.PPID=applicant_tid;
+            if(record.applicant_uid!==undefined) dbv.PUID=record.applicant_uid;
+            return true;
+        };
+        //-------------------------------------
+    }
+</script>
+<style>
+    VmInclude:__BASE__/vmiis/Common-Code/grid/grid.css
+    #D__ID{
+        overflow-x:auto;
+        /*white-space: nowrap;*/
+    }
+</style>

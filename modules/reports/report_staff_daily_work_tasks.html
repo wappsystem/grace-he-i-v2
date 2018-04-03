@@ -1,0 +1,78 @@
+<section>
+    <div id=toolbar__ID>
+        <a id=back__ID>Back</a>
+        <span class=tab__ID></span>
+        <span>Date:</span> <input type=text id=t1__ID placeholder="" style='width:80px;padding-left:3px' />
+        <select id=staff__ID></select>
+        <a id=aquery__ID >Query</a>
+        <a id=export__ID >Export</a>
+    	<span class=tab__ID></span><b>Staff performed Tasks</b>
+    </div>
+    <table id=grid__ID></table>
+</section>
+<script>
+    function F__ID(){
+        //-------------------------------------
+        _fields="Staff,File_Name,job_type,Task,Task_Type,Start_Time,End_Time,Mins|Actual_Duration,_Hidden|Minutes,_Hidden|Total_Duration,_Hidden|Time_gap,Status";
+        //_fields+=",Submit Date|DateTime,Submitted by|Author,_Delete";
+        //-------------------------------------
+        $('#aquery__ID').on('click',function(){ _set_req(); _request_data(); })
+        //-------------------------------------
+        VmInclude:__BASE__/vmiis/Common-Code/grid/grid.js
+        VmInclude:__BASE__/vmiis/Common-Code/style/ease-in-out.js
+//        Vm Include:__BASE__/wappsystem/grace-he-i/Modules/Control_panels/job_sub.js
+        //-------------------------------------
+        var task_list_tid=$vm.module_list[_app_id+'task_record'].var.task_list_tid;
+        var staff_list_tid=$vm.module_list[_app_id+'task_record'].var.staff_list_tid;
+        var timing_tid=$vm.module_list[_app_id+'task_record_admin'].var.timing_tid;
+        var task_tid=$vm.module_list[_app_id+'task_record'].var.task_tid;
+        //------------------------------------
+        var $List=$('#staff__ID');
+        $List.append(  $('<option>All</option>').val('').html(''))
+        sql="select staff=S1 from [TABLE-"+staff_list_tid+"] order by S1";
+        var req_data={cmd:'query_records',sql:sql};
+        $VmAPI.request({data:req_data,callback:function(res){
+            for(var i=0;i<res.records.length;i++){
+                var staff=res.records[i].staff;
+                $List.append(  $('<option></option>').html(staff))
+            }
+        }});
+        $List.val();
+        //-------------------------------------
+        $('#D__ID').on('load',function(){
+            var today = new Date();
+            $('#t1__ID').datepicker({dateFormat:'dd/mm/yy'});
+            $('#t1__ID').val($.datepicker.formatDate('dd/mm/yy', today));
+        })
+        //-------------------------------------
+        _set_req=_set_req_export=function(){
+            var sql="with fx as (select Staff=@('Staff'),File_Name='',job_type=@('job_type'),Task=@('Task'),Date=@('Date'),Task_Type='Added Time',Actual_Duration=V1,Total_Duration='',Minutes='',st=Convert(Time,dbo.F(Information,'StartTime')),Start_Time=@('StartTime'),End_Time=@('EndTime'),Status=@('Status'),GUID,ta=PUID,DT1 from [TABLE-"+timing_tid+"] where DT1=@T1 and S1 like '%'+@S1+'%' UNION ";
+                sql+="select Staff=@('Staff'),File_Name=@('File_Name'),job_type=@('job_type'),Task=@('Task'),Date=@('Date'),Task_Type=@('Task_Type'),Actual_Duration=V1,Total_Duration=V2,Minutes=V3,st=Convert(Time,dbo.F(Information,'StartTime')),Start_Time=@('StartTime'),End_Time=@('EndTime'),Status=@('Status'),PUID,ta=UID,DT1 from [TABLE-"+task_tid+"] where DT1=@T1 and S1 like '%'+@S1+'%' )";
+                sql+="select Staff,File_Name,job_type,Task,Date,Task_Type,st,Start_Time,End_Time,Actual_Duration,Status,Total_Duration,Minutes,ta from fx order by st "
+
+/*
+            var sql="with timing as (select V1,st=Convert(Time,dbo.F(Information,'StartTime')),Start_Time=@('StartTime'),End_Time=@('EndTime'),PUID from [TABLE-"+timing_tid+"] where DT1=@T1 and  S1 like '%'+@S1+'%') ";
+                sql+=", task as (select V2,Information,S1,UID from [TABLE-"+_db_pid+"] where S1=@s1) ";
+                sql+=",comb as (select st,V1,V2,Information,S1='a',Start_Time,End_Time from timing left join task on PUID=UID  UNION ";
+            sql+="select st=Convert(Time,dbo.F(Information,'StartTime')),V1,V2,Information,S1='b',Start_Time=@('StartTime'),End_Time=@('EndTime') from [TABLE-"+_db_pid+"] where DT1=@T1 and  S1 like '%'+@S1+'%') "
+            sql+="select V1,V2,Information,Start_Time,End_Time from comb order by st"
+            //sql="select V1,V2,Information,starttime=Convert(Time,dbo.F(Information,'StartTime')),S1='b' from [TABLE-"+_db_pid+"] where DT1=@T1 and S1=@s1 order by starttime"
+*/
+            _req={cmd:'query_records',sql:sql,t1:$('#t1__ID').val(),s1:$('#staff__ID').val()}
+        }
+        //-------------------------------------
+        _data_process=function(){
+        }
+        //-------------------------------------
+        var _request_data_export=function(){
+            $VmAPI.request({data:_req,callback:function(res){
+                //_records=data_process(res.records);
+                _export_data(_filename);
+            }})
+        }
+        //-------------------------------------
+    }
+</script>
+<style>
+    VmInclude:__BASE__/vmiis/Common-Code/grid/grid.css
+</style>

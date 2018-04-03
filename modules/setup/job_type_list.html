@@ -1,0 +1,82 @@
+<section>
+      VmInclude:__BASE__/wappsystem/grace-he-i/Common-Code/grid.html
+</section>
+<script>
+    function F__ID(){
+        //-------------------------------------
+        VmInclude:__BASE__/vmiis/Common-Code/grid/grid.js
+        VmInclude:__BASE__/vmiis/Common-Code/style/ease-in-out.js
+        //-------------------------------------
+        _fields="_Form,Job Type List|Job_type,_Task,_Document_check";
+        _fields+=",Submit Date|DateTime,Submitted by|Author,_Delete";
+        //-------------------------------------
+        $("#title__ID").text('Job Type List');
+        //-------------------------------------
+        $('#D__ID').on('load',function(){ _set_req(); _request_data();} )
+        $('#D__ID').on('back',function(){ _set_req(); _request_data();} )
+        //-------------------------------------
+        _cell_render=function(records,I,field,td,set_value,source){
+            switch(field){
+                case '_Task':
+                    records[I].vm_custom[field]=true;
+                    if(_records[I].UID===undefined) return;
+                    td.html("<u style='cursor:pointer'>Task List..</u>");
+                    td.find('u').on('click',function(){
+						//*****************************************************************************************************
+						if(_module.var==undefined){ _module.var={}, _module.var.task_list_module=_config.module_ids.task_list;}
+						//*****************************************************************************************************
+                        $vm.load_module_by_name(_module.var.task_list_module,$vm.root_layout_content_slot,{
+                            rid:_records[I].ID,job_type_uid:_records[I].UID,
+                            job_type:_records[I].Job_type,
+                        });
+                    });
+                    break;
+                case '_Document_check':
+                    records[I].vm_custom[field]=true;
+                    if(_records[I].UID===undefined) return;
+                    td.html("<u style='cursor:pointer'>Document Checklist..</u>");
+                    td.find('u').on('click',function(){
+						//*****************************************************************************************************
+						if(_module.var==undefined){ _module.var={}, _module.var.document_check_list_module=_config.module_ids.document_check_list;}
+						//*****************************************************************************************************
+                        $vm.load_module_by_name(_module.var.document_check_list_module,$vm.root_layout_content_slot,{
+                            rid:_records[I].ID,job_type_uid:_records[I].UID,
+                            job_type:_records[I].Job_type,
+                        });
+                    });
+                    break;
+            }
+        }
+        //-------------------------------------
+        _before_submit=function(record,dbv){
+            if(record.Job_type!=='') dbv.S1=record.Job_type;
+            return true;
+        };
+        //-------------------------------------
+        _new_pre_data_process=function(){
+        };
+        //-------------------------------------
+        _after_change=function(records,I,field,td,set_value,source){
+/*            switch(field){
+                case 'Document_Type':
+                    _render(I);
+                break;
+
+            }
+*/        }
+//-------------------------------------
+    }
+</script>
+<style>
+    VmInclude:__BASE__/vmiis/Common-Code/grid/grid.css
+    .ui-autocomplete.ui-menu{
+        font-size:12px;
+        background:#ddd;
+    }
+    .ui-autocomplete li:hover{
+        color:White;
+        background:#96B202;
+        font-weight:normal;
+        outline:none;
+    }
+</style>

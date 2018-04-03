@@ -1,0 +1,149 @@
+<section>
+    <div id=toolbar__ID>
+        <a id=back__ID>Back</a>
+        <span class=tab__ID></span><select id=YY__ID type=select></select> <select id=MM__ID type=select></select>
+        <a id=aquery__ID >Query</a>
+        <a id=export__ID >Export</a>
+    	<span class=tab__ID></span>Report - Applications Duration
+    </div>
+    <table id=grid__ID></table>
+</section>
+<script>
+ function F__ID(){
+    //------------------------
+    VmInclude:__BASE__/vmiis/Common-Code/grid/grid.js
+    VmInclude:__BASE__/vmiis/Common-Code/style/ease-in-out.js
+    //------------------------
+    var scheduler_tid=$vm.module_list[_app_id+'report_scheduled_job_duration'].var.scheduler_tid;
+    //------------------------
+    //number dropdown
+    var $List2=$('#YY__ID');
+    var y=new Date().getFullYear();
+    for(var i=0;i<5;i++){
+        $List2.append(  $('<option></option>').val(y-i+2).html(y-i+2)  );
+    }
+    $List2.val(y);
+    //---------------------------------------------
+    //number dropdown
+    var $List1=$('#MM__ID');
+    var m=new Date().getMonth()+1;
+    for(var i=1;i<13;i++){
+        $List1.append(  $('<option></option>').val(i).html(i));
+    }
+    $List1.val(m);
+    //---------------------------------------------
+    _fields="Applicant ID|applicant_uid,Applicant|applicant,File Name|File_Name,Application|job_type,Date,Allocated,Total,Time_Gap,Admin,Accounting,Normal-School|Normal_School,Normal-Visa|Normal_Visa,Other,Status";
+    //-------------------------------------
+    $('#aquery__ID').on('click',function(){_set_req(); _request_data();})
+    $('#D__ID').on('load',function(){_set_req(); _request_data();})
+    //-------------------------------------
+    _set_req=_set_req_export=function(){
+        var sql="with tb as (select Information,UID from [TABLE-"+scheduler_tid+"] where DATEPART(yy,DT1)=@I1 and DATEPART(mm,DT1)=@I2 )";
+        sql+=", tb1 as (select Allocated=sum(V3),Total=sum(V2),Time_Gap=sum(V3)-sum(V2),PUID,Task_Type=@('Task_Type') from [TABLE-"+_db_pid+"] group by PUID,@('Task_Type') ) ";
+        sql+=" select Information,Allocated,Total,Time_Gap,Task_Type,PUID from tb join tb1 on UID=PUID order by PUID"
+        _req={cmd:'query_records',sql:sql,i1:$('#YY__ID').val(),i2:$('#MM__ID').val()}
+    }
+    //-------------------------------------
+    _data_process=function(){
+        $vm.alert('Working hard...');
+        var r=_records;
+        _records=[];
+        setTimeout(function(){
+            _records=data_process(r);
+            _simple_render();
+            $vm.close_alert();
+        }, 100);
+    }
+    //-------------------------------------
+    var data_process=function(data_records){
+        var records={};
+        var r=[];
+        var j=0;var alloc=0;var actual=0;var timegap=0;
+        for(var i=0;i<data_records.length;i++){
+            switch(data_records[i].Task_Type){
+               case '':
+                   alloc+=parseInt(data_records[i].Allocated || 0);
+                   actual+=parseInt(data_records[i].Total || 0);
+                   timegap+=parseInt(data_records[i].Time_Gap || 0);
+                   records.Accounting='';
+                   records.Admin='';
+                   records.Normal_Visa='';
+                   records.Normal_School='';
+                   records.Other='';
+                   break;
+               case 'Accounting':
+                   alloc+=parseInt(data_records[i].Allocated || 0);
+                   actual+=parseInt(data_records[i].Total || 0);
+                   timegap+=parseInt(data_records[i].Time_Gap || 0);
+                   records.Accounting=data_records[i].Total
+                   break;
+               case 'Admin':
+                   alloc+=parseInt(data_records[i].Allocated || 0);
+                   actual+=parseInt(data_records[i].Total || 0);
+                   timegap+=parseInt(data_records[i].Time_Gap || 0);
+                   records.Admin=data_records[i].Total;
+                   break;
+               case 'Normal_Visa':
+                   alloc+=parseInt(data_records[i].Allocated || 0);
+                   actual+=parseInt(data_records[i].Total || 0);
+                   timegap+=parseInt(data_records[i].Time_Gap || 0);
+                   records.Normal_Visa=data_records[i].Total;
+                   break;
+               case 'Normal_School':
+                   alloc+=parseInt(data_records[i].Allocated || 0);
+                   actual+=parseInt(data_records[i].Total || 0);
+                   timegap+=parseInt(data_records[i].Time_Gap || 0);
+                   records.Normal_School=data_records[i].Total;
+                   break;
+               case 'Other':
+                   alloc+=parseInt(data_records[i].Allocated || 0);
+                   actual+=parseInt(data_records[i].Total || 0);
+                   timegap+=parseInt(data_records[i].Time_Gap || 0);
+                   records.Other=data_records[i].Total;
+                   break;
+            }
+            if(i<data_records.length-1){
+                if(data_records[i].PUID!=data_records[i+1].PUID) {
+                    records.Allocated=alloc.toString();
+                    records.Total=actual.toString();
+                    records.Time_Gap=timegap.toString();
+                    records.applicant_uid=data_records[i].applicant_uid;
+                    records.applicant=data_records[i].applicant;
+                    records.File_Name=data_records[i].File_Name;
+                    records.Date=data_records[i].Date;
+                    records.Status=data_records[i].Status;
+                    records.job_type=data_records[i].job_type;
+                    r.push(records);
+                    records={};
+                    alloc=0;actual=0;timegap=0;
+                }
+            }
+            else{
+                records.Allocated=alloc.toString();
+                records.Total=actual.toString();
+                records.Time_Gap=timegap.toString();
+                records.applicant_uid=data_records[i].applicant_uid;
+                records.applicant=data_records[i].applicant;
+                records.File_Name=data_records[i].File_Name;
+                records.Date=data_records[i].Date;
+                records.Status=data_records[i].Status;
+                records.applicant_uid=data_records[i].applicant_uid;
+                records.job_type=data_records[i].job_type;
+                r.push(records);
+            }
+        }
+        return(r);
+    }
+    //-------------------------------------
+    var _request_data_export=function(){
+        $VmAPI.request({data:_req,callback:function(res){
+            //_records=data_process(res.records);
+            _export_data(_filename);
+        }})
+    }
+    //-------------------------------------
+ }
+</script>
+<style>
+    VmInclude:__BASE__/vmiis/Common-Code/grid/grid.css
+</style>

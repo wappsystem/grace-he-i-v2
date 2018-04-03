@@ -1,0 +1,65 @@
+<section>
+    <div id=toolbar__ID>
+        <a id=back__ID>Back</a>
+        <span class=tab__ID></span>
+        <span>Date:</span> <input type=text id=t1__ID placeholder="" style='width:80px;padding-left:3px' />
+        <a id=query1__ID >Query</a>
+        <a id=export__ID >Export</a>
+    	<span class=tab__ID></span><b>Daily Work Duration</b>
+    </div>
+    <table id=grid__ID></table>
+</section>
+<script>
+    function F__ID(){
+        //-------------------------------------
+        VmInclude:__BASE__/vmiis/Common-Code/grid/grid.js
+        VmInclude:__BASE__/vmiis/Common-Code/style/ease-in-out.js
+//        Vm Include:__BASE__/wappsystem/grace-he-i/Modules/Control_panels/job_sub.js
+        //-------------------------------------
+        _fields="Staff,Mins|work_minutes, Hrs:Mins|work_hours,Allocated|alloc_minutes,Gap Mins|Gap";
+        //_fields+=",Submit Date|DateTime,Submitted by|Author,_Delete";
+        //-------------------------------------
+        $('#query1__ID').on('click',function(){ _set_req(); _request_data(); })
+        //-------------------------------------
+        var task_list_tid=$vm.module_list[_app_id+'task_record'].var.task_list_tid;
+        var staff_list_tid=$vm.module_list[_app_id+'task_record'].var.staff_list_tid;
+        var timing_tid=$vm.module_list[_app_id+'task_record_admin'].var.timing_tid;
+        //-------------------------------------
+        $('#D__ID').on('load',function(){
+            var today = new Date();
+            $('#t1__ID').datepicker({dateFormat:'dd/mm/yy'});
+            $('#t1__ID').val($.datepicker.formatDate('dd/mm/yy', today));
+        })
+        //-------------------------------------
+        _set_req=_set_req_export=function(){
+            var sql="with staff_list as (select Staff=S1 from [TABLE-"+staff_list_tid+"]) "
+            sql+=",task as (select time1=sum(V1),alloc_minutes=sum(V3),TStaff=S1 from [TABLE-"+_db_pid+"] where DT1=@T1 group by S1) ";
+            sql+=",timing as (select time2=sum(V1),S1 from [TABLE-"+timing_tid+"] where DT1=@T1 group by S1) "
+            sql+="select alloc_minutes,work_minutes=isnull(time1,0)+isnull(time2,0),Staff from staff_list left join task on Staff=TStaff left join timing on TStaff=S1"
+            _req={cmd:'query_records',sql:sql,t1:$('#t1__ID').val()}
+        }
+        //-------------------------------------
+        _data_process=function(){
+            var total_time=0;
+            var total_alloc_time=0;
+            for(var i=0;i<_records.length;i++){
+                total_time=parseInt(_records[i].work_minutes);
+                _records[i].work_hours=Math.floor(total_time/60)+':'+((total_time%60<10)?"0":"")+total_time%60;
+                total_alloc_time=parseInt(_records[i].alloc_minutes);
+                //_records[i].alloc_hours=Math.floor(total_alloc_time/60)+':'+((total_alloc_time%60<10)?"0":"")+total_alloc_time%60;
+                _records[i].Gap=total_alloc_time-total_time;
+            }
+        }
+        //-------------------------------------
+        var _request_data_export=function(){
+            $VmAPI.request({data:_req,callback:function(res){
+                //_records=data_process(res.records);
+                _export_data(_filename);
+            }})
+        }
+        //-------------------------------------
+    }
+</script>
+<style>
+    VmInclude:__BASE__/vmiis/Common-Code/grid/grid.css
+</style>

@@ -1,0 +1,83 @@
+<section>
+    <html_toolbar>
+        <div id=toolbar__ID>
+            <a id=back__ID>Back</a> <a id=save__ID>Save & Back</a> <a id=delete__ID>Delete</a>
+        </div>
+    </html_toolbar>
+    <form id=F__ID>
+		<div id=table__ID>
+	        <table id=tb__ID>
+	        </table>
+		</div>
+    </form>
+</section>
+</section>
+<script>
+    function F__ID(){
+        //---------------------------------------------
+        var content_slot=$vm.root_layout_content_slot;
+        VmInclude:__BASE__/vmiis/Common-Code/grid/grid.js
+        VmInclude:__BASE__/vmiis/Common-Code/style/ease-in-out.js
+        //---------------------------------------------
+        var job_tid=$vm.module_list[_app_id+'client'].var.scheduler_tid;
+        var document_type_list_tid=$vm.module_list[_app_id+'client'].var.document_type_list_tid;
+        var documents_tid=$vm.module_list[_app_id+'client'].var.documents_tid;
+        //-------------------------------------
+        //$('#name__ID').text('Project Information');
+        //---------------------------------------------
+        $('#D__ID').on('load',function(){
+            $("#title__ID").text("Documents | ");//+$vm.vm['__ID'].op.project_name.replace(/_/g,' '));
+            var job_uid=$vm.vm['__ID'].op.job_uid;
+            var file_name=$vm.vm['__ID'].op.job;
+            var job_type=$vm.vm['__ID'].op.job_type;
+            var head='Document1'
+            var doc='doc1'
+            var modify=true;
+            var txt='';
+            var sql="select count(ID) from [TABLE-"+documents_tid+"] where PUID=@I2";
+            var req_data={cmd:'query_records',sql:sql,i2:job_uid};
+            jQuery.ajaxSetup({async:false});
+            $VmAPI.request({data:req_data,callback:function(res){
+              if(res.records.length==0){
+                  modify=false;
+              }
+            }});
+            jQuery.ajaxSetup({async:true});
+            txt='<div class="w3-container w3-content w3-medium" >'
+            txt+=' <div class="w3-container w3-left">';
+            txt+='   <h4 class="" >Documents for '+job_type+'</h4>';
+            txt+='        </div>';
+            txt+='  <table id=tb__ID class="w3-table-all w3-small">';
+            txt+='  <colgroup><col style="width:200px"></col><col></col></colgroup>';
+            txt+='    <tr >';
+            txt+='      <td>'+head+'</td>';
+            txt+='      <td data-id='+doc+'><u style="cursor:pointer"></u><span class="file_buttons"><a title="Remove the file" class="remove_file" style="visibility: hidden;">X</a><a> </a><a title="Choose a file" class="choose_file">☷</a><a></a></span><form><a><input type="file" style="display:none"></a></form></td>';
+            txt+='    </tr>';
+            txt+='    <tr >';
+            txt+='      <td>Project Description</td>';
+            txt+='      <td></td>';
+            txt+='    </tr>';
+            txt+='    <tr >';
+            txt+='      <td>Commencement Date</td>';
+            txt+='      <td></td>';
+            txt+='    </tr>';
+            txt+='  </table>';
+            txt+=' </div>';
+            txt+='</div>';
+            $('#tb__ID').html(txt);
+        });
+    //-------------------------------------
+    _cell_render=function(records,I,field,td,set_value,source){
+
+        switch(field){
+            case 'doc1':
+                alert(1);
+                break;
+            }
+        }
+}
+</script>
+<style>
+VmInclude:__BASE__/vmiis/common-code/toolbar/toolbar.css
+VmInclude:__BASE__/vmiis/common-code/grid/grid.css
+</style>

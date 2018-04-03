@@ -1,0 +1,99 @@
+<div>
+    <div id=toolbar__ID>
+        <a id=back__ID>Back</a> <a id=check_count__ID>Check</a><span class=tab__ID></span><span id=nav_link__ID></span>
+    </div>
+    <div id=panel__ID style='clear:left;'>
+        <div class='nav__ID'>
+            <span>Clients</span>
+            <ul>
+                <li data-check=1 data-name=client>Clients</li>
+<!--                <li data-check=1 data-name=documents>Documents</li> -->
+            </ul>
+            <br>
+            <span>Scheduler</span>
+            <ul>
+                <li data-check=1 data-name=scheduler_record>All Scheduled Records</li>
+                <li data-check=1 data-name=scheduler_record_not_completed>Scheduled Records - Not Completed</li>
+            </ul>
+            <br>
+            <span>Tasks</span>
+            <ul>
+                <li data-check=1 data-name=task_daily_assigned>Daily - Assigned Tasks</li>
+                <li data-check=1 data-name=task_daily_not_completed>Daily - Not Completed Tasks</li>
+            </ul>
+            <br>
+            <span>Lists</span>
+            <ul>
+                <li data-check=1 data-name=commission>Commissions</li>
+                <li data-check=1 data-name=insurance>Insurance</li>
+                <li data-check=1 data-name=service_fee>Service Fee</li>
+                <li data-check=1 data-name=tax_invoice>Tax Invoice</li>
+                <li data-check=1 data-name=main_job>Main Job</li>
+            </ul>
+            <br>
+            <span>Cost Charts</span>
+            <ul>
+                <li data-check=1 data-name=institute_course>Institute and Course Summary</li>
+                <li data-check=1 data-name=rental_all_units>Rental Summary for All Units</li>
+                <li data-check=1 data-name=rental_each_unit>Rental Summary for Each Unit</li>
+            </ul>
+        </div>
+        <div class='nav__ID'>
+            <span>Setup</span>
+            <ul>
+                <li data-name=job_status_list>Job Status List</li>
+                <li data-name=job_type_list>Job Type List - each with specific task list</li>
+                <li data-name=rate_list>Task Type - Rate</li>
+                <li data-name=staff_list>Staff List</li>
+                <li data-name=document_type_list>Document Type List</li>
+                <li data-name=commission_list>Commission List</li>
+            </ul>
+            <br>
+        </div>
+        <div class='nav__ID'>
+            <span>Reports</span>
+            <ul>
+                <span>Application</span>
+<!--                <li data-name=report_scheduled_job_duration>Scheduled Job Duration</li> -->
+                <li data-name=report_scheduled_job_duration_split>Calculate Duration - Search Based on Assigned Date/</li>
+                <li data-name=report_scheduled_job_duration_split_due_date>Calculate Duration - Search Based on Due Date</li>
+                <li data-name=report_scheduled_job_details>Individual - Details</li>
+<!--                <li data-name=report_scheduled_job_documents>Individual - Documents</li>-->
+                <span>Task</span>
+                <li data-name=report_task_assign_date>Search Based on Assigned Date</li>
+                <li data-name=report_task_due_date>Search Based on Due Date</li>
+                <span>Staff</span>
+                <li data-name=report_staff_assignments>Daily Assigned Task Duration - Monthly view</li>
+                <li data-name=report_staff_daily_work>Daily Work Duration</li>
+                <li data-name=report_staff_daily_work_tasks>Daily Work - Time Spent on Tasks</li>
+                <li data-name=staff_payment_period>Calculate Payments for a Period</li>
+            </ul>
+            <br>
+        </div>
+    </div>
+</div>
+<script>
+    //---------------------------------------------
+    function F__ID(){
+        //---------------------------------------------
+        VmInclude:__BASE__/vmiis/Common-Code/navigation/navigation.js
+        VmInclude:__BASE__/vmiis/Common-Code/style/ease-in-out.js
+        VmInclude:__BASE__/wappsystem/grace-he-i/modules/control_panels/main.js
+        //---------------------------------------------
+        _set_li_permissions();
+        //---------------------------------------------
+        $('#D__ID').on('load',function(){
+            _nav_name='Admin';
+            _set_nav_link();
+        });
+        //---------------------------------------------
+        $('.nav__ID div').hide();
+        //---------------------------------------------
+    }
+</script>
+<style>
+    VmInclude:__BASE__/vmiis/Common-Code/navigation/navigation.css
+    #D__ID{
+        background: url("__BASE__/vmiis/SaaS/images/fresh_snow.png");
+    }
+</style>

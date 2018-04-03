@@ -1,0 +1,92 @@
+<section>
+    <div id=toolbar__ID>
+        <a id=back__ID>Back</a>
+        <span class=tab__ID></span>
+        <a id=query__ID >Query</a>
+        <a id=export__ID >Export</a>
+    	<span class=tab__ID></span>Check Required Documents for this Job
+    </div>
+    <table id=grid__ID></table>
+</section>
+<script>
+ function F__ID(){
+    //------------------------
+    VmInclude:__BASE__/vmiis/Common-Code/grid/grid.js
+    VmInclude:__BASE__/vmiis/Common-Code/style/ease-in-out.js
+    //------------------------
+    var documents_tid=$vm.module_list[_app_id+'check_document'].var.documents_tid;
+    //------------------------
+    _fields="_Hidden|ID,Required Documents|req_doc,Uploaded Documents|uploaded_docs,Checked|B1,_Upload_Document";
+    //-------------------------------------
+    $('#D__ID').on('load',function(){
+                job_uid=$vm.vm['__ID'].op.job_uid;
+                job_type=$vm.vm['__ID'].op.job_type;
+                job_type_uid=$vm.vm['__ID'].op.job_type_uid;
+                File_name=$vm.vm['__ID'].op.filename;
+                applicant_uid=$vm.vm['__ID'].op.applicant_uid;
+                applicant=$vm.vm['__ID'].op.applicant;
+                _set_req(); _request_data();
+    })
+    //-------------------------------------
+    _set_req=_set_req_export=function(){
+        var sql="with tb as(select req_doc=S1 from [TABLE-"+_db_pid+"] where PUID=@I1 ) \
+        		 ,tb1 as (select ID,uploaded_docs=@('Document'),Type=@('Type'),B1 from [TABLE-"+documents_tid+"] where PUID=@I2 ) \
+                 select ID,req_doc,uploaded_docs,B1 from tb left join tb1 on req_doc=Type ";
+        _req={cmd:'query_records',sql:sql,i1:job_type_uid,i2:applicant_uid}
+    }
+    //-------------------------------------
+    var _request_data_export=function(){
+        $VmAPI.request({data:_req,callback:function(res){
+            //_records=data_process(res.records);
+            _export_data(_filename);
+        }})
+    }
+    //-------------------------------------
+    _data_process=function(){
+        for(var i=0;i<_records.length;i++){
+            if(_records[i].B1 == 'True') _records[i].B1='Yes'; else _records[i].B1='No';
+        }
+    }
+    //-------------------------------------
+    _cell_render=function(records,I,field,td,set_value,source){
+        switch(field){
+            case 'uploaded_docs':
+                records[I].vm_custom[field]=true;
+                if(records[I][field]===undefined) records[I][field]="";
+                td.data('filename_field',field);
+                var html="<u style='cursor:pointer'>"+records[I][field]+"</u>";
+                html+="<span class=file_buttons>";
+                html+="<form><input type=file style='display:none'></input></form>";
+                td.html(html);
+                if(records[I][field]==="" || records[I][field]===null || records[I][field]===undefined) td.find('a.remove_file').css('visibility','hidden');
+                td.find('u').on('click',function(){
+                    var f_name=$(this).html();
+                    var rid=records[I].ID;
+                    if(rid!==undefined){
+                        $vm.open_link({rid:rid,filename:f_name});
+                    }
+                    else alert("No file was found on server.")
+                });
+            break;
+            case '_Upload_Document':
+                    records[I].vm_custom[field]=true;
+                    //if(records[I].UID===undefined) return;
+                    var html="<u style='cursor:pointer'>Upload Document..</u>";
+                    td.html(html);
+                    td.find('u').on('click',function(){
+                        $vm.load_module_by_name($vm.module_list[_app_id+'check_document'].var.document_module,$vm.root_layout_content_slot,{applicant_uid:applicant_uid,file_name:File_name,document_type:_records[I].req_doc});
+                    })
+            break;
+        }
+    }
+
+
+ }
+</script>
+<style>
+    VmInclude:__BASE__/vmiis/Common-Code/grid/grid.css
+    #D__ID{
+        overflow-x:auto;
+        /*white-space: nowrap;*/
+    }
+</style>

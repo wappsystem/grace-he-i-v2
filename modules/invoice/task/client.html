@@ -1,0 +1,79 @@
+<section>
+      VmInclude:__CURRENT_PATH__/grid.v3.html
+</section>
+<script>
+    function F__ID(){
+        //-------------------------------------
+        VmInclude:__COMPONENT__/grid/grid.v3.js
+        //-------------------------------------
+        _fields="_Form,Business_Name,Address,Suburb,Postcode,State,Contact_Name,Telephone,Mobilephone";
+        _fields+=",_gridHidden|Fax";
+        _fields+=",_gridHidden|Email";
+        _fields+=",_gridHidden|Web";
+        _fields+=",_gridHidden|Additional_Information";
+        _fields+=",_gridHidden|Login_Name";
+        _fields+=",Submit Date|DateTime,Submitted by|Author,_Delete";
+        //-------------------------------------
+        _cell_render=function(records,I,field,td,set_value,source){
+            switch(field){
+                case 'Suburb':
+                    VmInclude:__COMPONENT__/grid/field_suburb.js
+                break;
+                case 'Postcode':
+                    VmInclude:__COMPONENT__/grid/field_postcode.js
+                break;
+            }
+        }
+        //-------------------------------------
+        _before_submit=function(record,dbv){
+            dbv.S2=record.Login_Name;
+			dbv.S3=record.Business_Name;
+            return true;
+        };
+        //-------------------------------------
+        $('#D__ID').on('load',function(){  $('#title__ID').text('Clients');$('#help__ID').html(help);_set_req(); _request_data(); })
+        //-------------------------------------
+        var help='<div class="container">\
+        						<div class="row">\
+                                    <div class="col-sm-2 text-content text-left">\
+                                        <h4>Symbols in client list</h4>\
+                                        <p><i class="fa fa-pencil-square-o"></i> Edit / change details</p>\
+                                        <p><i class="fa fa-trash-o"></i> Delete client</p>\
+                                        <br>\
+                                    </div>\
+        							<div class="col-sm-2 text-content text-left">\
+        								<h4><i class="fa fa-plus"></i> = Add Client</h4>\
+                                        <p>Entry can be done directly in the grid</p>\
+        								<p>Click on <i class="fa fa-pencil-square-o"></i> to edit client record in other form</p>\
+                                        <p>REMEMBER Click on <i class="fa fa-upload"></i> to save the changes</p>\
+        								<br>\
+        							</div>\
+        							<div class="col-sm-2 text-content text-left">\
+        								<h4><i class="fa fa-upload"></i> = Save change</h4>\
+        								<p>This button will turn red when change has been made.<br>Click to save changes.</p>\
+        								<br>\
+        							</div>\
+                                    <div class="col-sm-2 text-content text-left">\
+        								<h4><i class="fa fa-search"></i> = Search </h4>\
+        								<p>If Keyword is empty reload client list.<br>\
+                                        Search for full words in Keyword from the client list.</p>\
+        								<br>\
+        							</div>\
+                                    <div class="col-sm-2 text-content text-left">\
+        								<h4><i class="fa fa-arrow-left"></i> = Previous</h4>\
+                                        <h4><i class="fa fa-arrow-right"></i> = Next Page</h4>\
+        								<p>If all clients don&apos;t fit into one page, these arrows can be used for paging </p>\
+        								<br>\
+        							</div>\
+                                    <div class="col-sm-2 text-content text-left">\
+        								<h4><i class="fa fa-download"></i> = Export</h4>\
+        								<p>Exporting the client list to excel format (.csv)</p>\
+        								<br>\
+        							</div>\
+        						</div>\
+        			</div>'
+    }
+</script>
+<style>
+    VmInclude:__COMPONENT__/grid/grid.v3.css
+</style>

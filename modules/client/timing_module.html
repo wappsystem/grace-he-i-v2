@@ -1,0 +1,125 @@
+<section>
+      VmInclude:__BASE__/vmiis/Common-Code/grid/grid.html
+</section>
+<script>
+    function F__ID(){
+        //-------------------------------------
+        _fields="_Form,_Hidden|UID,PUID,Task,Staff,Date,Time From|StartTime,Time to|EndTime,Mins|Actual_Duration";
+        _fields+=",Submit Date|DateTime,Submitted by|Author,_Delete";
+        //-------------------------------------
+        VmInclude:__BASE__/vmiis/Common-Code/grid/grid.js
+        VmInclude:__BASE__/vmiis/Common-Code/style/ease-in-out.js
+//        Vm Include:__BASE__/wappsystem/grace-he-i/Modules/Control_panels/job_sub.js
+        //-------------------------------------
+        var timing_tid=$vm.module_list[_app_id+'timing_module'].var.timing_tid;
+        var task_tid=$vm.module_list[_app_id+'timing_module'].var.task_tid;
+        var task='';
+        var task_uid='';
+        //-------------------------------------
+        $('#D__ID').on('load',function(){
+            job_uid=$vm.vm['__ID'].op.job_uid;
+            task_uid=$vm.vm['__ID'].op.task_uid;
+            task=$vm.vm['__ID'].op.task;
+            staff=$vm.vm['__ID'].op.staff;
+            _set_req(); _request_data();
+        })
+        //-------------------------------------
+        _set_req=function(){
+            var sql="";
+            var sql_n="";
+            sql+="with task as (select ID,UID,PUID,Information,DateTime,Author,RowNum=row_number() over (order by ID DESC) from [TABLE-"+_db_pid+"-@S1] where PUID=@I2)";
+            sql+=" select ID,UID,PUID,Information,DateTime,Author,RowNum,dirty=0, valid=1 from task where RowNum between @I6 and @I7";
+            sql_n+=" select count(ID) from [TABLE-"+_db_pid+"-@S1] where PUID=@I2";
+            _req={cmd:'query_records',sql:sql,sql_n:sql_n,i2:task_uid,s1:'"'+$('#keyword__ID').val()+'"',I:$('#I__ID').text(),page_size:$('#page_size__ID').val()}
+        }
+        //-------------------------------------
+        _data_process=function(){
+        }
+        //-------------------------------------
+        _cell_render=function(records,I,field,td,set_value,source){
+            switch(field){
+                case 'Task':
+                case 'Staff':
+                case 'Actual_Duration':
+                    records[I].vm_readonly[field]=true;
+                    td.css('color','#888');
+                    break;
+                case 'Date':
+                    VmInclude:__BASE__/vmiis/Common-Code/grid/field_date.js
+                    break;
+                case 'StartTime':
+                case 'EndTime':
+                    td.on('dblclick',function(){
+                        var currentdate= new Date();
+                        var html=((currentdate.getHours() < 10)?"0":"") + currentdate.getHours()+":"+((currentdate.getMinutes() < 10)?"0":"")+ currentdate.getMinutes();
+                        td.html(html)
+                        var dmy =((currentdate.getDate() < 10)?"0":"") + currentdate.getDate()+"/"+(((currentdate.getMonth()+1) < 10)?"0":"")+ (currentdate.getMonth()+1)+"/"+currentdate.getFullYear();
+                        set_value(dmy,records,I,'Date');
+                    })
+                    break;
+            }
+        }
+        //-------------------------------------
+        _new_pre_data_process=function(){
+            if($vm.vm['__ID'].op.task_uid!==undefined) _records[0].task_uid=$vm.vm['__ID'].op.task_uid;
+            if($vm.vm['__ID'].op.task!==undefined) _records[0].Task=$vm.vm['__ID'].op.task;
+            if($vm.vm['__ID'].op.staff!==undefined) _records[0].Staff=$vm.vm['__ID'].op.staff;
+        }
+        //-------------------------------------
+        _after_change=function(records,I,field,td,set_value,source){
+            switch(field){
+                case 'StartTime':
+                case 'EndTime':
+                    set_value(get_duration(records[I].StartTime,records[I].EndTime),records,I,'Actual_Duration');
+                    _render(I);
+                    break;
+            }
+        }
+        //-------------------------------------
+        get_duration=function(StartTime,EndTime){
+            if(StartTime!='' && EndTime!='' && StartTime!=undefined && EndTime!=undefined){
+                var sparts=StartTime.split(':');
+                var smins=0;
+                if(sparts[0]!='' && sparts[1]!=''){
+                    smins=parseInt(sparts[0])*60+parseInt(sparts[1])
+                }
+                var eparts=EndTime.split(':');
+                var emins=0;
+                if(eparts[0]!='' && eparts[1]!=''){
+                    emins=parseInt(eparts[0])*60+parseInt(eparts[1])
+                }
+                return emins-smins;
+            }
+            else return 0
+        }
+        //-------------------------------------
+        _before_submit=function(record,dbv){
+            if(record.Minutes!==''){
+                var actual_duration=0;
+                actual_duration+=get_duration(record.StartTime,record.EndTime)
+                if(actual_duration!=0){
+                    record.Actual_Duration=actual_duration;
+                }
+                else {
+                    record.Actual_Duration='';
+                }
+            }
+            dbv.PPID=task_tid;
+            if(record.Actual_Duration!=='') dbv.V1=record.Actual_Duration;
+            if(record.task_uid!==undefined) dbv.PUID=record.task_uid;
+            dbv.GUID=job_uid;
+            if(record.Date!=='') dbv.DT1=record.Date;
+            if(record.Staff!=='') dbv.S1=record.Staff;
+//            if(record.Staff!=='') dbv.S1=record.Staff;
+            return true;
+        };
+        //-------------------------------------
+    }
+</script>
+<style>
+    VmInclude:__BASE__/vmiis/Common-Code/grid/grid.css
+    #D__ID{
+        overflow-x:auto;
+        /*white-space: nowrap;*/
+    }
+</style>

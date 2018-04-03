@@ -1,0 +1,95 @@
+<section>
+      VmInclude:__BASE__/wappsystem/grace-he-i/Common-Code/grid.html
+</section>
+<script>
+    function F__ID(){
+        //-------------------------------------
+        VmInclude:__BASE__/vmiis/Common-Code/grid/grid.js
+        VmInclude:__BASE__/vmiis/Common-Code/style/ease-in-out.js
+        //-------------------------------------
+        _fields="_Form,_Hidden|job_type_uid,Job Type|job_type,Task|Task,Allocated Hours|Hours,Allocated Minutes|Minutes,Task_Type";
+        _fields+=",Submit Date|DateTime,Submitted by|Author,_Delete";
+        //-------------------------------------
+        //input needed in module input variables
+        var m_var=$vm.module_list[$vm.vm['__ID'].name].var;
+        var job_type_pid=m_var.job_type_list_tid;
+        var sql_job_type=m_var.sql_job_type_uid;
+        //-------------------------------------
+        $("#title__ID").text('Task List');
+        //-------------------------------------
+        $('#D__ID').on('load',function(){ _set_req(); _request_data();} )
+        $('#D__ID').on('back',function(){ _set_req(); _request_data();} )
+        //-------------------------------------
+        _set_req=function(){
+            var where="";
+            var job_type_uid=$vm.vm['__ID'].op.job_type_uid;
+
+            if(job_type_uid!==undefined){
+                var job_type_where=" where puid="+job_type_uid;
+            }
+            var sql="with task as (select ID,UID,PUID,S1,Information,DateTime,Author,RowNum=row_number() over (order by ID DESC) from [TABLE-"+_db_pid+"-@S1] "+job_type_where+")";
+            sql+="select ID,UID,Information,DateTime,Author,RowNum,dirty=0, valid=1 from task where RowNum between @I6 and @I7 ";
+            var sql_n=" select count(ID) from [TABLE-"+_db_pid+"-@S1] "+job_type_where+"";
+
+            _req={cmd:'query_records',sql:sql,sql_n:sql_n,s1:'"'+$('#keyword__ID').val()+'"',I:$('#I__ID').text(),page_size:$('#page_size__ID').val()}
+        }
+        //-------------------------------------
+        _cell_render=function(records,I,field,td,set_value,source){
+            switch(field){
+                case 'Task_Type':
+                    var html="<select style='border:0;'>\
+                    <option value='Normal_Visa'>Normal-Visa</option>\
+                    <option value='Normal_School'>Normal-School</option>\
+                    <option >Admin</option>\
+                    <option >Accounting</option>\
+                    <option >Other</option>\
+                    </select>\
+                    ";
+                    VmInclude:__BASE__/vmiis/Common-Code/grid/field_select.js
+                    break;
+                case 'job_type':
+                    records[I].vm_readonly[field]=true;
+                    td.css('color','#888');
+                    break;
+                }
+        }
+        //-------------------------------------
+        _before_submit=function(record,dbv){
+            if(record.Task!=='') dbv.S1=record.Task;
+            if(record.Task_Type=='Accounting') dbv.B1='1';else dbv.B1='0';
+            if(record.Task_Type=='Admin') dbv.B2='1';else dbv.B2='0';
+            if(record.Task_Type!==undefined) dbv.S2=record.Task_Type;
+            if(record.job_type_uid!==undefined) dbv.PUID=record.job_type_uid;
+            dbv.PPID=record.job_type_pid;
+            return true;
+        };
+        //-------------------------------------
+        _new_pre_data_process=function(){
+            if($vm.vm['__ID'].op.job_type_uid!==undefined) _records[0].job_type_uid=$vm.vm['__ID'].op.job_type_uid;
+            if($vm.vm['__ID'].op.job_type!==undefined) _records[0].job_type=$vm.vm['__ID'].op.job_type;
+        }
+        //-------------------------------------
+        _after_change=function(records,I,field,td,set_value,source){
+/*            switch(field){
+                case 'Document_Type':
+                    _render(I);
+                break;
+
+            }
+*/        }
+//-------------------------------------
+    }
+</script>
+<style>
+    VmInclude:__BASE__/vmiis/Common-Code/grid/grid.css
+    .ui-autocomplete.ui-menu{
+        font-size:12px;
+        background:#ddd;
+    }
+    .ui-autocomplete li:hover{
+        color:White;
+        background:#96B202;
+        font-weight:normal;
+        outline:none;
+    }
+</style>

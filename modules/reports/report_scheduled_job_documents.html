@@ -1,0 +1,91 @@
+<section>
+    <div id=toolbar__ID>
+        <a id=back__ID>Back</a>
+        <span class=tab__ID></span>
+        <input type=text id=application__ID style='width:400px'>
+        <a id=aquery__ID >Query</a>
+        <a id=export__ID >Export</a>
+    	<span class=tab__ID></span><b>Report - Application Documents</b>
+    </div>
+    <table id=grid__ID></table>
+</section>
+<script>
+    function F__ID(){
+        //-------------------------------------
+        _fields="File_Name,job_type,Required Documents|req_doc,Uploaded Documents|uploaded_docs,Checked|B1";
+        //_fields+=",Submit Date|DateTime,Submitted by|Author,_Delete";
+        //-------------------------------------
+        $('#aquery__ID').on('click',function(){ _set_req(); _request_data(); })
+        //-------------------------------------
+        VmInclude:__BASE__/vmiis/Common-Code/grid/grid.js
+        VmInclude:__BASE__/vmiis/Common-Code/style/ease-in-out.js
+//        Vm Include:__BASE__/wappsystem/grace-he-i/Modules/Control_panels/job_sub.js
+        //-------------------------------------
+        var documents_tid=$vm.module_list[_app_id+'report_scheduled_job_documents'].var.documents_tid;
+        var scheduler_tid=$vm.module_list[_app_id+'report_scheduled_job_documents'].var.scheduler_tid;
+        //------------------------------------
+        $('#application__ID').autocomplete({
+            minLength:0,
+            source:function(request,response){
+                var sql="with tb as (select name=CONVERT(varchar, UID)+' - '+@('applicant')+' - '+@('File_Name')+' - '+@('job_type') from [TABLE-"+scheduler_tid+"])";
+                sql+=" select top 10 name,value=name from tb where name like '%'+@S1+'%' ";
+                $VmAPI.request({data:{cmd:'auto',s1:request.term,sql:sql,minLength:0},callback:function(res){
+                    response($vm.autocomplete_list(res.table));
+                }});
+            },
+        })
+        $('#application__ID').focus(function(){$('#application__ID').autocomplete("search","");});
+        //-------------------------------------
+        $('#D__ID').on('load',function(){
+        })
+        //-------------------------------------
+        _set_req=_set_req_export=function(){
+            var id=$('#application__ID').val().split(" ");
+            var sql="with tb2 as ( select inf=Information,job_type_uid=@('job_type_uid') from [TABLE-"+scheduler_tid+"] where UID=@I2 ) \
+                     ,tb as(select inf,req_doc=S1 from [TABLE-"+_db_pid+"] join tb2 on PUID=job_type_uid ) \
+            		 ,tb1 as (select ID,uploaded_docs=@('Document'),Type=@('Type'),B1 from [TABLE-"+documents_tid+"] where PUID=@I2 ) \
+                     select ID,Information=inf,req_doc,uploaded_docs,B1 from tb left join tb1 on req_doc=Type ";
+            _req={cmd:'query_records',sql:sql,i2:id[0]}
+        }
+        //-------------------------------------
+        _data_process=function(){
+            for(var i=0;i<_records.length;i++){
+                if(_records[i].B1 == 'True') _records[i].B1='Yes'; else _records[i].B1='No';
+            }
+        }
+        //-------------------------------------
+        var _request_data_export=function(){
+            $VmAPI.request({data:_req,callback:function(res){
+                //_records=data_process(res.records);
+                _export_data(_filename);
+            }})
+        }
+        //-------------------------------------
+        _cell_render=function(records,I,field,td,set_value,source){
+            switch(field){
+                case 'uploaded_docs':
+                records[I].vm_custom[field]=true;
+                if(records[I][field]===undefined) records[I][field]="";
+                td.data('filename_field',field);
+                var html="<u style='cursor:pointer'>"+records[I][field]+"</u>";
+                html+="<span class=file_buttons>";
+                html+="<form><input type=file style='display:none'></input></form>";
+                td.html(html);
+                if(records[I][field]==="" || records[I][field]===null || records[I][field]===undefined) td.find('a.remove_file').css('visibility','hidden');
+                td.find('u').on('click',function(){
+                    var f_name=$(this).html();
+                    var rid=records[I].ID;
+                    if(rid!==undefined){
+                        $vm.open_link({rid:rid,filename:f_name});
+                    }
+                    else alert("No file was found on server.")
+                });
+                break;
+            }
+        }
+        //-------------------------------------
+    }
+</script>
+<style>
+    VmInclude:__BASE__/vmiis/Common-Code/grid/grid.css
+</style>
