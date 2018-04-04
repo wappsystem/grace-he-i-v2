@@ -12,6 +12,8 @@
         _fields_e="Client ID|UID,Givennames,Surname,File Name|File_Name,Visa Expire Date|Visa_Expire_Date,Visa,Subclass,Visa Grant Date|Visa_Grant_Date,Passport No|Passport_No,Passport Expire Date|Passport_Expire_Date,Passport Commence Date|Passport_Commence_Date,Passport Autority|Passport_Autority,DOB,Nationality,Street_Address,Suburb,Postcode,State,Country,Phone,Email,Branch,Notes";
         _fields+=",Submit Date|DateTime,Submitted by|Author,_Delete";
         //-------------------------------------
+        var prefix=_mlist[$vm.vm['__ID'].name].prefix; if(prefix==undefined) prefix="";
+        //-------------------------------------
 
         $('#D__ID').on('load',function(){ $("#title__ID").text('Clients');$('#help__ID').html(help); _set_req(); _request_data();  })
         $('#D__ID').on('back',function(){ $("#title__ID").text('Clients');$('#help__ID').html(help);_set_req(); _request_data();  })
@@ -55,11 +57,20 @@
                         if(_records[I].UID===undefined) return;
                             td.html("<u style='cursor:pointer'>Applications..</u>");
                             td.find('u').on('click',function(){
-                                $vm.load_module_by_name($vm.module_list[_app_id+'scheduler_record'].var.scheduler_record_module,$vm.root_layout_content_slot,{
+                                var this_mobj=_mobj;
+        						var this_record=records[I];
+        						var op={
+        							//----------------
+        							sys:_sys,
+        							mobj:this_mobj,
+        							record:this_record,
+                                }
+                                $vm.load_module_by_name(prefix+'scheduler_record',$vm.root_layout_content_slot,op);
+                                /*$vm.load_module_by_name($vm.module_list[_app_id+'scheduler_record'].var.scheduler_record_module,$vm.root_layout_content_slot,{
                                     rid:_records[I].ID,applicant_uid:_records[I].UID,
                                     applicant:_records[I].Givennames+' '+_records[I].Surname,
                                     file_name:_records[I].File_Name
-                                });
+                                }); */
                             });
                         break;
 
@@ -69,7 +80,15 @@
                         var html="<u style='cursor:pointer'>Documents..</u>";
                         td.html(html);
                         td.find('u').on('click',function(){
-                            $vm.load_module_by_name($vm.module_list[_app_id+'scheduler_record'].var.document_module,$vm.root_layout_content_slot,{applicant_uid:_records[I].UID,file_name:_records[I].File_Name});
+                            var this_mobj=_mobj;
+                            var this_record=records[I];
+                            var op={
+                                //----------------
+                                sys:_sys,
+                                mobj:this_mobj,
+                                record:this_record,
+                            }
+                            $vm.load_module_by_name(prefix+'documents',$vm.root_layout_content_slot,op);
                         })
                         break;
             }

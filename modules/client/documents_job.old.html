@@ -1,28 +1,17 @@
 <section>
-	<div id=toolbar__ID class="navbar navbar-default">
-		<div id=row_1__ID class="col-sm _col-lg-3 form-inline">
-			<a class="col-"><button type="button" class='btn btn-info btn-sm ' data-toggle="collapse" data-target="#help__ID" title="Help - Intructions" ><i class="fa fa-info"></i></button></a>
-	    	<button id=new__ID  type=button class='btn btn-secondary btn-sm' title='Add New'><i class="fa fa-plus"></i></button>
-	    	<button id=save__ID type=button class='btn btn-secondary btn-sm' title='Save Change'><i class="fa fa-upload" ></i></button> <a type=button class='btn btn-secondary btn-sm' id=new1__ID  title='Prefill List'>Prefill List</a></span><span class=tab__ID></span>
-			<input id=keyword__ID type="text" placeholder="keyword" class="form-control form-control-sm" style="width: 150px; display:inline-block;">
-			<button id=query__ID type=button class="btn btn-secondary btn-sm" title='Search for keyword'><i class="fa fa-search" ></i></button>
-		</div>
-		<div class="col-sm _col-lg-3 form-inline">
-	            Page Size:
-	            <select id=page_size__ID class="form-control form-control-sm" style='margin-right:20px;display:inline-block;width:auto;'><option>30</option><option>50</option><option>100</option><option>200</option></select>
-	            <span id=I__ID style="display:none">0</span><span id=A__ID></span>
-	            <button id=p__ID type=button class="btn btn-secondary btn-sm" title="Previous page"><i class="fa fa-arrow-left"></i></button>
-	            <button id=n__ID type=button class="btn btn-secondary btn-sm" title="Next page"><i class="fa fa-arrow-right"></i></button>
-		</div>
-		<div class="d-none d-lg-inline-block col-lg-4 form-inline">
-				Start page:	<input id=start__ID type=text class="form-control form-control-sm" style="width:45px; display:inline-block;" />
-	            Num of page: <input id=num__ID type=text class="form-control form-control-sm" style="width:45px; display:inline-block;" />
-				<button id=export__ID type=button class="btn btn-secondary btn-sm" title=Export><i class="fa fa-download" ></i></button>
-		</div>
-		<span id=elapsed__ID style='float:right;display:none' ></span>
+    <div id=toolbar__ID>
+        <a id=back__ID>Back</a> <span id=ns__ID><a id=new__ID>New</a> <a id=save__ID>Save</a> <a id=new1__ID>Prefill List</a></span><span class=tab__ID></span><input placeholder='filter' id=keyword__ID type=text /> <a id=query__ID>Load</a>
+        <span id=multi__ID>
+            <span class=tab__ID></span>Page Size: <select id=page_size__ID><option>30</option><option>50</option><option>100</option><option>200</option></select><span class=tab__ID></span>
+            <span id=I__ID style="display:none">0</span><span id=A__ID></span>
+            <img id=p__ID src="__BASE__/vmiis/Common-Code/image/p.png" ><img id=n__ID src="__BASE__/vmiis/Common-Code/image/n.png" >
+            <span class=tab__ID></span>Start page: <input id=start__ID type=text style="width:45px" />
+            Number of page: <input id=num__ID type=text  style="width:45px" />
+            <a id=export__ID>Export</a>
+        </span>
+		<span id=title__ID></span>
+        <span id=elapsed__ID style='float:right'></span>
     </div>
-	<div id=title__ID class="h6 text-left"></div>
-	<div id=help__ID class="collapse"></div>
     <div id=table__ID>
         <table id=grid__ID></table>
     </div>
@@ -35,14 +24,14 @@
         //-------------------------------------
         VmInclude:__COMPONENT__/grid/grid.v3.js
         VmInclude:__COMPONENT__/style/ease-in-out.2.js
-        VmInclude:__CURRENT_PATH__/client_sub.js
+        VmInclude:__BASE__/wappsystem/grace-he-i/Modules/Control_panels/client_sub.js
         //-------------------------------------
-        var client_tid=$vm.module_list['client'].table_id;
-        var document_type_list_tid=$vm.module_list['document_type_list'].table_id;
-        var document_check_tid=$vm.module_list['document_check_list'].table_id
+        var client_tid=$vm.module_list['client'].var.client_tid;
+        var document_type_list_tid=$vm.module_list[_app_id+'client'].var.document_type_list_tid;
+        var document_check_tid=$vm.module_list[_app_id+'client'].var.document_check_tid;
         //-------------------------------------
         $('#D__ID').on('load',function(){
-            applicant_uid=$vm.vm['__ID'].op.record.UID;
+            applicant_uid=$vm.vm['__ID'].op.applicant_uid;
             job_uid=$vm.vm['__ID'].op.job_uid;
             job_type=$vm.vm['__ID'].op.job_type;
             job_type_uid=$vm.vm['__ID'].op.job_type_uid;
@@ -69,7 +58,7 @@
                     td.css('color','#888');
                     break;
                 case 'Document':
-                    VmInclude:__BASE__/vmiis/Common-Code/grid/field_file_with_size.js
+                    VmInclude:__COMPONENT__/grid/field_file_with_size.js
                 break;
                 case 'Size':
                     records[I].vm_custom[field]=true;
@@ -79,7 +68,7 @@
                 break;
                 case 'Checked':
                     td.html('<input type=checkbox />');
-                    VmInclude:__BASE__/vmiis/Common-Code/grid/field_checkbox.js
+                    VmInclude:__COMPONENT__/grid/field_checkbox.js
                 break;
                 case 'Type':
                     var sql="with tb as (select name=S1,value2=uid from  [TABLE-"+document_check_tid+"] where PUID=@I3)";
@@ -176,46 +165,7 @@
             if(record.Checked=='1') dbv.B1='1';
             return true;
         };
-		//-------------------------------------
-        var help='<div class="container">\
-        						<div class="row">\
-                                    <div class="col-sm-2 text-content text-left">\
-                                        <h4>Symbols in client list</h4>\
-                                        <p><i class="fa fa-pencil-square-o"></i> Edit / change details</p>\
-                                        <p><i class="fa fa-trash-o"></i> Delete client</p>\
-                                        <br>\
-                                    </div>\
-        							<div class="col-sm-2 text-content text-left">\
-        								<h4><i class="fa fa-plus"></i> = Add Client</h4>\
-                                        <p>Entry can be done directly in the grid</p>\
-        								<p>Click on <i class="fa fa-pencil-square-o"></i> to edit client record in other form</p>\
-                                        <p>REMEMBER Click on <i class="fa fa-upload"></i> to save the changes</p>\
-        								<br>\
-        							</div>\
-        							<div class="col-sm-2 text-content text-left">\
-        								<h4><i class="fa fa-upload"></i> = Save change</h4>\
-        								<p>This button will turn red when change has been made.<br>Click to save changes.</p>\
-        								<br>\
-        							</div>\
-                                    <div class="col-sm-2 text-content text-left">\
-        								<h4><i class="fa fa-search"></i> = Search </h4>\
-        								<p>If Keyword is empty reload client list.<br>\
-                                        Search for full words in Keyword from the client list.</p>\
-        								<br>\
-        							</div>\
-                                    <div class="col-sm-2 text-content text-left">\
-        								<h4><i class="fa fa-arrow-left"></i> = Previous</h4>\
-                                        <h4><i class="fa fa-arrow-right"></i> = Next Page</h4>\
-        								<p>If all clients don&apos;t fit into one page, these arrows can be used for paging </p>\
-        								<br>\
-        							</div>\
-                                    <div class="col-sm-2 text-content text-left">\
-        								<h4><i class="fa fa-download"></i> = Export</h4>\
-        								<p>Exporting the client list to excel format (.csv)</p>\
-        								<br>\
-        							</div>\
-        						</div>\
-        			</div>'
+        //-------------------------------------
     }
 </script>
 <style>

@@ -1,20 +1,5 @@
 <section>
-    <div id=toolbar__ID>
-        <a id=back__ID>Back</a> <span id=ns__ID><a id=new__ID>New</a> <a id=save__ID>Save</a> <a id=new1__ID>Prefill List</a></span><span class=tab__ID></span><input placeholder='filter' id=keyword__ID type=text /> <a id=query__ID>Load</a>
-        <span id=multi__ID>
-            <span class=tab__ID></span>Page Size: <select id=page_size__ID><option>30</option><option>50</option><option>100</option><option>200</option></select><span class=tab__ID></span>
-            <span id=I__ID style="display:none">0</span><span id=A__ID></span>
-            <img id=p__ID src="__BASE__/vmiis/Common-Code/image/p.png" ><img id=n__ID src="__BASE__/vmiis/Common-Code/image/n.png" >
-            <span class=tab__ID></span>Start page: <input id=start__ID type=text style="width:45px" />
-            Number of page: <input id=num__ID type=text  style="width:45px" />
-            <a id=export__ID>Export</a>
-        </span>
-		<span id=title__ID></span>
-        <span id=elapsed__ID style='float:right'></span>
-    </div>
-    <div id=table__ID>
-        <table id=grid__ID></table>
-    </div>
+      VmInclude:__CURRENT_PATH__/grid/grid.v3.html
 </section>
 <script>
     function F__ID(){
@@ -23,17 +8,17 @@
         VmInclude:__COMPONENT__/style/ease-in-out.2.js
 //        Vm Include:__BASE__/wappsystem/grace-he-i/Modules/Control_panels/job_sub.js
         //-------------------------------------
-        _fields="_Form,_Hidden|job_uid,_Hidden|job_type_uid,File_Name,Job|job_type,_Documents,Task ID|UID,Staff,_Hidden|Task_uid,Task,Type|Task_Type,Status,Colour,Notes,Notes_Admin,Assigned Date|Date,Date_Completed,Due_Date,Time From|StartTime,Time To|EndTime,Mins|Actual_Duration,_Add_More_Times,Alloc. Minutes|Minutes,Total Duration|Total_Duration,Time gap|Time_gap";
-        _fields_e="File_Name,Job|job_type,Task ID|UID,Staff,Task,Type|Task_Type,Status,Colour,Notes,Notes_Admin,Assigned Date|Date,Date_Completed,Due_Date,Time From|StartTime,Time To|EndTime,Mins|Actual_Duration,_Add_More_Times,Alloc. Minutes|Minutes,Total Duration|Total_Duration,Time gap|Time_gap";
+        _fields="_Form,Application ID|job_uid,_Hidden|job_type_uid,File_Name,Job|job_type,_Documents,Task ID|Task_id,Staff,_Hidden|Task_uid,Task,Type|Task_Type,Status,Colour,Urgent,Notes,_Notes_Admin,Notes_Adm,Assigned Date|Assigned_Date,Date_Completed,Due_Date,Alloc. Minutes|Minutes,Total Duration|Total_Duration,Time gap|Time_gap";
+        _fields_e="File_Name,Job|job_type,Task ID|UID,Staff,Task,Type|Task_Type,Status,Colour,Notes,Notes_Admin,Assigned Date|Assigned_Date,Date_Completed,Due_Date,Alloc. Minutes|Minutes,Total Duration|Total_Duration,Time gap|Time_gap";
         _fields+=",Submit Date|DateTime,Submitted by|Author,_Delete";
         //-------------------------------------
-        var notes_admin_tid=$vm.module_list[_app_id+'task_record_admin'].var.notes_admin_tid;
-        var task_tid=$vm.module_list[_app_id+'task_record_admin'].var.task_tid;
-        var job_tid=$vm.module_list[_app_id+'task_record_admin'].var.scheduler_tid;
-        var job_status_list_tid=$vm.module_list[_app_id+'task_record_admin'].var.job_status_list_tid;
-        var task_list_tid=$vm.module_list[_app_id+'task_record_admin'].var.task_list_tid;
-        var staff_list_tid=$vm.module_list[_app_id+'task_record_admin'].var.staff_list_tid;
-        var timing_tid=$vm.module_list[_app_id+'task_record_admin'].var.timing_tid;
+        var notes_admin_tid=$vm.module_list['admin_notes'].tabel_id;
+        var task_tid=$vm.module_list['task_record'].table_id;
+        var job_tid=$vm.module_list['scheduler_record'].table_id;
+        var job_status_list_tid=$vm.module_list['job_status_list'].table_id;
+        var task_list_tid=$vm.module_list['task_list'].table_id;
+        var staff_list_tid=$vm.module_list['staff_list'].table_id;
+        //var timing_tid=$vm.module_list[_app_id+'task_record_admin'].var.timing_tid;
         var job_uid='';
         var job_type='';
         var job_type_uid='';
@@ -54,7 +39,7 @@
                 admin=res
             }});
             jQuery.ajaxSetup({async:true});
-            _set_req(); _request_data();
+             $("#title__ID").text('Clients - Applications - Task');$('#help__ID').html(help);_set_req(); _request_data();
         })
         //-------------------------------------
         _set_req=_set_req_export=function(){
@@ -67,16 +52,20 @@
             if (admin[notes_admin_tid]=='1') {
                 sql="with adm as (select ID from [TABLE-"+notes_admin_tid+"])"
                 sql+=",job as (select job_uid=UID from [FORM-"+job_tid+"] "+job_where+" )";
-                sql+=",task as (select ID,UID,PUID,S3,S2,Information,DateTime,Author,RowNum=row_number() over (order by ID DESC) from [TABLE-"+_db_pid+"-@S1] join job on PUID=job_uid)";
-                sql+="select ID,S3,UID,S2,Information,DateTime,Author,RowNum,dirty=0, valid=1 from task where RowNum between @I6 and @I7";
+                sql+=",notes as (select Notes_Adm=@('Notes_Admin'),note_puid=PUID from [TABLE-"+notes_admin_tid+"] )";
+                sql+=",task as (select ID,Task_id=UID,UID,PUID,S3,Notes_Adm,Information,DateTime,Author,RowNum=row_number() over (order by ID DESC) from [TABLE-"+_db_pid+"-@S1] join job on PUID=job_uid left join notes on UID=note_puid)";
+                sql+="select ID,S3,Task_id,UID,Notes_Adm,Information,DateTime,Author,RowNum,dirty=0, valid=1 from task where RowNum between @I6 and @I7";
                 sql_n="with job as (select job_uid=UID from [TABLE-"+job_tid+"] "+job_where+" )";
                 sql_n+=" select count(ID) from [TABLE-"+task_tid+"-@S1] join job on PUID=job_uid";
             }
             else
             {
+                _fields="_Form,Application ID|job_uid,_Hidden|job_type_uid,File_Name,Job|job_type,_Documents,Task ID|UID,Staff,_Hidden|Task_uid,Task,Type|Task_Type,Status,Colour,Notes,Assigned Date|Assigned_Date,Date_Completed,Due_Date,Alloc. Minutes|Minutes,Total Duration|Total_Duration,Time gap|Time_gap";
+                _fields+=",Submit Date|DateTime,Submitted by|Author,_Delete";
+
                 sql="with job as (select job_uid=UID from [FORM-"+job_tid+"] "+job_where+" )";
-                sql+=",task as (select ID,UID,PUID,S3,Information,DateTime,Author,RowNum=row_number() over (order by ID DESC) from [TABLE-"+_db_pid+"-@S1] join job on PUID=job_uid)";
-                sql+="select ID,S3,UID,Information,DateTime,Author,RowNum,dirty=0, valid=1 from task where RowNum between @I6 and @I7";
+                sql+=",task as (select ID,Task_id=UID,UID,PUID,S3,Information,DateTime,Author,RowNum=row_number() over (order by ID DESC) from [TABLE-"+_db_pid+"-@S1] join job on PUID=job_uid)";
+                sql+="select ID,S3,Task_id,UID,Information,DateTime,Author,RowNum,dirty=0, valid=1 from task where RowNum between @I6 and @I7";
                 sql_n="with job as (select job_uid=UID from [TABLE-"+job_tid+"] "+job_where+" )";
                 sql_n+=" select count(ID) from [TABLE-"+_db_pid+"-@S1] join job on PUID=job_uid";
             }
@@ -84,25 +73,21 @@
         }
         //-------------------------------------
         _data_process=function(){
-            if (admin[notes_admin_tid]='1') {
-                for(var i=0;i<_records.length;i++){
-                    _records[i].Notes_Admin=_records[i].S2;
-                }
-            }
         }
         //-------------------------------------
         _cell_render=function(records,I,field,td,set_value,source){
             switch(field){
-                case 'UID':
+                case 'Task_id':
                 case 'job_type':
                 case 'File_Name':
                 case 'Time_gap':
                 case 'Date_Completed':
                 case 'Task_Type':
+                case 'Notes_Adm':
                     records[I].vm_readonly[field]=true;
                     td.css('color','#888');
                     break;
-                case 'Date':
+                case 'Assigned_Date':
                 case 'Due_Date':
                     VmInclude:__COMPONENT__/grid/field_date.js
                     break;
@@ -198,16 +183,20 @@
                         $vm.load_module_by_name($vm.module_list[_app_id+'scheduler_record'].var.document_module_task,$vm.root_layout_content_slot,{task_uid:records[I].Task_uid,applicant_uid:applicant_uid,job:File_Name,job_type_uid:job_type_uid});
                     })
                     break;
-                case '_Add_More_Times':
+                case '_Notes_Admin':
                     records[I].vm_custom[field]=true;
                     if(records[I].UID===undefined) return;
-                    var html="<u style='cursor:pointer'>Add More Times..</u>";
+                    var html="<u style='cursor:pointer'>Notes Admin..</u>";
                     td.html(html);
                     td.find('u').on('click',function(){
-                        set_value('',records,I,'Total_Duration');
-                        $vm.load_module_by_name($vm.module_list[_app_id+'scheduler_record'].var.time_module,$vm.root_layout_content_slot,{task_uid:records[I].UID,task:records[I].Task,staff:records[I].Staff,job_uid:_records[I].job_uid});
+                        $vm.load_module_by_name($vm.module_list[_app_id+'scheduler_record'].var.admin_notes,$vm.root_layout_content_slot,{task_uid:records[I].UID});
                     })
                     break;
+                case 'Urgent':
+                    td.html('<input type=checkbox />');
+                    if(records[I][field]=='1') td.css('background-color','#F00');
+                    VmInclude:__COMPONENT__/grid/field_checkbox.js
+                break;
             }
         }
         //-------------------------------------
@@ -236,7 +225,7 @@
                     new_row[b]="";
                 }
             }
-            sql="select S1,UID from [TABLE-"+task_list_tid+"] where PUID=@I1 ";
+            sql="select S1,S2,V1,UID from [TABLE-"+task_list_tid+"] where PUID=@I1 ";
             var req_data={cmd:'query_records',sql:sql,i1:$vm.vm['__ID'].op.job_type_uid};
             $VmAPI.request({data:req_data,callback:function(res){
                 if(res.records.length>0){
@@ -244,9 +233,12 @@
                         var rd={};
                         var dbv1={};
                         rd['Task']=res.records[i].S1;
+                        rd['Task_Type']=res.records[i].S2;
                         rd['Task_uid']=res.records[i].UID;
+                        rd['Minutes']=res.records[i].V1;
                         rd['job_type']=job_type;
                         rd['File_Name']=File_Name;
+                        rd['job_uid']=job_uid;
                         dbv1['PUID']=job_uid;
                         dbv1['GUID']=applicant_uid;
                         dbv1['PPID']=job_tid;
@@ -270,85 +262,87 @@
             switch(field){
                 case 'Task':
                 case 'Status':
-                case 'Total_Duration':
                     _render(I);
-                    break;
-                case 'StartTime':
-                case 'EndTime':
-                    set_value(get_duration(records[I].StartTime,records[I].EndTime),records,I,'Actual_Duration');
-                    _render(I);
-                    break;
+                break;
+                case 'Notes_Admin':
+/*                    sql="select Notes_Admin=@('Notes_Admin') from [TABLE-"+task_list_tid+"] where PUID=@I1 ";
+                    var req_data={cmd:'query_records',sql:sql,i1:records[I].UID};
+                    $VmAPI.request({data:req_data,callback:function(res){
+                        if(res.records.length>0){
+                            records[I].Notes_Admin=res.record[0].Notes_Admin;
+                        }
+                    }});
+*/                    _render(I);
+                break;
             }
-        }
-        //-------------------------------------
-        get_duration=function(StartTime,EndTime){
-            if(StartTime!='' && EndTime!='' && StartTime!=undefined && EndTime!=undefined){
-                var sparts=StartTime.split(':');
-                var smins=0;
-                if(sparts[0]!='' && sparts[1]!=''){
-                    smins=parseInt(sparts[0])*60+parseInt(sparts[1])
-                }
-                var eparts=EndTime.split(':');
-                var emins=0;
-                if(eparts[0]!='' && eparts[1]!=''){
-                    emins=parseInt(eparts[0])*60+parseInt(eparts[1])
-                }
-                return emins-smins;
-            }
-            else return 0
         }
         //-------------------------------------
         _before_submit=function(record,dbv){
-            var dur=0;
-            if(record.UID!==''){
-                jQuery.ajaxSetup({async:false});
-                var sql="select dur=sum(V1) from [TABLE-"+timing_tid+"] where PUID=@I1";
-                $VmAPI.request({data:{cmd:'query_records',sql:sql,i1:record.UID},callback:function(res){
-                    if(res.records.length>0){
-                        if(res.records[0].dur!==''){
-                            dur=parseInt(res.records[0].dur);
-                        }
-                    }
-                }});
-                jQuery.ajaxSetup({async:true});
-            }
-            if(record.Minutes!==''){
-                var total_duration=dur;
-                total_duration+=get_duration(record.StartTime,record.EndTime)
-                if(total_duration!=0){
-                    record.Total_Duration=total_duration;
-                    record.Time_gap=total_duration-parseInt(record.Minutes);
-                }
-                else {
-                    record.Total_Duration='';
-                    record.Time_gap='';
-                }
-            }
             dbv.PPID=job_tid;
-            record.Actual_Duration=parseInt(record.Actual_Duration || 0).toString();
-            record.Total_Duration=parseInt(record.Total_Duration || 0).toString();
-            dbv.V1=record.Actual_Duration;
-            dbv.V2=record.Total_Duration;
             if(record.job_uid!==undefined) dbv.PUID=record.job_uid;
             if(applicant_uid!==undefined) dbv.GUID=applicant_uid;
             if(record.Minutes!=='') dbv.V3=parseInt(record.Minutes || 0).toString();
-            if(record.Date!=='') dbv.DT1=record.Date;
+            if(record.Assigned_Date!=='') dbv.DT1=record.Assigned_Date;
+            if(record.Due_Date!=='') dbv.DT2=record.Due_Date;
             if(record.Staff!=='') dbv.S1=record.Staff;
-            if (admin[notes_admin_tid]='1') {
-                if(record.Notes_Admin!=='') {dbv.S2=record.Notes_Admin;record.Notes_Admin=''}
-            }
-            else record.Notes_Admin='';
+            if(record.Task_Type!=='') dbv.S2=record.Task_Type;
             if(record.Status!=='') dbv.S3=record.Status;
             if(record.Status=='Completed') dbv.B1='1';else dbv.B1='0';
             return true;
         };
         //-------------------------------------
-    }
-</script>
-<style>
-    VmInclude:__COMPONENT__/grid/grid.v3.css
-    #D__ID{
-        overflow-x:auto;
-        /*white-space: nowrap;*/
-    }
-</style>
+        var help='<div class="container">\
+                <div class="row">\
+                    <div class="col-sm-2 text-content text-left">\
+                        <h4>Symbols in task list</h4>\
+                        <p><i class="fa fa-pencil-square-o"></i> Edit / change details</p>\
+                        <p><i class="fa fa-trash-o"></i> Delete task</p>\
+                        <br>\
+                    </div>\
+                    <div class="col-sm-2 text-content text-left">\
+                        <h4><i class="fa fa-plus"></i> = Add task</h4>\
+                        <p>Entry can be done directly in the grid</p>\
+                        <p>Click on <i class="fa fa-pencil-square-o"></i> to edit task record in other form</p>\
+                        <p>REMEMBER Click on <i class="fa fa-upload"></i> to save the changes</p>\
+                        <br>\
+                    </div>\
+                    <div class="col-sm-2 text-content text-left">\
+                        <h4><i class="fa fa-upload"></i> = Save change</h4>\
+                        <p>This button will turn red when change has been made.<br>Click to save changes.</p>\
+                        <br>\
+                    </div>\
+                    <div class="col-sm-2 text-content text-left">\
+                        <h4><i class="fa fa-search"></i> = Search </h4>\
+                        <p>If Keyword is empty reload task list.<br>\
+                        Search for full words in Keyword from the task list.</p>\
+                        <br>\
+                    </div>\
+                    <div class="col-sm-2 text-content text-left">\
+                        <h4><i class="fa fa-arrow-left"></i> = Previous</h4>\
+                        <h4><i class="fa fa-arrow-right"></i> = Next Page</h4>\
+                        <p>If all tasks don&apos;t fit into one page, these arrows can be used for paging </p>\
+                        <br>\
+                    </div>\
+                    <div class="col-sm-2 text-content text-left">\
+                        <h4><i class="fa fa-download"></i> = Export</h4>\
+                        <p>Exporting the task list to excel format (.csv)</p>\
+                        <br>\
+                    </div>\
+                </div>\
+            </div>'
+
+        }
+    </script>
+    <style>
+        VmInclude:__COMPONENT__/grid/grid.v3.css
+        .ui-autocomplete.ui-menu{
+            font-size:12px;
+            background:#ddd;
+        }
+        .ui-autocomplete li:hover{
+            color:White;
+            background:#96B202;
+            font-weight:normal;
+            outline:none;
+        }
+    </style>

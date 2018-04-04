@@ -11,9 +11,10 @@
         VmInclude:__COMPONENT__/style/ease-in-out.2.js
 //        Vm Include:__BASE__/wappsystem/grace-he-i/Modules/Control_panels/job_sub.js
         //-------------------------------------
-        var client_tid=$vm.module_list[_app_id+'commission'].var.client_tid;
+        var client_tid=$vm.module_list['client'].table_id;
         //-------------------------------------
-        $('#D__ID').on('load',function(){ _set_req(); _request_data();  })
+        $('#D__ID').on('load',function(){ $("#title__ID").text('Tax Invoice');$('#help__ID').html(help);_set_req(); _request_data();} )
+        $('#D__ID').on('back',function(){ $("#title__ID").text('Tax Invoice');$('#help__ID').html(help);_set_req(); _request_data();} )
         //-------------------------------------
         _cell_render=function(records,I,field,td,set_value,source){
             switch(field){
@@ -90,6 +91,45 @@
             return true;
         };
         //-------------------------------------
+        var help='<div class="container">\
+                <div class="row">\
+                    <div class="col-sm-2 text-content text-left">\
+                        <h4>Symbols in tax invoice list</h4>\
+                        <p><i class="fa fa-pencil-square-o"></i> Edit / change details</p>\
+                        <p><i class="fa fa-trash-o"></i> Delete tax invoice</p>\
+                        <br>\
+                    </div>\
+                    <div class="col-sm-2 text-content text-left">\
+                        <h4><i class="fa fa-plus"></i> = Add tax invoice</h4>\
+                        <p>Entry can be done directly in the grid</p>\
+                        <p>Click on <i class="fa fa-pencil-square-o"></i> to edit tax invoice record in other form</p>\
+                        <p>REMEMBER Click on <i class="fa fa-upload"></i> to save the changes</p>\
+                        <br>\
+                    </div>\
+                    <div class="col-sm-2 text-content text-left">\
+                        <h4><i class="fa fa-upload"></i> = Save change</h4>\
+                        <p>This button will turn red when change has been made.<br>Click to save changes.</p>\
+                        <br>\
+                    </div>\
+                    <div class="col-sm-2 text-content text-left">\
+                        <h4><i class="fa fa-search"></i> = Search </h4>\
+                        <p>If Keyword is empty reload tax invoice list.<br>\
+                        Search for full words in Keyword from the tax invoice list.</p>\
+                        <br>\
+                    </div>\
+                    <div class="col-sm-2 text-content text-left">\
+                        <h4><i class="fa fa-arrow-left"></i> = Previous</h4>\
+                        <h4><i class="fa fa-arrow-right"></i> = Next Page</h4>\
+                        <p>If all tax invoices don&apos;t fit into one page, these arrows can be used for paging </p>\
+                        <br>\
+                    </div>\
+                    <div class="col-sm-2 text-content text-left">\
+                        <h4><i class="fa fa-download"></i> = Export</h4>\
+                        <p>Exporting the tax invoice list to excel format (.csv)</p>\
+                        <br>\
+                    </div>\
+                </div>\
+            </div>'
     }
 </script>
 <style>
