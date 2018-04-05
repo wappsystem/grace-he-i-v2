@@ -6,18 +6,35 @@
         //-------------------------------------
         VmInclude:__COMPONENT__/grid/grid.v3.js
         VmInclude:__COMPONENT__/style/ease-in-out.2.js
-        VmInclude:__BASE__/wappsystem/grace-he-i/Modules/Control_panels/client_sub.js
+        VmInclude:__CURRENT_PATH__/client_sub.js
         //-------------------------------------
-        _fields="_Form,_Task,_Documents,_Hidden|UID,Client ID|applicant_uid,Client|applicant,Application ID|UID,File name|File_Name,Assigned Date|Date,Due_Date,_Hidden|job_type_uid,Job Type|job_type,Status,Colour,_Check_Documents,All documents available|Documents_Available";
-        _fields_e="Client ID|applicant_uid,Client|applicant,Application ID|UID,File name|File_Name,Assigned Date|Date,Due Date|Due_Date,Job Type|job_type,Status,Colour,All documents available|Documents_Available";
+        _fields="_Form,_Task,_Task_Not_Done,_Documents,_Hidden|UID,Client ID|applicant_uid,Client|applicant,Application ID|UID,File Name|File_Name,Assigned Date|Assigned_Date,Due_Date,_Hidden|job_type_uid,Job Type|job_type,Status,Colour,_Check_Documents,_Calculate"
+        _fields+=",Alloc.|Total_Allocated,Real|Total_Real,Gap|Total_Gap,Admin Alloc.|Admin_Allocated,Admin Real|Admin_Real,Admin Gap|Admin_Gap"
+        _fields+=",Account Alloc.|Account_Allocated,Account Real|Account_Real,Account Gap|Account_Gap";
+        _fields+=",School Alloc.|School_Allocated,School Real|School_Real,School Gap|School_Gap";
+        _fields+=",Visa Alloc.|Visa_Allocated,Visa Real|Visa_Real,Visa Gap|Visa_Gap";
+        _fields_e="Client ID|applicant_uid,Client|applicant,Application ID|UID,File name|File_Name,Assigned Date|Assigned_Date,Due Date|Due_Date,Job Type|job_type,Status,Colour";
+        _fields_e+=",Alloc.|Total_Allocated,Real|Total_Real,Gap|Total_Gap,Admin Alloc.|Admin_Allocated,Admin Real|Admin_Real,Admin Gap|Admin_Gap"
+        _fields_e+=",Account Alloc.|Account_Allocated,Account Real|Account_Real,Account Gap|Account_Gap";
+        _fields_e+=",School Alloc.|School_Allocated,School Real|School_Real,School Gap|School_Gap";
+        _fields_e+=",Visa Alloc.|Visa_Allocated,Visa Real|Visa_Real,Visa Gap|Visa_Gap";
         _fields+=",Submit Date|DateTime,Submitted by|Author,_Delete";
         //-------------------------------------
-        var applicant_tid=$vm.module_list[_app_id+'scheduler_record'].var.client_tid;
-        var job_type_list_tid=$vm.module_list[_app_id+'scheduler_record'].var.job_type_list_tid;
-        var job_status_list_tid=$vm.module_list[_app_id+'scheduler_record'].var.job_status_list_tid;
-        var task_tid=$vm.module_list[_app_id+'scheduler_record'].var.task_tid;
+        var applicant_tid=$vm.module_list['client'].table_id;
+        var job_type_list_tid=$vm.module_list['job_type_list'].table_id;
+        var job_status_list_tid=$vm.module_list['job_status_list'].table_id;
+        var task_tid=$vm.module_list['task_record'].table_id;
+        var rate_tid=$vm.module_list['rate_list'].table_id;
+        var prefix=_mlist[$vm.vm['__ID'].name].prefix; if(prefix==undefined) prefix="";
         //-------------------------------------
-        $('#D__ID').on('load',function(){_set_req(); _request_data();  })
+        $('#D__ID').on('load',function(){ $("#title__ID").text('Scheduled Records - Not Completed');$('#help__ID').html(help); _set_req(); _request_data();  })
+        $('#D__ID').on('back',function(){ $("#title__ID").text('Scheduled Records - Not Completed');$('#help__ID').html(help);_set_req(); _request_data();  })
+        //-------------------------------------
+        var formatter = new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD',
+            minimumFractionDigits: 2,
+        });
         //-------------------------------------
         var _set_req=_set_req_export=function(){
             var sql="with tb as (select Information,B1,ID,UID,PUID,DateTime,Author,RowNum=row_number() over (order by ID DESC) from [TABLE-"+_db_pid+"-@S1] where B1=0)";
@@ -34,7 +51,13 @@
                     var html="<u style='cursor:pointer'>Documents..</u>";
                     td.html(html);
                     td.find('u').on('click',function(){
-                        $vm.load_module_by_name($vm.module_list[_app_id+'scheduler_record'].var.document_module_job,$vm.root_layout_content_slot,{applicant_uid:_records[I].applicant_uid,job_uid:_records[I].UID,job:_records[I].File_Name,job_type:_records[I].job_type,job_type_uid:_records[I].job_type_uid});
+                        $vm.load_module_by_name(prefix+'documents_job',$vm.root_layout_content_slot,{
+                        //$vm.load_module_by_name($vm.module_list[_app_id+'scheduler_record'].var.document_module_job,$vm.root_layout_content_slot,{
+                            applicant_uid:_records[I].applicant_uid,
+                            job_uid:_records[I].UID,
+                            job:_records[I].File_Name,
+                            job_type:_records[I].job_type,
+                            job_type_uid:_records[I].job_type_uid});
                     })
                     break;
                 case 'applicant_uid':
@@ -44,7 +67,7 @@
                     td.css('background','#f8f8f8');
                     td.html(records[I][field]);
                     break;
-                case 'Date':
+                case 'Assigned_Date':
                 case 'Due_Date':
                     VmInclude:__COMPONENT__/grid/field_date.js
                     break;
@@ -121,7 +144,24 @@
                     if(_records[I].UID===undefined) return;
                     td.html("<u style='cursor:pointer'>Task..</u>");
                     td.find('u').on('click',function(){
-                        $vm.load_module_by_name(_module.var.task_module,$vm.root_layout_content_slot,{
+                        $vm.load_module_by_name(prefix+'task_record',$vm.root_layout_content_slot,{
+                            rid:_records[I].ID,
+                            job_uid:_records[I].UID,
+                            job_type_uid:_records[I].job_type_uid,
+                            job_type:_records[I].job_type,
+                            applicant_uid:_records[I].applicant_uid,
+                            applicant:_records[I].applicant,
+                            filename:_records[I].File_Name
+                        });
+                    });
+                    break;
+                case '_Task_Not_Done':
+                    records[I].vm_custom[field]=true;
+                    if(_records[I].UID===undefined) return;
+                    td.html("<u style='cursor:pointer'>Task not done..</u>");
+                    td.find('u').on('click',function(){
+                        $vm.load_module_by_name(prefix+'task_not_completed',$vm.root_layout_content_slot,{
+                        //$vm.load_module_by_name(_module.var.task_module_not_done,$vm.root_layout_content_slot,{
                             rid:_records[I].ID,job_uid:_records[I].UID,job_type_uid:_records[I].job_type_uid,
                             job_type:_records[I].job_type,applicant_uid:_records[I].applicant_uid,
                             applicant:_records[I].applicant,filename:_records[I].File_Name
@@ -133,18 +173,101 @@
                     if(_records[I].UID===undefined) return;
                     td.html("<u style='cursor:pointer'>Check Document..</u>");
                     td.find('u').on('click',function(){
-                        $vm.load_module_by_name(_module.var.check_document_module,$vm.root_layout_content_slot,{
+                        $vm.load_module_by_name(prefix+'check_document',$vm.root_layout_content_slot,{
+                        //$vm.load_module_by_name(_module.var.check_document_module,$vm.root_layout_content_slot,{
                             rid:_records[I].ID,job_uid:_records[I].UID,job_type_uid:_records[I].job_type_uid,
                             job_type:_records[I].job_type,applicant_uid:_records[I].applicant_uid,
                             applicant:_records[I].applicant,filename:_records[I].File_Name
                         });
                     });
                     break;
-                case 'Documents_Available':
-                    td.html('<input type=checkbox />');
-                    VmInclude:__COMPONENT__/grid/field_checkbox.js
+                case '_Calculate':
+                    records[I].vm_custom[field]=true;
+                    if(_records[I].UID===undefined) return;
+                    td.html("<u style='cursor:pointer'>Calculate..</u>");
+                    td.find('u').on('click',function(){
+//                        var sql="select S2,Total_Duration=sum(V2),Time_gap=sum(V1),Minutes=sum(V3) from [TABLE-"+task_tid+"] where PUID=@I2 group by S2";
+                        var sql="with rate_table as (select S1,rate=V1 from [TABLE-"+rate_tid+"])"
+                        sql+=",duration as (select S2,Total_Duration=sum(V2),Time_gap=sum(V1),Minutes=sum(V3) from [TABLE-"+task_tid+"] where PUID=@I2 group by S2) "
+                        sql+=" select S2,Total_Duration=Total_Duration*rate/60,Time_gap=Time_gap*rate/60,Minutes=Minutes*rate/60 from duration join rate_table on S2=S1"
+                        var req1={cmd:'query_records',sql:sql,i2:_records[I].UID}
+                        $VmAPI.request({data:req1,callback:function(res){
+                              if(res.records.length>0){
+                                  var total_alloc=0;
+                                  var total_real=0;
+                                  var total_gap=0;
+                                  for (var i=0;i<res.records.length;i++){
+                                      switch(res.records[i].S2){
+                                        case 'Admin':
+                                            _set_value(res.records[i].Total_Duration,records,I,'Admin_Real');
+                                            _set_value(res.records[i].Minutes,records,I,'Admin_Allocated');
+                                            _set_value(res.records[i].Time_gap,records,I,'Admin_Gap');
+                                              total_real+=parseFloat(res.records[i].Total_Duration)
+                                              total_alloc+=parseFloat(res.records[i].Minutes)
+                                              total_gap+=parseFloat(res.records[i].Time_gap)
+                                              break;
+                                          case 'Accounting':
+                                              _set_value(res.records[i].Total_Duration,records,I,'Account_Real');
+                                              _set_value(res.records[i].Minutes,records,I,'Account_Allocated');
+                                              _set_value(res.records[i].Time_gap,records,I,'Account_Gap');
+                                              total_real+=parseFloat(res.records[i].Total_Duration)
+                                              total_alloc+=parseFloat(res.records[i].Minutes)
+                                              total_gap+=parseFloat(res.records[i].Time_gap)
+                                            break;
+                                        case 'Normal_School':
+                                            _set_value(res.records[i].Total_Duration,records,I,'School_Real');
+                                            _set_value(res.records[i].Minutes,records,I,'School_Allocated');
+                                            _set_value(res.records[i].Time_gap,records,I,'School_Gap');
+                                            total_real+=parseFloat(res.records[i].Total_Duration)
+                                            total_alloc+=parseFloat(res.records[i].Minutes)
+                                            total_gap+=parseFloat(res.records[i].Time_gap)
+                                          break;
+                                      case 'Normal_Visa':
+                                          _set_value(res.records[i].Total_Duration,records,I,'Visa_Real');
+                                          _set_value(res.records[i].Minutes,records,I,'Visa_Allocated');
+                                          _set_value(res.records[i].Time_gap,records,I,'Visa_Gap');
+                                          total_real+=parseFloat(res.records[i].Total_Duration)
+                                          total_alloc+=parseFloat(res.records[i].Minutes)
+                                          total_gap+=parseFloat(res.records[i].Time_gap)
+                                        break;
+                                      }
+                                  }
+                                  records[I].Total_Real=total_real.toFixed(2);
+                                  records[I].Total_Allocated=total_alloc.toFixed(2);
+                                  records[I].Total_Gap=total_gap.toFixed(2);
+                                  _render(I)
+                              }
+                        }});
+                    });
                     break;
-            }
+                    case 'Total_Allocated':
+                    case 'Total_Real':
+                    case 'Total_Gap':
+                    case 'Admin_Allocated':
+                    case 'Admin_Real':
+                    case 'Admin_Gap':
+                    case 'Account_Allocated':
+                    case 'Account_Real':
+                    case 'Account_Gap':
+                    case 'School_Allocated':
+                    case 'School_Real':
+                    case 'School_Gap':
+                    case 'Visa_Allocated':
+                    case 'Visa_Real':
+                    case 'Visa_Gap':
+                    records[I].vm_readonly[field]=true;
+                     td.css('color','#888');
+                     if(source=="grid") td.css("text-align","right").css('white-space','nowrap');
+                     if(records[I][field]!=='' && records[I][field]!==undefined ){
+                         if(records[I][field] <0) {
+                           var strr=formatter.format(records[I][field]).replace('-','(')
+                           td.html(strr+')');
+                           td.css("color","red")
+                         }
+                         else td.html(formatter.format(records[I][field]));
+                     }
+                    break;
+                }
         }
         //-------------------------------------
         _after_change=function(records,I,field,td,set_value,source){
@@ -152,6 +275,7 @@
                 case 'job_type':
                 case 'applicant':
                 case 'Status':
+                case 'Total_Real':
                     _render(I);
                     break;
             }
@@ -161,13 +285,53 @@
         _before_submit=function(record,dbv){
             dbv.PPID=applicant_tid;
             if(record.applicant_uid!==undefined) dbv.PUID=record.applicant_uid;
-            if(record.Date!=='') dbv.DT1=record.Date;
+            if(record.Assigned_Date!=='') dbv.DT1=record.Assigned_Date;
             if(record.Due_Date!=='') dbv.DT2=record.Due_Date;
             if(record.Status!=='') dbv.S1=record.Status;
+            if(record.job_type!=='') dbv.S2=record.job_type;
             if(record.Status=='Completed') dbv.B1='1'; else dbv.B1='0';
             return true;
         };
         //-------------------------------------
+        var help='<div class="container">\
+        						<div class="row">\
+                                    <div class="col-sm-2 text-content text-left">\
+                                        <h4>Symbols in application list</h4>\
+                                        <p><i class="fa fa-pencil-square-o"></i> Edit / change details</p>\
+                                        <p><i class="fa fa-trash-o"></i> Delete application</p>\
+                                        <br>\
+                                    </div>\
+        							<div class="col-sm-2 text-content text-left">\
+        								<h4><i class="fa fa-plus"></i> = Add application</h4>\
+                                        <p>Entry can be done directly in the grid</p>\
+        								<p>Click on <i class="fa fa-pencil-square-o"></i> to edit application record in other form</p>\
+                                        <p>REMEMBER Click on <i class="fa fa-upload"></i> to save the changes</p>\
+        								<br>\
+        							</div>\
+        							<div class="col-sm-2 text-content text-left">\
+        								<h4><i class="fa fa-upload"></i> = Save change</h4>\
+        								<p>This button will turn red when change has been made.<br>Click to save changes.</p>\
+        								<br>\
+        							</div>\
+                                    <div class="col-sm-2 text-content text-left">\
+        								<h4><i class="fa fa-search"></i> = Search </h4>\
+        								<p>If Keyword is empty reload application list.<br>\
+                                        Search for full words in Keyword from the application list.</p>\
+        								<br>\
+        							</div>\
+                                    <div class="col-sm-2 text-content text-left">\
+        								<h4><i class="fa fa-arrow-left"></i> = Previous</h4>\
+                                        <h4><i class="fa fa-arrow-right"></i> = Next Page</h4>\
+        								<p>If all applications don&apos;t fit into one page, these arrows can be used for paging </p>\
+        								<br>\
+        							</div>\
+                                    <div class="col-sm-2 text-content text-left">\
+        								<h4><i class="fa fa-download"></i> = Export</h4>\
+        								<p>Exporting the application list to excel format (.csv)</p>\
+        								<br>\
+        							</div>\
+        						</div>\
+        			</div>'
     }
 </script>
 <style>

@@ -42,13 +42,13 @@
         var document_check_tid=$vm.module_list['document_check_list'].table_id
         //-------------------------------------
         $('#D__ID').on('load',function(){
-            applicant_uid=$vm.vm['__ID'].op.record.UID;
+            applicant_uid=$vm.vm['__ID'].op.applicant_uid;
             job_uid=$vm.vm['__ID'].op.job_uid;
             job_type=$vm.vm['__ID'].op.job_type;
             job_type_uid=$vm.vm['__ID'].op.job_type_uid;
             job=$vm.vm['__ID'].op.job;
             if (job_type_uid==''){$vm.alert('Please select a Job Type before trying to add documents.'); $('#back__ID').click();}
-            else{ _set_req(); _request_data();}
+            else{ $("#title__ID").text('Clients - Applications- Documents');$('#help__ID').html(help); _set_req(); _request_data();}
         })
         //-------------------------------------
         _set_req=function(){
@@ -69,7 +69,7 @@
                     td.css('color','#888');
                     break;
                 case 'Document':
-                    VmInclude:__BASE__/vmiis/Common-Code/grid/field_file_with_size.js
+                    VmInclude:__COMPONENT__/grid/field_file_with_size.js
                 break;
                 case 'Size':
                     records[I].vm_custom[field]=true;
@@ -79,7 +79,7 @@
                 break;
                 case 'Checked':
                     td.html('<input type=checkbox />');
-                    VmInclude:__BASE__/vmiis/Common-Code/grid/field_checkbox.js
+                    VmInclude:__COMPONENT__/grid/field_checkbox.js
                 break;
                 case 'Type':
                     var sql="with tb as (select name=S1,value2=uid from  [TABLE-"+document_check_tid+"] where PUID=@I3)";
@@ -180,15 +180,15 @@
         var help='<div class="container">\
         						<div class="row">\
                                     <div class="col-sm-2 text-content text-left">\
-                                        <h4>Symbols in client list</h4>\
+                                        <h4>Symbols in document list</h4>\
                                         <p><i class="fa fa-pencil-square-o"></i> Edit / change details</p>\
-                                        <p><i class="fa fa-trash-o"></i> Delete client</p>\
+                                        <p><i class="fa fa-trash-o"></i> Delete document</p>\
                                         <br>\
                                     </div>\
         							<div class="col-sm-2 text-content text-left">\
-        								<h4><i class="fa fa-plus"></i> = Add Client</h4>\
+        								<h4><i class="fa fa-plus"></i> = Add document</h4>\
                                         <p>Entry can be done directly in the grid</p>\
-        								<p>Click on <i class="fa fa-pencil-square-o"></i> to edit client record in other form</p>\
+        								<p>Click on <i class="fa fa-pencil-square-o"></i> to edit document record in other form</p>\
                                         <p>REMEMBER Click on <i class="fa fa-upload"></i> to save the changes</p>\
         								<br>\
         							</div>\
@@ -199,19 +199,19 @@
         							</div>\
                                     <div class="col-sm-2 text-content text-left">\
         								<h4><i class="fa fa-search"></i> = Search </h4>\
-        								<p>If Keyword is empty reload client list.<br>\
-                                        Search for full words in Keyword from the client list.</p>\
+        								<p>If Keyword is empty reload document list.<br>\
+                                        Search for full words in Keyword from the document list.</p>\
         								<br>\
         							</div>\
                                     <div class="col-sm-2 text-content text-left">\
         								<h4><i class="fa fa-arrow-left"></i> = Previous</h4>\
                                         <h4><i class="fa fa-arrow-right"></i> = Next Page</h4>\
-        								<p>If all clients don&apos;t fit into one page, these arrows can be used for paging </p>\
+        								<p>If all documents don&apos;t fit into one page, these arrows can be used for paging </p>\
         								<br>\
         							</div>\
                                     <div class="col-sm-2 text-content text-left">\
         								<h4><i class="fa fa-download"></i> = Export</h4>\
-        								<p>Exporting the client list to excel format (.csv)</p>\
+        								<p>Exporting the document list to excel format (.csv)</p>\
         								<br>\
         							</div>\
         						</div>\
@@ -224,4 +224,31 @@
         overflow-x:auto;
         /*white-space: nowrap;*/
     }
+	#toolbar__ID{
+		background-color:#ccc;
+		padding:5px 0px;
+		margin-bottom:0px;
+		overflow:hidden
+	}
+	#toolbar__ID *{
+		margin-right:3px;
+	}
+	@media screen and (max-width:768px){
+		#toolbar__ID{
+			padding: 3px 0;
+		}
+		#toolbar__ID div{
+			padding-left:3px;
+		}
+		#row_1__ID{
+			padding-bottom: 3px;
+		}
+	}
+	#title__ID{
+		margin:0.3rem;
+	}
+	#help_botton__ID,#new__ID,#save__ID,#query__ID,#p__ID,#n__ID,#export__ID{
+		cursor: pointer;
+	}
+
 </style>

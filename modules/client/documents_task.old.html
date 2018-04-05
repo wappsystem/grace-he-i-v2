@@ -1,27 +1,42 @@
 <section>
-      VmInclude:__CURRENT_PATH__/grid/grid.v3.html
+    <div id=toolbar__ID>
+        <a id=back__ID>Back</a> <span id=ns__ID><a id=new__ID>New</a> <a id=save__ID>Save</a></span><span class=tab__ID></span><input placeholder='filter' id=keyword__ID type=text /> <a id=query__ID>Load</a>
+        <span id=multi__ID>
+            <span class=tab__ID></span>Page Size: <select id=page_size__ID><option>30</option><option>50</option><option>100</option><option>200</option></select><span class=tab__ID></span>
+            <span id=I__ID style="display:none">0</span><span id=A__ID></span>
+            <img id=p__ID src="__BASE__/vmiis/Common-Code/image/p.png" ><img id=n__ID src="__BASE__/vmiis/Common-Code/image/n.png" >
+            <span class=tab__ID></span>Start page: <input id=start__ID type=text style="width:45px" />
+            Number of page: <input id=num__ID type=text  style="width:45px" />
+            <a id=export__ID>Export</a>
+        </span>
+		<span id=title__ID></span>
+        <span id=elapsed__ID style='float:right'></span>
+    </div>
+    <div id=table__ID>
+        <table id=grid__ID></table>
+    </div>
 </section>
 <script>
     function F__ID(){
         //-------------------------------------
-        VmInclude:__COMPONENT__/grid/grid.v3.js
-        VmInclude:__COMPONENT__/style/ease-in-out.2.js
-        VmInclude:__CURRENT_PATH__/client_sub.js
-        //-------------------------------------
         _fields="_Form,File Name|job,Document,Last Modified|lastModified,Size,Description,Type,Checked";
         _fields+=",Submit Date|DateTime,Submitted by|Author,_Delete";
         //-------------------------------------
-        var client_tid=$vm.module_list['client'].table_id;
-        var document_type_list_tid=$vm.module_list['document_type_list'].table_id;
-        var document_check_tid=$vm.module_list['document_check_list'].table_id;
+        VmInclude:__BASE__/vmiis/Common-Code/grid/grid.js
+        VmInclude:__BASE__/vmiis/Common-Code/style/ease-in-out.js
+        VmInclude:__BASE__/wappsystem/grace-he-i/Modules/Control_panels/client_sub.js
         //-------------------------------------
-        $('#D__ID').on('show',function(){
+        var client_tid=$vm.module_list[_app_id+'client'].var.client_tid;
+        var document_type_list_tid=$vm.module_list[_app_id+'client'].var.document_type_list_tid;
+        var document_check_tid=$vm.module_list[_app_id+'client'].var.document_check_tid;
+        //-------------------------------------
+        $('#D__ID').on('load',function(){
             applicant_uid=$vm.vm['__ID'].op.applicant_uid;
             job_type_uid=$vm.vm['__ID'].op.job_type_uid;
             task_uid=$vm.vm['__ID'].op.task_uid;
             job=$vm.vm['__ID'].op.job;
             if (task_uid==''){$vm.alert('Please select a Task before trying to add documents.'); $('#back__ID').click();}
-            else{ $("#title__ID").text('Clients - Applications - Task - Documents');$('#help__ID').html(help); _set_req(); _request_data();}
+            else{ _set_req(); _request_data();}
         })
         //-------------------------------------
         _set_req=_seq_req_export=function(){
@@ -41,7 +56,7 @@
                     td.css('color','#888');
                     break;
                 case 'Document':
-                    VmInclude:__COMPONENT__/grid/field_file_with_size.js
+                    VmInclude:__BASE__/vmiis/Common-Code/grid/field_file_with_size.js
                 break;
                 case 'Size':
                     records[I].vm_custom[field]=true;
@@ -51,7 +66,7 @@
                 break;
                 case 'Checked':
                     td.html('<input type=checkbox />');
-                    VmInclude:__COMPONENT__/grid/field_checkbox.js
+                    VmInclude:__BASE__/vmiis/Common-Code/grid/field_checkbox.js
                 break;
                 case 'Type':
                     var sql="with tb as (select name=S1,value2=uid from  [TABLE-"+document_check_tid+"] where PUID=@I3 and GUID=@I2)";
@@ -106,49 +121,10 @@
             return true;
         };
         //-------------------------------------
-        var help='<div class="container">\
-        						<div class="row">\
-                                    <div class="col-sm-2 text-content text-left">\
-                                        <h4>Symbols in document list</h4>\
-                                        <p><i class="fa fa-pencil-square-o"></i> Edit / change details</p>\
-                                        <p><i class="fa fa-trash-o"></i> Delete document</p>\
-                                        <br>\
-                                    </div>\
-        							<div class="col-sm-2 text-content text-left">\
-        								<h4><i class="fa fa-plus"></i> = Add document</h4>\
-                                        <p>Entry can be done directly in the grid</p>\
-        								<p>Click on <i class="fa fa-pencil-square-o"></i> to edit document record in other form</p>\
-                                        <p>REMEMBER Click on <i class="fa fa-upload"></i> to save the changes</p>\
-        								<br>\
-        							</div>\
-        							<div class="col-sm-2 text-content text-left">\
-        								<h4><i class="fa fa-upload"></i> = Save change</h4>\
-        								<p>This button will turn red when change has been made.<br>Click to save changes.</p>\
-        								<br>\
-        							</div>\
-                                    <div class="col-sm-2 text-content text-left">\
-        								<h4><i class="fa fa-search"></i> = Search </h4>\
-        								<p>If Keyword is empty reload document list.<br>\
-                                        Search for full words in Keyword from the document list.</p>\
-        								<br>\
-        							</div>\
-                                    <div class="col-sm-2 text-content text-left">\
-        								<h4><i class="fa fa-arrow-left"></i> = Previous</h4>\
-                                        <h4><i class="fa fa-arrow-right"></i> = Next Page</h4>\
-        								<p>If all documents don&apos;t fit into one page, these arrows can be used for paging </p>\
-        								<br>\
-        							</div>\
-                                    <div class="col-sm-2 text-content text-left">\
-        								<h4><i class="fa fa-download"></i> = Export</h4>\
-        								<p>Exporting the document list to excel format (.csv)</p>\
-        								<br>\
-        							</div>\
-        						</div>\
-        			</div>'
     }
 </script>
 <style>
-    VmInclude:__COMPONENT__/grid/grid.v3.css
+    VmInclude:__BASE__/vmiis/Common-Code/grid/grid.css
     #D__ID{
         overflow-x:auto;
         /*white-space: nowrap;*/

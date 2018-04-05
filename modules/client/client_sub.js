@@ -7,7 +7,7 @@ var _task_fields='';
 //-------------------------------------
 _set_req=_set_req_export=function(){
     var client_where="";
-    var client_uid=$vm.vm['__ID'].op.record.UID;
+    var client_uid=$vm.vm['__ID'].op.applicant_uid;
     if(client_uid!==undefined){
         client_where=" where uid="+client_uid;
     }

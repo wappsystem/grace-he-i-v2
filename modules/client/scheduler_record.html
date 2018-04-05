@@ -45,7 +45,8 @@
                     var html="<u style='cursor:pointer'>Documents..</u>";
                     td.html(html);
                     td.find('u').on('click',function(){
-                        $vm.load_module_by_name($vm.module_list[_app_id+'scheduler_record'].var.document_module_job,$vm.root_layout_content_slot,{
+                        $vm.load_module_by_name(prefix+'documents_job',$vm.root_layout_content_slot,{
+                        //$vm.load_module_by_name($vm.module_list[_app_id+'scheduler_record'].var.document_module_job,$vm.root_layout_content_slot,{
                             applicant_uid:_records[I].applicant_uid,
                             job_uid:_records[I].UID,
                             job:_records[I].File_Name,
@@ -153,7 +154,8 @@
                     if(_records[I].UID===undefined) return;
                     td.html("<u style='cursor:pointer'>Task not done..</u>");
                     td.find('u').on('click',function(){
-                        $vm.load_module_by_name(_module.var.task_module_not_done,$vm.root_layout_content_slot,{
+                        $vm.load_module_by_name(prefix+'task_not_completed',$vm.root_layout_content_slot,{
+                        //$vm.load_module_by_name(_module.var.task_module_not_done,$vm.root_layout_content_slot,{
                             rid:_records[I].ID,job_uid:_records[I].UID,job_type_uid:_records[I].job_type_uid,
                             job_type:_records[I].job_type,applicant_uid:_records[I].applicant_uid,
                             applicant:_records[I].applicant,filename:_records[I].File_Name
@@ -165,7 +167,8 @@
                     if(_records[I].UID===undefined) return;
                     td.html("<u style='cursor:pointer'>Check Document..</u>");
                     td.find('u').on('click',function(){
-                        $vm.load_module_by_name(_module.var.check_document_module,$vm.root_layout_content_slot,{
+                        $vm.load_module_by_name(prefix+'check_document',$vm.root_layout_content_slot,{
+                        //$vm.load_module_by_name(_module.var.check_document_module,$vm.root_layout_content_slot,{
                             rid:_records[I].ID,job_uid:_records[I].UID,job_type_uid:_records[I].job_type_uid,
                             job_type:_records[I].job_type,applicant_uid:_records[I].applicant_uid,
                             applicant:_records[I].applicant,filename:_records[I].File_Name

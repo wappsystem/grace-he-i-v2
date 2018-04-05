@@ -6,6 +6,7 @@
         //-------------------------------------
         VmInclude:__COMPONENT__/grid/grid.v3.js
         VmInclude:__COMPONENT__/style/ease-in-out.2.js
+        //-------------------------------------
 //        Vm Include:__BASE__/wappsystem/grace-he-i/Modules/Control_panels/job_sub.js
         //-------------------------------------
         _fields="_Form,Application ID|job_uid,_Hidden|job_type_uid,File_Name,Job|job_type,_Documents,Task ID|Task_id,Staff,_Hidden|Task_uid,Task,Type|Task_Type,Status,Colour,Urgent,Notes,_Notes_Admin,Notes_Adm,Assigned Date|Assigned_Date,Date_Completed,Due_Date,Alloc. Minutes|Minutes,Total Duration|Total_Duration,Time gap|Time_gap";
@@ -19,8 +20,6 @@
         var staff_list_tid=$vm.module_list['staff_list'].table_id;
         var notes_admin_tid=$vm.module_list['admin_notes'].table_id;
         var prefix=_mlist[$vm.vm['__ID'].name].prefix; if(prefix==undefined) prefix="";
-
-        //var timing_tid=$vm.module_list[_app_id+'task_record_admin'].var.timing_tid;
         var job_uid='';
         var job_type='';
         var job_type_uid='';
@@ -41,7 +40,8 @@
                 admin=res
             }});
             jQuery.ajaxSetup({async:true});
-             $("#title__ID").text('Clients - Applications - Task');$('#help__ID').html(help);_set_req(); _request_data();
+            $("#title__ID").text('Clients - Applications - Task not done');$('#help__ID').html(help);_set_req(); _request_data();
+
         })
         //-------------------------------------
         _set_req=_set_req_export=function(){
@@ -55,7 +55,7 @@
                 sql="with adm as (select ID from [TABLE-"+notes_admin_tid+"])"
                 sql+=",job as (select job_uid=UID from [FORM-"+job_tid+"] "+job_where+" )";
                 sql+=",notes as (select Notes_Adm=@('Notes_Admin'),note_puid=PUID from [TABLE-"+notes_admin_tid+"] )";
-                sql+=",task as (select ID,Task_id=UID,UID,PUID,S3,Notes_Adm,Information,DateTime,Author,RowNum=row_number() over (order by ID DESC) from [TABLE-"+_db_pid+"-@S1] join job on PUID=job_uid left join notes on UID=note_puid)";
+                sql+=",task as (select ID,Task_id=UID,UID,PUID,S3,Notes_Adm,Information,DateTime,Author,RowNum=row_number() over (order by ID DESC) from [TABLE-"+_db_pid+"-@S1] join job on PUID=job_uid left join notes on UID=note_puid where B1='False' )";
                 sql+="select ID,S3,Task_id,UID,Notes_Adm,Information,DateTime,Author,RowNum,dirty=0, valid=1 from task where RowNum between @I6 and @I7";
                 sql_n="with job as (select job_uid=UID from [TABLE-"+job_tid+"] "+job_where+" )";
                 sql_n+=" select count(ID) from [TABLE-"+task_tid+"-@S1] join job on PUID=job_uid";
@@ -193,7 +193,7 @@
                     td.html(html);
                     td.find('u').on('click',function(){
                         $vm.load_module_by_name(prefix+'admin_notes',$vm.root_layout_content_slot,{task_uid:records[I].UID});
-                        //$vm.load_module_by_name($vm.module_list['admin_notes'].var.admin_notes,$vm.root_layout_content_slot,{task_uid:records[I].UID});
+                        //$vm.load_module_by_name($vm.module_list[_app_id+'scheduler_record'].var.admin_notes,$vm.root_layout_content_slot,{task_uid:records[I].UID});
                     })
                     break;
                 case 'Urgent':
@@ -287,7 +287,6 @@
             if(applicant_uid!==undefined) dbv.GUID=applicant_uid;
             if(record.Minutes!=='') dbv.V3=parseInt(record.Minutes || 0).toString();
             if(record.Assigned_Date!=='') dbv.DT1=record.Assigned_Date;
-            if(record.Due_Date!=='') dbv.DT2=record.Due_Date;
             if(record.Staff!=='') dbv.S1=record.Staff;
             if(record.Task_Type!=='') dbv.S2=record.Task_Type;
             if(record.Status!=='') dbv.S3=record.Status;

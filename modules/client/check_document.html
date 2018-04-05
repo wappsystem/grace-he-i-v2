@@ -1,31 +1,29 @@
 <section>
-    <div id=toolbar__ID>
-        <a id=back__ID>Back</a>
-        <span class=tab__ID></span>
-        <a id=query__ID >Query</a>
-        <a id=export__ID >Export</a>
-    	<span class=tab__ID></span>Check Required Documents for this Job
-    </div>
-    <table id=grid__ID></table>
+      VmInclude:__CURRENT_PATH__/grid/grid.v3.html
 </section>
 <script>
- function F__ID(){
+    function F__ID(){
+        //-------------------------------------
+        VmInclude:__COMPONENT__/grid/grid.v3.js
+        VmInclude:__COMPONENT__/style/ease-in-out.2.js
     //------------------------
-    VmInclude:__COMPONENT__/grid/grid.v3.js
-    VmInclude:__COMPONENT__/style/ease-in-out.2.js
-    //------------------------
-    var documents_tid=$vm.module_list[_app_id+'check_document'].var.documents_tid;
+    var documents_tid=$vm.module_list['documents'].table_id;
+    var prefix=_mlist[$vm.vm['__ID'].name].prefix; if(prefix==undefined) prefix="";
     //------------------------
     _fields="_Hidden|ID,Required Documents|req_doc,Uploaded Documents|uploaded_docs,Checked|B1,_Upload_Document";
     //-------------------------------------
-    $('#D__ID').on('load',function(){
+    $('#save__ID').hide();
+    $('#new__ID').hide();
+    $('#keyword__ID').hide();
+
+    $('#D__ID').on('show',function(){
                 job_uid=$vm.vm['__ID'].op.job_uid;
                 job_type=$vm.vm['__ID'].op.job_type;
                 job_type_uid=$vm.vm['__ID'].op.job_type_uid;
-                File_name=$vm.vm['__ID'].op.filename;
+                File_Name=$vm.vm['__ID'].op.filename;
                 applicant_uid=$vm.vm['__ID'].op.applicant_uid;
                 applicant=$vm.vm['__ID'].op.applicant;
-                _set_req(); _request_data();
+                $("#title__ID").text('Clients - Applications - Check Document');$('#help__ID').html(help); _set_req(); _request_data();
     })
     //-------------------------------------
     _set_req=_set_req_export=function(){
@@ -74,19 +72,38 @@
                     var html="<u style='cursor:pointer'>Upload Document..</u>";
                     td.html(html);
                     td.find('u').on('click',function(){
-                        $vm.load_module_by_name($vm.module_list[_app_id+'check_document'].var.document_module,$vm.root_layout_content_slot,{applicant_uid:applicant_uid,file_name:File_name,document_type:_records[I].req_doc});
+                        $vm.load_module_by_name(prefix+'documents',$vm.root_layout_content_slot,{applicant_uid:applicant_uid,file_name:File_Name,document_type:_records[I].req_doc});
+                        //$vm.load_module_by_name($vm.module_list[_app_id+'check_document'].var.document_module,$vm.root_layout_content_slot,{applicant_uid:applicant_uid,file_name:File_Name,document_type:_records[I].req_doc});
                     })
             break;
         }
     }
-
-
- }
+    var help='<div class="container">\
+                            <div class="row">\
+                                <div class="col-sm-2 text-content text-left">\
+                                    <h4><i class="fa fa-search"></i> = Search </h4>\
+                                    <p>Refresh the list</p>\
+                                    <br>\
+                                </div>\
+                                <div class="col-sm-2 text-content text-left">\
+                                    <h4><i class="fa fa-arrow-left"></i> = Previous</h4>\
+                                    <h4><i class="fa fa-arrow-right"></i> = Next Page</h4>\
+                                    <p>If all documents don&apos;t fit into one page, these arrows can be used for paging </p>\
+                                    <br>\
+                                </div>\
+                                <div class="col-sm-2 text-content text-left">\
+                                    <h4><i class="fa fa-download"></i> = Export</h4>\
+                                    <p>Exporting the document list to excel format (.csv)</p>\
+                                    <br>\
+                                </div>\
+                            </div>\
+                </div>'
+}
 </script>
 <style>
-    VmInclude:__COMPONENT__/grid/grid.v3.css
-    #D__ID{
-        overflow-x:auto;
-        /*white-space: nowrap;*/
-    }
+VmInclude:__COMPONENT__/grid/grid.v3.css
+#D__ID{
+    overflow-x:auto;
+    /*white-space: nowrap;*/
+}
 </style>
