@@ -77,12 +77,15 @@
                 case 'Time_gap':
                 case 'Date_Completed':
                 case 'Task_Type':
+                case 'Assigned_Date':
                     records[I].vm_readonly[field]=true;
                     td.css('color','#888');
                     break;
+/*
                 case 'Assigned_Date':
                     VmInclude:__BASE__/vmiis/Common-Code/grid/field_date.js
                     break;
+*/
                 case 'Urgent':
                     //records[I].vm_readonly[field]=true;
                     td.html('');
@@ -93,6 +96,7 @@
                     td.html('');
                     td.css('background-color',records[I].Colour);
                     break;
+/*
                 case 'StartTime':
                 case 'EndTime':
                     td.on('dblclick',function(){
@@ -101,6 +105,7 @@
                         td.html(html)
                     })
                     break;
+*/
                 case 'Status':
                     var sql="with tb as (select name=@('Job_status'),value3=@('Colour'),value2=uid from [TABLE-"+job_status_list_tid+"])";
                     sql+=" select top 10 name,value=name,value2,value3 from tb where Name like '%'+@S1+'%' ";

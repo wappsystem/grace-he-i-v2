@@ -1,35 +1,26 @@
 <section>
-    <div id=toolbar__ID>
-        <a id=back__ID>Back</a>
-        <span class=tab__ID></span>
-        <span>Date:</span> <input type=text id=t1__ID placeholder="" style='width:80px;padding-left:3px' />
-        <a id=query1__ID >Query</a>
-        <a id=export__ID >Export</a>
-    	<span class=tab__ID></span><b>Daily Work Duration</b>
-    </div>
-    <table id=grid__ID></table>
+      VmInclude:__CURRENT_PATH__/grid/grid.v3.html
 </section>
 <script>
-    function F__ID(){
-        //-------------------------------------
-        VmInclude:__COMPONENT__/grid/grid.v3.js
-        VmInclude:__COMPONENT__/style/ease-in-out.2.js
-//        Vm Include:__BASE__/wappsystem/grace-he-i/Modules/Control_panels/job_sub.js
+ function F__ID(){
+    //------------------------
+    VmInclude:__COMPONENT__/grid/grid.v3.js
+    VmInclude:__COMPONENT__/style/ease-in-out.2.js
         //-------------------------------------
         _fields="Staff,Mins|work_minutes, Hrs:Mins|work_hours,Allocated|alloc_minutes,Gap Mins|Gap";
         //_fields+=",Submit Date|DateTime,Submitted by|Author,_Delete";
         //-------------------------------------
-        $('#query1__ID').on('click',function(){ _set_req(); _request_data(); })
+        $('#aquery__ID').on('click',function(){ $("#title__ID").text('Staff - Daily Work Duration');$('#help__ID').html(help); _set_req(); _request_data();  })
         //-------------------------------------
-        var task_list_tid=$vm.module_list[_app_id+'task_record'].var.task_list_tid;
-        var staff_list_tid=$vm.module_list[_app_id+'task_record'].var.staff_list_tid;
-        var timing_tid=$vm.module_list[_app_id+'task_record_admin'].var.timing_tid;
+        var staff_list_tid=$vm.module_list['staff_list'].table_id;
+        var task_list_tid=$vm.module_list['task_list'].table_id;
+        var timing_tid=$vm.module_list['timing_module'].table_id;
         //-------------------------------------
-        $('#D__ID').on('load',function(){
-            var today = new Date();
-            $('#t1__ID').datepicker({dateFormat:'dd/mm/yy'});
-            $('#t1__ID').val($.datepicker.formatDate('dd/mm/yy', today));
-        })
+        $('#add_search__ID').append("<span>&nbsp;Date:</span> <input  class='form-control form-control-sm' type=text id=t1__ID placeholder='' style='width:100px;padding-left:3px' />");
+        //-------------------------------------
+        var today = new Date();
+        $('#t1__ID').datepicker({dateFormat:'dd/mm/yy'});
+        $('#t1__ID').val($.datepicker.formatDate('dd/mm/yy', today));
         //-------------------------------------
         _set_req=_set_req_export=function(){
             var sql="with staff_list as (select Staff=S1 from [TABLE-"+staff_list_tid+"]) "
@@ -58,8 +49,23 @@
             }})
         }
         //-------------------------------------
-    }
-</script>
-<style>
-    VmInclude:__COMPONENT__/grid/grid.v3.css
-</style>
+        var help='<div class="container">\
+                <div class="row">\
+                    <div class="col-sm-2 text-content text-left">\
+                        <h4><i class="fa fa-search"></i> = Search </h4>\
+                        <p>Updates the result based on selected criteria<br>\
+                        </p>\
+                        <br>\
+                    </div>\
+                    <div class="col-sm-2 text-content text-left">\
+                        <h4><i class="fa fa-download"></i> = Export</h4>\
+                        <p>Exporting the tax invoice list to excel format (.csv)</p>\
+                        <br>\
+                    </div>\
+                </div>\
+            </div>'
+     }
+    </script>
+    <style>
+        VmInclude:__COMPONENT__/grid/grid.v3.css
+    </style>

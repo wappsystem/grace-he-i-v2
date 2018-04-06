@@ -2,7 +2,7 @@
     <div id=toolbar__ID>
         <a id=back__ID>Back</a>
         <span class=tab__ID></span><select id=YY__ID type=select></select> <select id=MM__ID type=select></select>
-        <a id=query__ID >Query</a>
+        <a id=aquery__ID >Query</a>
         <a id=export__ID >Export</a>
     	<span class=tab__ID></span>Report - Scheduled Job Duration
     </div>
@@ -32,9 +32,9 @@
     }
     $List1.val(m);
     //---------------------------------------------
-    _fields="Applicant ID|applicant_uid,Applicant|applicant,File name|File_name,Date,Allocated,Actual,Time_Gap,Status,Admin,Accounting,Normal,Task_Type";
+    _fields="Applicant ID|applicant_uid,Applicant|applicant,File name|File_Name,Date,Allocated,Actual,Time_Gap,Status,Admin,Accounting,Normal,Task_Type";
     //-------------------------------------
-    $('#aquery__ID').on('click',function(){_set_req(); _request_data();})
+    $('#aaquery__ID').on('click',function(){_set_req(); _request_data();})
     $('#D__ID').on('load',function(){_set_req(); _request_data();})
     //-------------------------------------
     _set_req=_set_req_export=function(){

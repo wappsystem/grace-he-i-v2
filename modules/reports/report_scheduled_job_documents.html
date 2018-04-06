@@ -3,7 +3,7 @@
         <a id=back__ID>Back</a>
         <span class=tab__ID></span>
         <input type=text id=application__ID style='width:400px'>
-        <a id=aquery__ID >Query</a>
+        <a id=aaquery__ID >Query</a>
         <a id=export__ID >Export</a>
     	<span class=tab__ID></span><b>Report - Application Documents</b>
     </div>
@@ -15,7 +15,7 @@
         _fields="File_Name,job_type,Required Documents|req_doc,Uploaded Documents|uploaded_docs,Checked|B1";
         //_fields+=",Submit Date|DateTime,Submitted by|Author,_Delete";
         //-------------------------------------
-        $('#aquery__ID').on('click',function(){ _set_req(); _request_data(); })
+        $('#aaquery__ID').on('click',function(){ _set_req(); _request_data(); })
         //-------------------------------------
         VmInclude:__COMPONENT__/grid/grid.v3.js
         VmInclude:__COMPONENT__/style/ease-in-out.2.js

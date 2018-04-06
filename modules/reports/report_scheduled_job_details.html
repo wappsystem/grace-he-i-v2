@@ -1,31 +1,25 @@
 <section>
-    <div id=toolbar__ID>
-        <a id=back__ID>Back</a>
-        <span class=tab__ID></span>
-        <input type=text id=application__ID style='width:400px'>
-        <a id=aquery__ID >Query</a>
-        <a id=export__ID >Export</a>
-    	<span class=tab__ID></span><b>Application Details</b>
-    </div>
-    <table id=grid__ID></table>
+      VmInclude:__CURRENT_PATH__/grid/grid.v3.html
 </section>
 <script>
     function F__ID(){
         //-------------------------------------
-        _fields="Staff,File_Name,job_type,Task,Task_Type,Date,Start_Time,End_Time,Mins|Actual_Duration,Status,Alloc. Minutes|Minutes,Total_Duration,Time_gap,_Hidden|ta";
+        _fields="Staff,File_Name,job_type,Task,Task_Type,Date,Start_Time,End_Time,Actual|Actual_Duration,Allocated|Minutes,Total|Total_Duration,Time_gap,Status";
         //_fields+=",Submit Date|DateTime,Submitted by|Author,_Delete";
         //-------------------------------------
-        $('#aquery__ID').on('click',function(){ _set_req(); _request_data(); })
+        $('#aquery__ID').on('click',function(){ $("#title__ID").text('Individual - Details');$('#help__ID').html(help); _set_req(); _request_data();  })
         //-------------------------------------
         VmInclude:__COMPONENT__/grid/grid.v3.js
         VmInclude:__COMPONENT__/style/ease-in-out.2.js
 //        Vm Include:__BASE__/wappsystem/grace-he-i/Modules/Control_panels/job_sub.js
         //-------------------------------------
-        var scheduler_tid=$vm.module_list[_app_id+'report_scheduled_job_duration'].var.scheduler_tid;
-        var task_list_tid=$vm.module_list[_app_id+'task_record'].var.task_list_tid;
-        var task_tid=$vm.module_list[_app_id+'task_record'].var.task_tid;
-        var timing_tid=$vm.module_list[_app_id+'task_record_admin'].var.timing_tid;
+        var scheduler_tid=$vm.module_list['scheduler_record'].table_id;
+        var task_list_tid=$vm.module_list['task_list'].table_id;
+        var task_tid=$vm.module_list['task_record'].table_id;
+        var timing_tid=$vm.module_list['timing_module'].table_id;
         //------------------------------------
+        $('#add_search__ID').append("<span>&nbsp;</span> <input  class='form-control form-control-sm flex' type=text id=application__ID placeholder='' style='width:400px' />");
+        //-------------------------------------
         $('#application__ID').autocomplete({
             minLength:0,
             source:function(request,response){
@@ -43,44 +37,36 @@
         //-------------------------------------
         _set_req=_set_req_export=function(){
             var id=$('#application__ID').val().split(" ");
-/*            var sql="with timing as (select V1,st=Convert(Time,dbo.F(Information,'StartTime')),Start_Time=@('StartTime'),End_Time=@('EndTime'),GUID from [TABLE-"+timing_tid+"] and GUID=@I2 ) ";
-                sql+=", task as (select V2,Information,S1,PUID from [TABLE-"+task_tid+"] where PUID=@I2) ";
-                sql+=",comb as (select st,PUID,V1,V2,Information,S1='a',Start_Time,End_Time from task join timing on PUID=GUID UNION ";
-            sql+="select st=Convert(Time,dbo.F(Information,'StartTime')),PUID,V1,V2,Information,S1='b',Start_Time=@('StartTime'),End_Time=@('EndTime') from [TABLE-"+task_tid+"] where PUID=@I2 ) "
-            sql+="select PUID,V1,V2,Information,Start_Time,End_Time from comb order by st"
-*/            //sql="select V1,V2,Information,starttime=Convert(Time,dbo.F(Information,'StartTime')),S1='b' from [TABLE-"+_db_pid+"] where DT1=@T1 and S1=@s1 order by starttime"
-            var sql="with fx as (select Staff='',File_Name='',job_type='',Task=@('Task'),Date=@('Date'),Task_Type='Added Time',Actual_Duration=V1,Total_Duration='',Minutes='',st=Convert(Time,dbo.F(Information,'StartTime')),Start_Time=@('StartTime'),End_Time=@('EndTime'),Status=@('Status'),GUID,ta=PUID,DT1 from [TABLE-"+timing_tid+"] where GUID=@I2 UNION ";
-                sql+="select Staff=@('Staff'),File_Name=@('File_Name'),job_type=@('job_type'),Task=@('Task'),Date=@('Date'),Task_Type=@('Task_Type'),Actual_Duration=V1,Total_Duration=V2,Minutes=V3,st=Convert(Time,dbo.F(Information,'StartTime')),Start_Time=@('StartTime'),End_Time=@('EndTime'),Status=@('Status'),PUID,ta=UID,DT1 from [TABLE-"+task_tid+"] where PUID=@I2 )";
-                sql+="select Staff,File_Name,job_type,Task,Date,Task_Type,st,Start_Time,End_Time,Actual_Duration,Status,Total_Duration,Minutes,ta from fx order by ta,DT1,st "
-
+            var sql="with timing as (select DT1,Date=@('i1Date'),Start_Time=@('i1StartTime'),End_Time=@('i1EndTime'),Actual_Duration=@('i1Actual_Duration'),PUID from [TABLE-"+timing_tid+"] where GUID=@I2 )";
+            sql+=",task as (select Staff=@('Staff'),File_Name=@('File_Name'),job_type=@('job_type'),Task=@('Task'),Task_Type=@('Task_Type'),Total_Duration=V2,Time_gap=V1,Minutes=@('Minutes'),Status=S3,UID from [TABLE-"+task_tid+"] where PUID=@I2 )";
+            sql+=" select Staff,File_Name,job_type,Task,Date,Task_Type,Actual_Duration,Total_Duration,Minutes,Time_gap,Start_Time,End_Time,Status from timing join task on PUID=UID order by Task,DT1";
             _req={cmd:'query_records',sql:sql,t1:$('#t1__ID').val(),i2:id[0]}
         }
         //-------------------------------------
         _data_process=function(){
-            var total=0;
-            var timegap=0;
-            var rec=0;
-            var task=0;
-            for(var i=0;i<_records.length;i++){
-                if(task!==parseInt(_records[i].ta)){
-                    task=parseInt(_records[i].ta);
-                    _records[i].Time_gap=parseInt(_records[i].Minutes)-parseInt(_records[i].Total_Duration);
-                }
-                else{
-                    _records[i].Total_Duration='';
-                    _records[i].Minutes='';
-                    _records[i].Time_gap='';
-                }
-            }
-//            _records[_records.length-1].Time_gap=parseInt(_records[_records.length-1].Total_Duration)-parseInt(_records[_records.length-1].Minutes)
         }
         //-------------------------------------
         var _request_data_export=function(){
             $VmAPI.request({data:_req,callback:function(res){
-                //_records=data_process(res.records);
                 _export_data(_filename);
             }})
         }
+        //-------------------------------------
+        var help='<div class="container">\
+                <div class="row">\
+                    <div class="col-sm-2 text-content text-left">\
+                        <h4><i class="fa fa-search"></i> = Search </h4>\
+                        <p>Updates the result based on selected criteria<br>\
+                        </p>\
+                        <br>\
+                    </div>\
+                    <div class="col-sm-2 text-content text-left">\
+                        <h4><i class="fa fa-download"></i> = Export</h4>\
+                        <p>Exporting the tax invoice list to excel format (.csv)</p>\
+                        <br>\
+                    </div>\
+                </div>\
+            </div>'
         //-------------------------------------
     }
 </script>

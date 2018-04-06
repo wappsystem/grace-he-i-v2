@@ -1,0 +1,46 @@
+<section>
+	<div id=toolbar__ID class="navbar navbar-default">
+		<div id=row_1__ID class="col-sm _col-lg-3 form-inline">
+			<a class="col-"><button type="button" class='btn btn-info btn-sm ' data-toggle="collapse" data-target="#help__ID" title="Help - Intructions" ><i class="fa fa-info"></i></button></a>
+			<div id=add_search__ID></div>
+			<button id=aquery__ID type=button class="btn btn-secondary btn-sm" title='Search for keyword'><i class="fa fa-search" ></i></button>
+		</div>
+		<div class="d-none d-lg-inline-block col-lg-4 form-inline">
+				<button id=export__ID type=button class="btn btn-secondary btn-sm" title=Export><i class="fa fa-download" ></i></button>
+		</div>
+		<span id=elapsed__ID style='float:right;display:none' ></span>
+    </div>
+	<div id=title__ID class="h6 text-left"></div>
+	<div id=help__ID class="collapse"></div>
+    <div id=table__ID>
+        <table id=grid__ID></table>
+    </div>
+</section>
+<style>
+	#toolbar__ID{
+		background-color:#ccc;
+		padding:5px 0px;
+		margin-bottom:0px;
+		overflow:hidden
+	}
+	#toolbar__ID *{
+		margin-right:3px;
+	}
+	@media screen and (max-width:768px){
+		#toolbar__ID{
+			padding: 3px 0;
+		}
+		#toolbar__ID div{
+			padding-left:3px;
+		}
+		#row_1__ID{
+			padding-bottom: 3px;
+		}
+	}
+	#title__ID{
+		margin:0.3rem;
+	}
+	#help_botton__ID,#new__ID,#save__ID,#aquery__ID,#p__ID,#n__ID,#export__ID{
+		cursor: pointer;
+	}
+</style>

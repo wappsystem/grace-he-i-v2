@@ -42,6 +42,7 @@
         "task_not_completed":	            {"table_id":"20007386","url":"/modules/client/task_not_completed.html"},
         "task_daily_not_completed":	        {"table_id":"20007386","url":"/modules/client/task_daily_not_completed.html","form_module":"task_record_form"},
         "task_daily_assigned":	            {"table_id":"20007386","url":"/modules/client/task_daily_assigned.html","form_module":"task_record_form"},
+        "staff_payment_period":	            {"table_id":"20011203","url":"/modules/client/staff_payment_period.html"},
         "job_status_list":	                {"table_id":"20007377","url":"/modules/setup/job_status_list.html"},
         "job_type_list":	                {"table_id":"20010733","url":"/modules/setup/job_type_list.html"},
         "staff_list":	                    {"table_id":"20007376","url":"/modules/setup/staff_list.html"},
@@ -59,7 +60,6 @@
         "report_scheduled_job_details":	                    {"table_id":"20007387","url":"/modules/reports/report_scheduled_job_details.html"},
         "report_staff_daily_work":	                    {"table_id":"20007386","url":"/modules/reports/report_staff_daily_work.html"},
         "report_staff_daily_work_tasks":	                    {"table_id":"20007386","url":"/modules/reports/report_staff_daily_work_tasks.html"},
-        "staff_payment_period":	                    {"table_id":"20011203","url":"/modules/reports/staff_payment_period.html"},
         "report_task_assign_date":	                    {"table_id":"20007386","url":"/modules/reports/report_task_assign_date.html"},
         "report_task_due_date":	                    {"table_id":"20007386","url":"/modules/reports/report_task_due_date.html"}
 	}

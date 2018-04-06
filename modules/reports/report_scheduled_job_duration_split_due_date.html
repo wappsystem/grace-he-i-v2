@@ -35,12 +35,12 @@
     }});
     $List.val();
     //---------------------------------------------
-    _fields="_Hidden|PUID,Applicant ID|applicant_uid,Applicant|applicant,File Name|File_Name,Application|job_type,Assigned_Date,Due_Date,Allocated,Total,Time_Gap,Admin,Accounting,Normal-School|Normal_School,Normal-Visa|Normal_Visa,Other,Status";
+    _fields="Applicant ID|applicant_uid,Applicant|applicant,File Name|File_Name,Application|job_type,Assigned_Date,Due_Date,Allocated,Total,Time_Gap,Admin,Accounting,Normal-School|Normal_School,Normal-Visa|Normal_Visa,Other,Status";
     //-------------------------------------
-    $('#aquery__ID').on('click',function(){ $("#title__ID").text('Application - Calculate Duration - Search Based on Assigned Date');$('#help__ID').html(help); _set_req(); _request_data();  })
+    $('#aquery__ID').on('click',function(){ $("#title__ID").text('Application - Calculate Duration - Search Based on Due Date');$('#help__ID').html(help); _set_req(); _request_data();  })
     //-------------------------------------
     _set_req=_set_req_export=function(){
-        var sql="with tb as (select Information,UID from [TABLE-"+scheduler_tid+"] where convert(date,DT1)>=@T1 and convert(date,DT1)<=@T2 and  S2 like '%'+@S1+'%' )";
+        var sql="with tb as (select Information,UID from [TABLE-"+scheduler_tid+"] where convert(date,DT2)>=@T1 and convert(date,DT2)<=@T2 and  S2 like '%'+@S1+'%' )";
         sql+=", tb1 as (select Allocated=sum(V3),Total=sum(V2),Time_Gap=sum(V1),PUID,Task_Type=@('Task_Type') from [TABLE-"+_db_pid+"] group by PUID,@('Task_Type') ) ";
         sql+=" select Information,Allocated,Total,Time_Gap,Task_Type,PUID from tb left join tb1 on UID=PUID order by PUID"
         _req={cmd:'query_records',sql:sql,t1:$('#t1__ID').val(),t2:$('#t2__ID').val(),s1:$('#application__ID').val()}
@@ -120,7 +120,6 @@
                     records.Due_Date=data_records[i].Due_Date;
                     records.Status=data_records[i].Status;
                     records.job_type=data_records[i].job_type;
-                    records.PUID=data_records[i].PUID;
                     r.push(records);
                     records={};
                     alloc=0;actual=0;timegap=0;
@@ -138,7 +137,6 @@
                 records.Status=data_records[i].Status;
                 records.applicant_uid=data_records[i].applicant_uid;
                 records.job_type=data_records[i].job_type;
-                records.PUID=data_records[i].PUID;
                 r.push(records);
             }
         }
@@ -151,6 +149,7 @@
             _export_data(_filename);
         }})
     }
+    //-------------------------------------
     //-------------------------------------
     var help='<div class="container">\
             <div class="row">\
