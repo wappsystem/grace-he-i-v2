@@ -7,18 +7,16 @@
         VmInclude:__COMPONENT__/grid/grid.v3.js
         VmInclude:__COMPONENT__/style/ease-in-out.2.js
         //-------------------------------------
-        _fields="_Form,_Hidden|job_type_uid,Job Type|job_type,Task|Task,Allocated Hours|Hours,Allocated Minutes|Minutes,Task_Type";
+        _fields="_Form,_Hidden|job_type_uid,Job Type|job_type,Task|Task,Allocated Hours|Hours,Allocated Minutes|Minutes,Task_Group,Task_Type";
         _fields+=",Submit Date|DateTime,Submitted by|Author,_Delete";
         //-------------------------------------
         //input needed in module input variables
-        var m_var=$vm.module_list[$vm.vm['__ID'].name].var;
-        var job_type_pid=m_var.job_type_list_tid;
-        var sql_job_type=m_var.sql_job_type_uid;
+        var job_type_pid=$vm.module_list['job_type_list'].table_id;
         //-------------------------------------
         $("#title__ID").text('Task List');
         //-------------------------------------
-        $('#D__ID').on('load',function(){ _set_req(); _request_data();} )
-        $('#D__ID').on('back',function(){ _set_req(); _request_data();} )
+        $('#D__ID').on('load',function(){ $("#title__ID").text('Job Type List - Task List');$('#help__ID').html(help);_set_req(); _request_data();} )
+        $('#D__ID').on('back',function(){ $("#title__ID").text('Job Type List - Task List');$('#help__ID').html(help);_set_req(); _request_data();} )
         //-------------------------------------
         _set_req=function(){
             var where="";
@@ -36,6 +34,15 @@
         //-------------------------------------
         _cell_render=function(records,I,field,td,set_value,source){
             switch(field){
+                case 'Task_Group':
+                    var html="<select style='border:0;'>\
+                    <option >Before Application</option>\
+                    <option >During Application</option>\
+                    <option >Finalize Application</option>\
+                    </select>\
+                    ";
+                    VmInclude:__COMPONENT__/grid/field_select.js
+                    break;
                 case 'Task_Type':
                     var html="<select style='border:0;'>\
                     <option value='Normal_Visa'>Normal-Visa</option>\
@@ -77,7 +84,46 @@
 
             }
 */        }
-//-------------------------------------
+        //-------------------------------------
+        var help='<div class="container">\
+                <div class="row">\
+                    <div class="col-sm-2 text-content text-left">\
+                        <h4>Symbols in job type list</h4>\
+                        <p><i class="fa fa-pencil-square-o"></i> Edit / change details</p>\
+                        <p><i class="fa fa-trash-o"></i> Delete job type</p>\
+                        <br>\
+                    </div>\
+                    <div class="col-sm-2 text-content text-left">\
+                        <h4><i class="fa fa-plus"></i> = Add job type</h4>\
+                        <p>Entry can be done directly in the grid</p>\
+                        <p>Click on <i class="fa fa-pencil-square-o"></i> to edit job type record in other form</p>\
+                        <p>REMEMBER Click on <i class="fa fa-upload"></i> to save the changes</p>\
+                        <br>\
+                    </div>\
+                    <div class="col-sm-2 text-content text-left">\
+                        <h4><i class="fa fa-upload"></i> = Save change</h4>\
+                        <p>This button will turn red when change has been made.<br>Click to save changes.</p>\
+                        <br>\
+                    </div>\
+                    <div class="col-sm-2 text-content text-left">\
+                        <h4><i class="fa fa-search"></i> = Search </h4>\
+                        <p>If Keyword is empty reload job type list.<br>\
+                        Search for full words in Keyword from the job type list.</p>\
+                        <br>\
+                    </div>\
+                    <div class="col-sm-2 text-content text-left">\
+                        <h4><i class="fa fa-arrow-left"></i> = Previous</h4>\
+                        <h4><i class="fa fa-arrow-right"></i> = Next Page</h4>\
+                        <p>If all job types don&apos;t fit into one page, these arrows can be used for paging </p>\
+                        <br>\
+                    </div>\
+                    <div class="col-sm-2 text-content text-left">\
+                        <h4><i class="fa fa-download"></i> = Export</h4>\
+                        <p>Exporting the job type list to excel format (.csv)</p>\
+                        <br>\
+                    </div>\
+                </div>\
+            </div>'
     }
 </script>
 <style>

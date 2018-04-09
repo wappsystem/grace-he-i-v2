@@ -10,6 +10,8 @@
         _fields="_Form,Job Type List|Job_type,_Task,_Document_check";
         _fields+=",Submit Date|DateTime,Submitted by|Author,_Delete";
         //-------------------------------------
+        var prefix=_mlist[$vm.vm['__ID'].name].prefix; if(prefix==undefined) prefix="";
+        //-------------------------------------
         $('#D__ID').on('load',function(){ $("#title__ID").text('Job Type List');$('#help__ID').html(help);_set_req(); _request_data();} )
         $('#D__ID').on('back',function(){ $("#title__ID").text('Job Type List');$('#help__ID').html(help);_set_req(); _request_data();} )
         //-------------------------------------
@@ -20,10 +22,8 @@
                     if(_records[I].UID===undefined) return;
                     td.html("<u style='cursor:pointer'>Task List..</u>");
                     td.find('u').on('click',function(){
-						//*****************************************************************************************************
-						if(_module.var==undefined){ _module.var={}, _module.var.task_list_module=_config.module_ids.task_list;}
-						//*****************************************************************************************************
-                        $vm.load_module_by_name(_module.var.task_list_module,$vm.root_layout_content_slot,{
+                        $vm.load_module_by_name(prefix+'task_list',$vm.root_layout_content_slot,{
+//                        $vm.load_module_by_name(_module.var.task_list_module,$vm.root_layout_content_slot,{
                             rid:_records[I].ID,job_type_uid:_records[I].UID,
                             job_type:_records[I].Job_type,
                         });
@@ -34,10 +34,8 @@
                     if(_records[I].UID===undefined) return;
                     td.html("<u style='cursor:pointer'>Document Checklist..</u>");
                     td.find('u').on('click',function(){
-						//*****************************************************************************************************
-						if(_module.var==undefined){ _module.var={}, _module.var.document_check_list_module=_config.module_ids.document_check_list;}
-						//*****************************************************************************************************
-                        $vm.load_module_by_name(_module.var.document_check_list_module,$vm.root_layout_content_slot,{
+                        $vm.load_module_by_name(prefix+'document_check_list',$vm.root_layout_content_slot,{
+////                        $vm.load_module_by_name(_module.var.document_check_list_module,$vm.root_layout_content_slot,{
                             rid:_records[I].ID,job_type_uid:_records[I].UID,
                             job_type:_records[I].Job_type,
                         });

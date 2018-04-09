@@ -11,17 +11,14 @@
         _fields+=",Submit Date|DateTime,Submitted by|Author,_Delete";
         //-------------------------------------
         //input needed in module input variables
-        var m_var=$vm.module_list[$vm.vm['__ID'].name].var;
-        var job_type_pid=m_var.job_type_list_tid;
-        var sql_job_type=m_var.sql_job_type_uid;
-        var document_type_list_tid=m_var.document_type_list_tid;
-        var task_list_tid=m_var.task_list_tid;
+        var job_type_pid=$vm.module_list['job_type_list'].table_id;
+        var document_type_list_tid=$vm.module_list['document_type_list'].table_id;
+        var task_list_tid=$vm.module_list['task_list'].table_id;
         //-------------------------------------
-        $("#title__ID").text('Task List');
         var job_type_uid='';
         //-------------------------------------
-        $('#D__ID').on('load',function(){ job_type_uid=$vm.vm['__ID'].op.job_type_uid;_set_req(); _request_data();} )
-        $('#D__ID').on('back',function(){ job_type_uid=$vm.vm['__ID'].op.job_type_uid;_set_req(); _request_data();} )
+        $('#D__ID').on('load',function(){ job_type_uid=$vm.vm['__ID'].op.job_type_uid;$("#title__ID").text('Job Type List - Document Check List');$('#help__ID').html(help);_set_req(); _request_data();} )
+        $('#D__ID').on('back',function(){ job_type_uid=$vm.vm['__ID'].op.job_type_uid;$("#title__ID").text('Job Type List -  Document Check List');$('#help__ID').html(help);_set_req(); _request_data();} )
         //-------------------------------------
         _set_req=function(){
             var where="";
@@ -41,12 +38,12 @@
                     td.css('color','#888');
                     break;
                 case 'Document':
-                    var sql="with tb as (select name=@('Document_Type'),value2=uid from [TABLE-"+document_type_list_tid+"])";
+                    var sql="with tb as (select name=JSON_VALUE(Information,'$.Document_Type'),value2=uid from [TABLE-"+document_type_list_tid+"])";
                     sql+=" select top 10 name,value=name,value2 from tb where Name like '%'+@S1+'%' ";
                     VmInclude:__COMPONENT__/grid/field_auto.js
                     break;
                 case 'Task':
-                    var sql="with tb as (select S1,name=@('Task'),value2=uid from [TABLE-"+task_list_tid+"] where PUID=@I2)";
+                    var sql="with tb as (select S1,name=JSON_VALUE(Information,'$.Task'),value2=uid from [TABLE-"+task_list_tid+"] where PUID=@I2)";
                     sql+=" select top 10 name,S1,value=name,value2 from tb where Name like '%'+@S1+'%' order by S1";
                     td.autocomplete({
                         minLength:0,
@@ -99,7 +96,46 @@
 
             }
         }
-//-------------------------------------
+        //-------------------------------------
+        var help='<div class="container">\
+                <div class="row">\
+                    <div class="col-sm-2 text-content text-left">\
+                        <h4>Symbols in job type list</h4>\
+                        <p><i class="fa fa-pencil-square-o"></i> Edit / change details</p>\
+                        <p><i class="fa fa-trash-o"></i> Delete job type</p>\
+                        <br>\
+                    </div>\
+                    <div class="col-sm-2 text-content text-left">\
+                        <h4><i class="fa fa-plus"></i> = Add job type</h4>\
+                        <p>Entry can be done directly in the grid</p>\
+                        <p>Click on <i class="fa fa-pencil-square-o"></i> to edit job type record in other form</p>\
+                        <p>REMEMBER Click on <i class="fa fa-upload"></i> to save the changes</p>\
+                        <br>\
+                    </div>\
+                    <div class="col-sm-2 text-content text-left">\
+                        <h4><i class="fa fa-upload"></i> = Save change</h4>\
+                        <p>This button will turn red when change has been made.<br>Click to save changes.</p>\
+                        <br>\
+                    </div>\
+                    <div class="col-sm-2 text-content text-left">\
+                        <h4><i class="fa fa-search"></i> = Search </h4>\
+                        <p>If Keyword is empty reload job type list.<br>\
+                        Search for full words in Keyword from the job type list.</p>\
+                        <br>\
+                    </div>\
+                    <div class="col-sm-2 text-content text-left">\
+                        <h4><i class="fa fa-arrow-left"></i> = Previous</h4>\
+                        <h4><i class="fa fa-arrow-right"></i> = Next Page</h4>\
+                        <p>If all job types don&apos;t fit into one page, these arrows can be used for paging </p>\
+                        <br>\
+                    </div>\
+                    <div class="col-sm-2 text-content text-left">\
+                        <h4><i class="fa fa-download"></i> = Export</h4>\
+                        <p>Exporting the job type list to excel format (.csv)</p>\
+                        <br>\
+                    </div>\
+                </div>\
+            </div>'
     }
 </script>
 <style>
