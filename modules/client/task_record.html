@@ -8,7 +8,7 @@
         VmInclude:__COMPONENT__/style/ease-in-out.2.js
 //        Vm Include:__BASE__/wappsystem/grace-he-i/Modules/Control_panels/job_sub.js
         //-------------------------------------
-        _fields="_Form,Application ID|job_uid,_Hidden|job_type_uid,File_Name,Job|job_type,_Documents,Task ID|Task_id,Staff,_Hidden|Task_uid,Task,Type|Task_Type,Status,Colour,Urgent,Notes,_Notes_Admin,Notes_Adm,Assigned Date|Assigned_Date,Date_Completed,Due_Date,Alloc. Minutes|Minutes,Total Duration|Total_Duration,Time gap|Time_gap";
+        _fields="_Form,Application ID|job_uid,_Hidden|job_type_uid,File_Name,Job|job_type,_Documents,Task ID|Task_id,Staff,_Hidden|Task_uid,Task,Group|Task_Group,Type|Task_Type,Status,Colour,Urgent,Notes,_Notes_Admin,Notes_Adm,Assigned Date|Assigned_Date,Date_Completed,Due_Date,Alloc. Minutes|Minutes,Total Duration|Total_Duration,Time gap|Time_gap";
         _fields_e="File_Name,Job|job_type,Task ID|UID,Staff,Task,Type|Task_Type,Status,Colour,Notes,Notes_Admin,Assigned Date|Assigned_Date,Date_Completed,Due_Date,Alloc. Minutes|Minutes,Total Duration|Total_Duration,Time gap|Time_gap";
         _fields+=",Submit Date|DateTime,Submitted by|Author,_Delete";
         //-------------------------------------
@@ -54,7 +54,7 @@
             if (admin[notes_admin_tid]=='1') {
                 sql="with adm as (select ID from [TABLE-"+notes_admin_tid+"])"
                 sql+=",job as (select job_uid=UID from [FORM-"+job_tid+"] "+job_where+" )";
-                sql+=",notes as (select Notes_Adm=@('Notes_Admin'),note_puid=PUID from [TABLE-"+notes_admin_tid+"] )";
+                sql+=",notes as (select Notes_Adm=JSON_VALUE(Information,'$.Notes_Admin'),note_puid=PUID from [TABLE-"+notes_admin_tid+"] )";
                 sql+=",task as (select ID,Task_id=UID,UID,PUID,S3,Notes_Adm,Information,DateTime,Author,RowNum=row_number() over (order by ID DESC) from [TABLE-"+_db_pid+"-@S1] join job on PUID=job_uid left join notes on UID=note_puid)";
                 sql+="select ID,S3,Task_id,UID,Notes_Adm,Information,DateTime,Author,RowNum,dirty=0, valid=1 from task where RowNum between @I6 and @I7";
                 sql_n="with job as (select job_uid=UID from [TABLE-"+job_tid+"] "+job_where+" )";
@@ -85,6 +85,7 @@
                 case 'Time_gap':
                 case 'Date_Completed':
                 case 'Task_Type':
+                case 'Task_Group':
                 case 'Notes_Adm':
                     records[I].vm_readonly[field]=true;
                     td.css('color','#888');
@@ -112,13 +113,13 @@
                     td.css('background-color',records[I].Colour);
                     break;
                 case 'Staff':
-                    var sql="with tb as (select name=@('Staff'),value2=uid from [TABLE-"+staff_list_tid+"])";
+                    var sql="with tb as (select name=JSON_VALUE(Information,'$.Staff'),value2=uid from [TABLE-"+staff_list_tid+"])";
                     sql+=" select top 10 name,value=name,value2 from tb where Name like '%'+@S1+'%' ";
                     VmInclude:__COMPONENT__/grid/field_auto.js
                     break;
                 case 'Task':
-                    var sql="with tb as (select name=@('Task'),value4=@('Task_Type'),value3=@('Hours')+':'+@('Minutes'),value2=uid from [TABLE-"+task_list_tid+"] where PUID="+job_type_uid+")";
-                    sql+=" select top 10 name,value=name,value2,value3,value4 from tb where Name like '%'+@S1+'%' ";
+                    var sql="with tb as (select name=JSON_VALUE(Information,'$.Task'),value5=JSON_VALUE(Information,'$.Task_Group'),value4=JSON_VALUE(Information,'$.Task_Type'),value3=JSON_VALUE(Information,'$.Hours')+':'+JSON_VALUE(Information,'$.Minutes'),value2=uid from [TABLE-"+task_list_tid+"] where PUID="+job_type_uid+")";
+                    sql+=" select top 10 name,value=name,value2,value3,value4,value5 from tb where Name like '%'+@S1+'%' ";
                     td.autocomplete({
                         minLength:0,
                         source:function(request,response){
@@ -132,12 +133,13 @@
                             records[I]['Task_uid']=ui.item.value2;
                             records[I]['Minutes']=mins;
                             records[I]['Task_Type']=ui.item.value4;
+                            records[I]['Task_Group']=ui.item.value5;
                         }
                     })
                     td.focus(function(){td.autocomplete("search","");});
                     break;
                 case 'Status':
-                    var sql="with tb as (select name=@('Job_status'),value3=@('Colour'),value2=uid from [TABLE-"+job_status_list_tid+"])";
+                    var sql="with tb as (select name=JSON_VALUE(Information,'$.Job_status'),value3=JSON_VALUE(Information,'$.Colour'),value2=uid from [TABLE-"+job_status_list_tid+"])";
                     sql+=" select top 10 name,value=name,value2,value3 from tb where Name like '%'+@S1+'%' ";
                     td.autocomplete({
                         minLength:0,

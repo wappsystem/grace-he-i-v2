@@ -39,7 +39,7 @@
     //-------------------------------------
     _set_req=_set_req_export=function(){
         var sql="with tb as (select Information,UID from [TABLE-"+scheduler_tid+"] where DATEPART(yy,DT1)=@I1 and DATEPART(mm,DT1)=@I2 )";
-        sql+=", tb1 as (select Allocated=sum(V3),Actual=sum(V1),Time_Gap=sum(V2),PUID,Task_Type=@('Task_Type') from [TABLE-"+_db_pid+"] group by PUID,@('Task_Type') ) ";
+        sql+=", tb1 as (select Allocated=sum(V3),Actual=sum(V1),Time_Gap=sum(V2),PUID,Task_Type=JSON_VALUE(Information,'$.Task_Type') from [TABLE-"+_db_pid+"] group by PUID,JSON_VALUE(Information,'$.Task_Type') ) ";
         sql+=" select Information,Allocated,Actual,Time_Gap,Task_Type,PUID from tb join tb1 on UID=PUID order by PUID"
         _req={cmd:'query_records',sql:sql,i1:$('#YY__ID').val(),i2:$('#MM__ID').val()}
     }

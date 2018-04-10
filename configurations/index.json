@@ -52,6 +52,7 @@
         "document_check_list":	            {"table_id":"20011093","url":"/modules/setup/document_check_list.html"},
         "commission_list":	                {"table_id":"20010745","url":"/modules/setup/commission_list.html"},
         "rate_list":	                    {"table_id":"20011199","url":"/modules/setup/rate_list.html"},
+        "timing_list":	                    {"table_id":"20011182","url":"/modules/setup/timing_list.html"},
         "timing_module":                    {"table_id":"20011182"},
         "report_staff_assignments":	                    {"table_id":"20007386","url":"/modules/reports/report_staff_assignments.html"},
         "report_scheduled_job_duration":	                    {"table_id":"20007386","url":"/modules/reports/report_scheduled_job_duration.html"},

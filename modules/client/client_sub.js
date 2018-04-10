@@ -1,7 +1,7 @@
 //-------------------------------------
 //input needed in module input variables
 var client_pid=$vm.module_list['client'].table_id;
-var sql_client="@('Applicant')";
+var sql_client="JSON_VALUE(Information,'$.Applicant')";
 //-------------------------------------
 var _task_fields='';
 //-------------------------------------

@@ -27,7 +27,7 @@
         $('#application__ID').autocomplete({
             minLength:0,
             source:function(request,response){
-                var sql="with tb as (select name=CONVERT(varchar, UID)+' - '+@('applicant')+' - '+@('File_Name')+' - '+@('job_type') from [TABLE-"+scheduler_tid+"])";
+                var sql="with tb as (select name=CONVERT(varchar, UID)+' - '+JSON_VALUE(Information,'$.applicant')+' - '+JSON_VALUE(Information,'$.File_Name')+' - '+JSON_VALUE(Information,'$.job_type') from [TABLE-"+scheduler_tid+"])";
                 sql+=" select top 10 name,value=name from tb where name like '%'+@S1+'%' ";
                 $VmAPI.request({data:{cmd:'auto',s1:request.term,sql:sql,minLength:0},callback:function(res){
                     response($vm.autocomplete_list(res.table));
@@ -41,9 +41,9 @@
         //-------------------------------------
         _set_req=_set_req_export=function(){
             var id=$('#application__ID').val().split(" ");
-            var sql="with tb2 as ( select inf=Information,job_type_uid=@('job_type_uid') from [TABLE-"+scheduler_tid+"] where UID=@I2 ) \
+            var sql="with tb2 as ( select inf=Information,job_type_uid=JSON_VALUE(Information,'$.job_type_uid') from [TABLE-"+scheduler_tid+"] where UID=@I2 ) \
                      ,tb as(select inf,req_doc=S1 from [TABLE-"+_db_pid+"] join tb2 on PUID=job_type_uid ) \
-            		 ,tb1 as (select ID,uploaded_docs=@('Document'),Type=@('Type'),B1 from [TABLE-"+documents_tid+"] where PUID=@I2 ) \
+            		 ,tb1 as (select ID,uploaded_docs=JSON_VALUE(Information,'$.Document'),Type=JSON_VALUE(Information,'$.Type'),B1 from [TABLE-"+documents_tid+"] where PUID=@I2 ) \
                      select ID,Information=inf,req_doc,uploaded_docs,B1 from tb left join tb1 on req_doc=Type ";
             _req={cmd:'query_records',sql:sql,i2:id[0]}
         }

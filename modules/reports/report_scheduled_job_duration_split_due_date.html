@@ -41,7 +41,7 @@
     //-------------------------------------
     _set_req=_set_req_export=function(){
         var sql="with tb as (select Information,UID from [TABLE-"+scheduler_tid+"] where convert(date,DT2)>=@T1 and convert(date,DT2)<=@T2 and  S2 like '%'+@S1+'%' )";
-        sql+=", tb1 as (select Allocated=sum(V3),Total=sum(V2),Time_Gap=sum(V1),PUID,Task_Type=@('Task_Type') from [TABLE-"+_db_pid+"] group by PUID,@('Task_Type') ) ";
+        sql+=", tb1 as (select Allocated=sum(V3),Total=sum(V2),Time_Gap=sum(V1),PUID,Task_Type=JSON_VALUE(Information,'$.Task_Type') from [TABLE-"+_db_pid+"] group by PUID,JSON_VALUE(Information,'$.Task_Type') ) ";
         sql+=" select Information,Allocated,Total,Time_Gap,Task_Type,PUID from tb left join tb1 on UID=PUID order by PUID"
         _req={cmd:'query_records',sql:sql,t1:$('#t1__ID').val(),t2:$('#t2__ID').val(),s1:$('#application__ID').val()}
     }

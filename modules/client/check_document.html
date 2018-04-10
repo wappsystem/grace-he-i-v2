@@ -28,7 +28,7 @@
     //-------------------------------------
     _set_req=_set_req_export=function(){
         var sql="with tb as(select req_doc=S1 from [TABLE-"+_db_pid+"] where PUID=@I1 ) \
-        		 ,tb1 as (select ID,uploaded_docs=@('Document'),Type=@('Type'),B1 from [TABLE-"+documents_tid+"] where PUID=@I2 ) \
+        		 ,tb1 as (select ID,uploaded_docs=JSON_VALUE(Information,'$.Document'),Type=JSON_VALUE(Information,'$.Type'),B1 from [TABLE-"+documents_tid+"] where PUID=@I2 ) \
                  select ID,req_doc,uploaded_docs,B1 from tb left join tb1 on req_doc=Type ";
         _req={cmd:'query_records',sql:sql,i1:job_type_uid,i2:applicant_uid}
     }

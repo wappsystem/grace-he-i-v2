@@ -29,7 +29,7 @@
     $('#t1__ID').val($.datepicker.formatDate('dd/mm/yy', today));
     $('#t2__ID').val($.datepicker.formatDate('dd/mm/yy', today));
     //---------------------------------------------
-    _fields="Application ID|job_uid,File_Name,Job|job_type,Task ID|Task_id,Staff,Task,Type|Task_Type,Status,Colour,Urgent,Notes,Notes_Admin,Assigned Date|Assigned_Date,Date_Completed,Due_Date,Alloc. Minutes|Minutes,Total Duration|Total_Duration,Time gap|Time_gap";
+    _fields="Application ID|job_uid,File_Name,Job|job_type,Task ID|Task_id,Staff,Task,Group|Task_Group,Type|Task_Type,Status,Colour,Urgent,Notes,Notes_Admin,Assigned Date|Assigned_Date,Date_Completed,Due_Date,Alloc. Minutes|Minutes,Total Duration|Total_Duration,Time gap|Time_gap";
     //-------------------------------------
     $('#aquery__ID').on('click',function(){ $("#title__ID").text('Task - Search Based on Assigned Date');$('#help__ID').html(help); _set_req(); _request_data();  })
     //-------------------------------------

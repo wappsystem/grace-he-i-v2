@@ -69,12 +69,12 @@
                     VmInclude:__COMPONENT__/grid/field_color.js
                     break;
                 case 'job_type':
-                    var sql="with tb as (select name=@('Job_type'),value2=uid from [TABLE-"+job_type_list_tid+"])";
+                    var sql="with tb as (select name=JSON_VALUE(Information,'$.Job_type'),value2=uid from [TABLE-"+job_type_list_tid+"])";
                     sql+=" select top 10 name,value=name,value2 from tb where Name like '%'+@S1+'%' ";
                     VmInclude:__COMPONENT__/grid/field_auto.js
                     break;
                 case 'applicant':
-                    var sql="with tb as (select name=@('Givennames')+' '+@('Surname'),value2=uid,value3=@('File_Name') from [TABLE-"+applicant_tid+"])";
+                    var sql="with tb as (select name=JSON_VALUE(Information,'$.Givennames')+' 'JSON_VALUE(Information,'$.Surname'),value2=uid,value3=JSON_VALUE(Information,'$.File_Name') from [TABLE-"+applicant_tid+"])";
                     sql+=" select top 10 name,value=name,value2,value3 from tb where Name like '%'+@S1+'%' ";
                     td.autocomplete({
                         minLength:0,
@@ -104,7 +104,7 @@
                     td.focus(function(){td.autocomplete("search","");});
                     break;
                 case 'Status':
-                    var sql="with tb as (select name=@('Job_status'),value3=@('Colour'),value2=uid from [TABLE-"+job_status_list_tid+"])";
+                    var sql="with tb as (select name=JSON_VALUE(Information,'$.Job_status'),value3=JSON_VALUE(Information,'$.Colour'),value2=uid from [TABLE-"+job_status_list_tid+"])";
                     sql+=" select top 10 name,value=name,value2,value3 from tb where Name like '%'+@S1+'%' ";
                     td.autocomplete({
                         minLength:0,

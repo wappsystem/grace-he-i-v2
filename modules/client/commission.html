@@ -30,7 +30,7 @@
                     VmInclude:__COMPONENT__/grid/field_date.js
                     break;
                 case 'Client':
-                    var sql="with tb as (select name=@('Givennames')+' '+@('Surname'),value2=uid,value3=@('File_Name') from [TABLE-"+client_tid+"] )";
+                    var sql="with tb as (select name=JSON_VALUE(Information,'$.Givennames')+' '+JSON_VALUE(Information,'$.Surname'),value2=uid,value3=JSON_VALUE(Information,'$.File_Name') from [TABLE-"+client_tid+"] )";
                     sql+=" select top 10 name,value=name,value2,value3 from tb where Name like '%'+@S1+'%' ";
                     td.autocomplete({
                         minLength:0,

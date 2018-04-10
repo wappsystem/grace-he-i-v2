@@ -52,7 +52,7 @@
                     VmInclude:__COMPONENT__/grid/field_checkbox.js
                 break;
                 case 'Type':
-                    var sql="with tb as (select name=@('Document_Type'),value2=uid from [TABLE-"+document_type_list_tid+"])";
+                    var sql="with tb as (select name=JSON_VALUE(Information,'$.Document_Type'),value2=uid from [TABLE-"+document_type_list_tid+"])";
                     sql+=" select top 10 name,value=name,value2 from tb where Name like '%'+@S1+'%' ";
                     VmInclude:__COMPONENT__/grid/field_auto.js
                     break;

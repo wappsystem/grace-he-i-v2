@@ -31,7 +31,7 @@
         })
         //-------------------------------------
         _set_req=function(){
-            var sql="select Notes_Admin=@('Notes_Admin') from [TABLE-"+_db_pid+"] where PUID=@I2 ";
+            var sql="select Notes_Admin=JSON_VALUE(Information,'$.Notes_Admin') from [TABLE-"+_db_pid+"] where PUID=@I2 ";
             _req={cmd:"query_records",sql:sql,i2:task_uid};
             $VmAPI.request({data:_req,callback:function(res){
                 if(res.records.length>0){

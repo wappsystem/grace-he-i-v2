@@ -28,7 +28,7 @@
         _cell_render=function(records,I,field,td,set_value,source){
             switch(field){
                 case 'Staff':
-                    var sql="with tb as (select name=@('Staff'),value2=uid from [TABLE-"+staff_list_tid+"])";
+                    var sql="with tb as (select name=JSON_VALUE(Information,'$.Staff'),value2=uid from [TABLE-"+staff_list_tid+"])";
                     sql+=" select top 10 name,value=name,value2 from tb where Name like '%'+@S1+'%' ";
                     VmInclude:__BASE__/vmiis/Common-Code/grid/field_auto.js
                     break;

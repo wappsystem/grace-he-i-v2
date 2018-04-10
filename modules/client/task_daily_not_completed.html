@@ -8,7 +8,7 @@
         VmInclude:__COMPONENT__/style/ease-in-out.2.js
 //        Vm Include:__BASE__/wappsystem/grace-he-i/Modules/Control_panels/job_sub.js
         //-------------------------------------
-        _fields="_Hidden|applicant_uid,Application ID|job_uid,_Hidden|job_type_uid,File_Name,Job|job_type,_Documents,Task ID|UID,Staff,_Hidden|Task_uid,Task,Type|Task_Type,Status,Colour,Urgent,Notes,Notes_Admin,Assigned Date|Assigned_Date,Date_Completed,Due_Date,Add work times..|_Form,Alloc. Minutes|Minutes,Total Duration|Total_Duration,Time gap|Time_gap";
+        _fields="_Hidden|applicant_uid,Application ID|job_uid,_Hidden|job_type_uid,File_Name,Job|job_type,_Documents,Task ID|UID,Staff,_Hidden|Task_uid,Task,Group|Task_Group,Type|Task_Type,Status,Colour,Urgent,Notes,Notes_Admin,Assigned Date|Assigned_Date,Date_Completed,Due_Date,Add work times..|_Form,Alloc. Minutes|Minutes,Total Duration|Total_Duration,Time gap|Time_gap";
         _fields_e="File_Name,Job|job_type,Task ID|UID,Staff,Task,Type|Task_Type,Status,Colour,Notes,Notes_Admin,Assigned Date|Assigned_Date,Date_Completed,Due_Date,Alloc. Minutes|Minutes,Total Duration|Total_Duration,Time gap|Time_gap";
         //_fields+=",Submit Date|DateTime,Submitted by|Author,_Delete";
         //-------------------------------------
@@ -77,6 +77,7 @@
                 case 'Time_gap':
                 case 'Date_Completed':
                 case 'Task_Type':
+                case 'Task_Group':
                 case 'Assigned_Date':
                     records[I].vm_readonly[field]=true;
                     td.css('color','#888');
@@ -107,7 +108,7 @@
                     break;
 */
                 case 'Status':
-                    var sql="with tb as (select name=@('Job_status'),value3=@('Colour'),value2=uid from [TABLE-"+job_status_list_tid+"])";
+                    var sql="with tb as (select name=JSON_VALUE(Information,'$.Job_status'),value3=JSON_VALUE(Information,'$.Colour'),value2=uid from [TABLE-"+job_status_list_tid+"])";
                     sql+=" select top 10 name,value=name,value2,value3 from tb where Name like '%'+@S1+'%' ";
                     td.autocomplete({
                         minLength:0,

@@ -15,7 +15,7 @@
     $('#add_search__ID').append("<span>&nbsp;Date:</span> <input  class='form-control form-control-sm' type=text id=t1__ID placeholder='' style='width:100px;padding-left:3px' />\
         <select class='form-control form-control-sm' id=staff__ID></select>");
     //-------------------------------------
-        _fields="Staff,File_Name,job_type,Task,Task_Type,Start_Time,End_Time,Mins|Actual_Duration,_Hidden|Minutes,_Hidden|Total_Duration,_Hidden|Time_gap,Status";
+        _fields="Staff,File_Name,job_type,Task,Task_Group,Task_Type,Start_Time,End_Time,Mins|Actual_Duration,_Hidden|Minutes,_Hidden|Total_Duration,_Hidden|Time_gap,Status";
         //_fields+=",Submit Date|DateTime,Submitted by|Author,_Delete";
         //-------------------------------------
         $('#aquery__ID').on('click',function(){ $("#title__ID").text('Staff - Daily Work - Time Spent on Tasks');$('#help__ID').html(help); _set_req(); _request_data();  })
@@ -43,9 +43,9 @@
                 sql+="select Staff=@('Staff'),File_Name=@('File_Name'),job_type=@('job_type'),Task=@('Task'),Date=@('Date'),Task_Type=@('Task_Type'),Actual_Duration=V1,Total_Duration=V2,Minutes=V3,st=Convert(Time,dbo.F(Information,'StartTime')),Start_Time=@('StartTime'),End_Time=@('EndTime'),Status=@('Status'),PUID,ta=UID,DT1 from [TABLE-"+task_tid+"] where DT1=@T1 and S1 like '%'+@S1+'%' )";
                 sql+="select Staff,File_Name,job_type,Task,Date,Task_Type,st,Start_Time,End_Time,Actual_Duration,Status,Total_Duration,Minutes,ta from fx order by st "
 */
-                var sql="with timing as (select DT1,Date=@('i1Date'),Start_Time=@('i1StartTime'),End_Time=@('i1EndTime'),Actual_Duration=@('i1Actual_Duration'),PUID from [TABLE-"+timing_tid+"]  where DT2=@T1  )";
-                sql+=",task as (select Staff=@('Staff'),File_Name=@('File_Name'),job_type=@('job_type'),Task=@('Task'),Task_Type=@('Task_Type'),Total_Duration=V2,Time_gap=V1,Minutes=@('Minutes'),Status=S3,UID from [TABLE-"+task_tid+"] where S1 like '%'+@S1+'%' )";
-                sql+=" select Staff,File_Name,job_type,Task,Date,Task_Type,Actual_Duration,Total_Duration,Minutes,Time_gap,Start_Time,End_Time,Status from task join timing on PUID=UID order by DT1";
+                var sql="with timing as (select DT1,Date=JSON_VALUE(Information,'$.i1Date'),Start_Time=JSON_VALUE(Information,'$.i1StartTime'),End_Time=JSON_VALUE(Information,'$.i1EndTime'),Actual_Duration=JSON_VALUE(Information,'$.i1Actual_Duration'),PUID from [TABLE-"+timing_tid+"]  where DT2=@T1  )";
+                sql+=",task as (select Staff=JSON_VALUE(Information,'$.Staff'),File_Name=JSON_VALUE(Information,'$.File_Name'),job_type=JSON_VALUE(Information,'$.job_type'),Task=JSON_VALUE(Information,'$.Task'),Task_Type=JSON_VALUE(Information,'$.Task_Type'),Task_Group=JSON_VALUE(Information,'$.Task_Group'),Total_Duration=V2,Time_gap=V1,Minutes=JSON_VALUE(Information,'$.Minutes'),Status=S3,UID from [TABLE-"+task_tid+"] where S1 like '%'+@S1+'%' )";
+                sql+=" select Staff,File_Name,job_type,Task,Date,Task_Group,Task_Type,Actual_Duration,Total_Duration,Minutes,Time_gap,Start_Time,End_Time,Status from task join timing on PUID=UID order by DT1";
 
 /*
             var sql="with timing as (select V1,st=Convert(Time,dbo.F(Information,'StartTime')),Start_Time=@('StartTime'),End_Time=@('EndTime'),PUID from [TABLE-"+timing_tid+"] where DT1=@T1 and  S1 like '%'+@S1+'%') ";

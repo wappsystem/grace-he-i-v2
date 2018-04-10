@@ -4,7 +4,7 @@
 <script>
     function F__ID(){
         //-------------------------------------
-        _fields="Staff,File_Name,job_type,Task,Task_Type,Date,Start_Time,End_Time,Actual|Actual_Duration,Allocated|Minutes,Total|Total_Duration,Time_gap,Status";
+        _fields="Staff,File_Name,job_type,Task,Task_Group,Task_Type,Date,Start_Time,End_Time,Actual|Actual_Duration,Allocated|Minutes,Total|Total_Duration,Time_gap,Status";
         //_fields+=",Submit Date|DateTime,Submitted by|Author,_Delete";
         //-------------------------------------
         $('#aquery__ID').on('click',function(){ $("#title__ID").text('Individual - Details');$('#help__ID').html(help); _set_req(); _request_data();  })
@@ -23,7 +23,7 @@
         $('#application__ID').autocomplete({
             minLength:0,
             source:function(request,response){
-                var sql="with tb as (select name=CONVERT(varchar, UID)+' - '+@('applicant')+' - '+@('File_Name')+' - '+@('job_type') from [TABLE-"+_db_pid+"])";
+                var sql="with tb as (select name=CONVERT(varchar, UID)+' - '+JSON_VALUE(Information,'$.applicant')+' - '+JSON_VALUE(Information,'$.File_Name')+' - '+JSON_VALUE(Information,'$.job_type') from [TABLE-"+_db_pid+"])";
                 sql+=" select top 10 name,value=name from tb where name like '%'+@S1+'%' ";
                 $VmAPI.request({data:{cmd:'auto',s1:request.term,sql:sql,minLength:0},callback:function(res){
                     response($vm.autocomplete_list(res.table));
@@ -37,9 +37,9 @@
         //-------------------------------------
         _set_req=_set_req_export=function(){
             var id=$('#application__ID').val().split(" ");
-            var sql="with timing as (select DT1,Date=@('i1Date'),Start_Time=@('i1StartTime'),End_Time=@('i1EndTime'),Actual_Duration=@('i1Actual_Duration'),PUID from [TABLE-"+timing_tid+"] where GUID=@I2 )";
-            sql+=",task as (select Staff=@('Staff'),File_Name=@('File_Name'),job_type=@('job_type'),Task=@('Task'),Task_Type=@('Task_Type'),Total_Duration=V2,Time_gap=V1,Minutes=@('Minutes'),Status=S3,UID from [TABLE-"+task_tid+"] where PUID=@I2 )";
-            sql+=" select Staff,File_Name,job_type,Task,Date,Task_Type,Actual_Duration,Total_Duration,Minutes,Time_gap,Start_Time,End_Time,Status from timing join task on PUID=UID order by Task,DT1";
+            var sql="with timing as (select DT1,Date=JSON_VALUE(Information,'$.i1Date'),Start_Time=JSON_VALUE(Information,'$.i1StartTime'),End_Time=JSON_VALUE(Information,'$.i1EndTime'),Actual_Duration=JSON_VALUE(Information,'$.i1Actual_Duration'),PUID from [TABLE-"+timing_tid+"] where GUID=@I2 )";
+            sql+=",task as (select Staff=JSON_VALUE(Information,'$.Staff'),File_Name=JSON_VALUE(Information,'$.File_Name'),job_type=JSON_VALUE(Information,'$.job_type'),Task=JSON_VALUE(Information,'$.Task'),Task_Type=JSON_VALUE(Information,'$.Task_Type'),Task_Group=JSON_VALUE(Information,'$.Task_Group'),Total_Duration=V2,Time_gap=V1,Minutes=JSON_VALUE(Information,'$.Minutes'),Status=S3,UID from [TABLE-"+task_tid+"] where PUID=@I2 )";
+            sql+=" select Staff,File_Name,job_type,Task,Date,Task_Type,Task_Group,Actual_Duration,Total_Duration,Minutes,Time_gap,Start_Time,End_Time,Status from timing join task on PUID=UID order by Task,DT1";
             _req={cmd:'query_records',sql:sql,t1:$('#t1__ID').val(),i2:id[0]}
         }
         //-------------------------------------
