@@ -8,6 +8,7 @@
 	{
         "home":	                            {"url":"/modules/static/home.html"},
         "panel-admin":	                    {"url":"/configurations/panel-admin.html"},
+        "panel-ei":	                        {"url":"/configurations/panel-ei.html"},
         "home":	                            {"url":"/modules/static/home.html"},
         "client":	                        {"table_id":"20003689","url":"/modules/client/client.html"},
         "passport":	                        {"table_id":"20007359","url":"/modules/client/passport.html"},
