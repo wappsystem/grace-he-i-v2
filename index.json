@@ -1,0 +1,10 @@
+{
+	"api_path_development":"https://cbs.wappsystem.com/dev/",
+	"api_path_production":"https://cbs.wappsystem.com/pro/",
+	"default_production":"No",
+    "panels":{
+		"website":    {"url":"","modules":["website/index.json"]},
+        "education":  {"url":"education/panel.html","modules":["client/index.json","setup/index.json","reports/index.json","invoice/index.json"]},
+        "admin":      {"url":"admin/panel.html","modules":["client/index.json","setup/index.json","reports/index.json","invoice/index.json"]}
+	}
+}

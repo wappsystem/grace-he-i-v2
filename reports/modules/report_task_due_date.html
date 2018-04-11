@@ -1,0 +1,113 @@
+<section>
+      VmInclude:__CURRENT_PATH__/grid/grid.v3.html
+</section>
+<script>
+ function F__ID(){
+    //------------------------
+    VmInclude:__COMPONENT__/grid/grid.v3.js
+    //-------------------------------------
+    var prefix=$vm.module_list[$vm.vm['__ID'].name].prefix; if(prefix==undefined) prefix="";
+    //---------------------------------------------
+    $('#add_search__ID').append("<span>&nbsp;Start Date:</span> <input  class='form-control form-control-sm' type=text id=t1__ID placeholder='' style='width:100px;padding-left:3px' />\
+        <span>&nbsp;End Date:</span> <input  class='form-control form-control-sm' type=text id=t2__ID placeholder='' style='width:100px;padding-left:3px' />\
+        <span>&nbsp;Staff:</span><select class='form-control form-control-sm' id=staff__ID></select>\
+        <span>&nbsp;Status:</span><select class='form-control form-control-sm' id=status__ID></select>\
+        Type: <select id=type__ID class='form-control form-control-sm'>\
+            <option value=''></option>\
+            <option value='Normal_Visa'>Normal-Visa</option>\
+            <option value='Normal_School'>Normal-School</option>\
+            <option >Admin</option>\
+            <option >Accounting</option>\
+            <option >Other</option>\
+            </select>");
+    //------------------------
+    var today = new Date();
+    var month = today.getMonth(), year = today.getFullYear();
+    if((month-1)<0) {month=11;year=year-1;} else month=month-1;
+    var firstDay = new Date(year, month, 1);
+    $('#t1__ID').datepicker({dateFormat:'dd/mm/yy'});
+    $('#t2__ID').datepicker({dateFormat:'dd/mm/yy'});
+    $('#t1__ID').val($.datepicker.formatDate('dd/mm/yy', today));
+    $('#t2__ID').val($.datepicker.formatDate('dd/mm/yy', today));
+    //---------------------------------------------
+    _fields="Application ID|job_uid,File_Name,Job|job_type,Task ID|Task_id,Staff,Task,Group|Task_Group,Type|Task_Type,Status,Colour,Urgent,Notes,Notes_Admin,Assigned Date|Assigned_Date,Date_Completed,Due_Date,Alloc. Minutes|Minutes,Total Duration|Total_Duration,Time gap|Time_gap";
+    //-------------------------------------
+    $('#aquery__ID').on('click',function(){ $("#title__ID").text('Task - Search Based on Due Date');$('#help__ID').html(help); _set_req(); _request_data();  })
+    //-------------------------------------
+    var staff_list_tid=$vm.module_list[prefix+'staff_list'].table_id;
+    var job_status_list_tid=$vm.module_list[prefix+'job_status_list'].table_id;
+    //---------------------------------------------
+    var $List=$('#staff__ID');
+    $List.append(  $('<option>All</option>').val('').html(''))
+    sql="select staff=S1 from [TABLE-"+staff_list_tid+"] order by S1";
+    var req_data={cmd:'query_records',sql:sql};
+    $VmAPI.request({data:req_data,callback:function(res){
+        for(var i=0;i<res.records.length;i++){
+            var staff=res.records[i].staff;
+            $List.append(  $('<option></option>').html(staff))
+        }
+    }});
+    $List.val();
+    //-------------------------------------
+    var $List1=$('#status__ID');
+    $List1.append(  $('<option>All</option>').val('').html(''))
+    sql="select staff=S1 from [TABLE-"+job_status_list_tid+"] order by S1";
+    var req_data={cmd:'query_records',sql:sql};
+    $VmAPI.request({data:req_data,callback:function(res){
+        for(var i=0;i<res.records.length;i++){
+            var staff=res.records[i].staff;
+            $List1.append(  $('<option></option>').html(staff))
+        }
+    }});
+    $List1.val();
+    //-------------------------------------
+    _set_req=_set_req_export=function(){
+        var sql="select Information from [TABLE-"+_db_pid+"] where convert(date,DT2)>=@T1 and convert(date,DT2)<=@T2 and S1 like '%'+@S1+'%' and S2 like '%'+@S2+'%' and S3 like '%'+@S3+'%' ";
+        _req={cmd:'query_records',sql:sql,t1:$('#t1__ID').val(),t2:$('#t2__ID').val(),s1:$('#staff__ID').val(),s2:$('#type__ID').val(),s3:$('#status__ID').val()}
+    }
+
+    //------------------------------------
+    _cell_render=function(records,I,field,td,set_value,source){
+        switch(field){
+            case 'Urgent':
+                //records[I].vm_readonly[field]=true;
+                td.html('');
+                if(records[I][field]=='1') td.css('background-color','#F00');
+                break;
+            case 'Colour':
+                records[I].vm_custom[field]=true;
+                td.html('');
+                td.css('background-color',records[I].Colour);
+                break;
+        }
+    }
+
+    //-------------------------------------
+    var _request_data_export=function(){
+        $VmAPI.request({data:_req,callback:function(res){
+            //_records=data_process(res.records);
+            _export_data(_filename);
+        }})
+    }
+    //-------------------------------------
+    var help='<div class="container">\
+            <div class="row">\
+                <div class="col-sm-2 text-content text-left">\
+                    <h4><i class="fa fa-search"></i> = Search </h4>\
+                    <p>Updates the result based on selected criteria<br>\
+                    </p>\
+                    <br>\
+                </div>\
+                <div class="col-sm-2 text-content text-left">\
+                    <h4><i class="fa fa-download"></i> = Export</h4>\
+                    <p>Exporting the tax invoice list to excel format (.csv)</p>\
+                    <br>\
+                </div>\
+            </div>\
+        </div>'
+    //-------------------------------------
+ }
+</script>
+<style>
+    VmInclude:__COMPONENT__/grid/grid.v3.css
+</style>

@@ -1,0 +1,14 @@
+{
+    "modules":{
+        "job_status_list":	                {"table_id":"20007377","url":"setup/modules/job_status_list.html"},
+        "job_type_list":	                {"table_id":"20010733","url":"setup/modules/job_type_list.html"},
+        "staff_list":	                    {"table_id":"20007376","url":"setup/modules/staff_list.html"},
+        "document_type_list":	            {"table_id":"20007375","url":"setup/modules/document_type_list.html"},
+        "task_list":	                    {"table_id":"20007618","url":"setup/modules/task_list.html"},
+        "document_check_list":	            {"table_id":"20011093","url":"setup/modules/document_check_list.html"},
+        "commission_list":	                {"table_id":"20010745","url":"setup/modules/commission_list.html"},
+        "rate_list":	                    {"table_id":"20011199","url":"setup/modules/rate_list.html"},
+        "timing_list":	                    {"table_id":"20011182","url":"setup/modules/timing_list.html"},
+        "timing_module":                    {"table_id":"20011182"}
+    }
+}

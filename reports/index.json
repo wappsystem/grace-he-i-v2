@@ -1,0 +1,15 @@
+{
+    "modules":
+	{
+        "report_staff_assignments":	                    {"table_id":"20007386","url":"reports/modules/report_staff_assignments.html"},
+        "report_scheduled_job_duration":	            {"table_id":"20007386","url":"reports/modules/report_scheduled_job_duration.html"},
+        "report_scheduled_job_duration_split":	        {"table_id":"20007386","url":"reports/modules/report_scheduled_job_duration_split.html"},
+        "report_scheduled_job_duration_split_due_date":	{"table_id":"20007386","url":"reports/modules/report_scheduled_job_duration_split_due_date.html"},
+        "report_scheduled_job_documents":	            {"table_id":"20011093","url":"reports/modules/report_scheduled_job_documents.html"},
+        "report_scheduled_job_details":	                {"table_id":"20007387","url":"reports/modules/report_scheduled_job_details.html"},
+        "report_staff_daily_work":	                    {"table_id":"20007386","url":"reports/modules/report_staff_daily_work.html"},
+        "report_staff_daily_work_tasks":	            {"table_id":"20007386","url":"reports/modules/report_staff_daily_work_tasks.html"},
+        "report_task_assign_date":	                    {"table_id":"20007386","url":"reports/modules/report_task_assign_date.html"},
+        "report_task_due_date":	                        {"table_id":"20007386","url":"reports/modules/report_task_due_date.html"}
+	}
+}

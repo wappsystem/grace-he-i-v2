@@ -6,15 +6,9 @@
 		<meta name='viewport' content='width=device-width, initial-scale=1'>
 		<meta name="description" content="Task Manager">
 		<meta name="author" content="Wappsystem, administrator@wappsystem.com">
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css">
-		<link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/jquery.ui/1.12.1/themes/redmond/jquery-ui.css">
+        <link rel="icon" href="data:,">
 		<script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-3.2.1.min.js"></script>
-		<script src="https://ajax.aspnetcdn.com/ajax/jquery.ui/1.12.1/jquery-ui.min.js"></script>
-		<script>
-			$(document).ready(function(){
-				$.get('version.html?_='+new Date().getTime().toString(),function(v){ console.log(v); $vm={}; $vm.ver=v.trim().split(','); $.getScript('index.js?_sv='+$vm.ver[2], function(){ vm_init();});},'text')
-			});
-		</script>
+        <script>$.ajaxSetup({cache:true});$.get('version.html',function(v){ console.log(v); $vm={}; $vm.ver=v.trim().split(',');$.getScript('index.js?_sv='+$vm.ver[2],function(){vm_init();});},'text')</script>
 	</head>
 	<body></body>
 </html>

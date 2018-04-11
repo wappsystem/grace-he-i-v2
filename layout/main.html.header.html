@@ -1,0 +1,90 @@
+<div header id=header__ID> <!-- bg-dark-->
+    <nav id=nav__ID class="navbar navbar-expand-md navbar-light" style='z-index:99999'>
+        <div id=brand__ID>
+            <a class="navbar-brand d-none d-lg-block" onclick="$vm.nav_load_module('website_home');">
+                <div class=large_logo__ID>
+                    Australia Grace Home Education &amp; Immigration Pty Ltd
+                    <h6>
+                        Hong Fang (Grace)<br>
+                        Suit 311, 368 Sussex St. Sydney NSW 2000 Australia
+                    </h6>
+                </div>
+            </a>
+            <a class="navbar-brand d-lg-none" onclick="$vm.nav_load_module('website_home');" style='cursor:pointer'>
+                <div class=large_logo_small_label__ID>
+                    Australia Grace Home Edu &amp; Imm
+                    <span class=large_logo_extra_small_label__ID></span>
+                </div>
+            </a>
+        </div>
+        <button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#navbars__ID" aria-controls="navbars__ID" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div id="navbars__ID" class="navbar-collapse collapse">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item"><a class="nav-link" data-toggle="collapse" data-target=".navbar-collapse.show" onclick="$vm.nav_load_module('website_home');"><i class="fa fa-home"></i> Home</a></li>
+                <li class="nav-item"><a class="nav-link" data-toggle="collapse" data-target=".navbar-collapse.show" onclick="$vm.nav_load_module('education');"><i class="fa fa-tasks"></i> Eduaction &amp; Immigration</a></li>
+                <li class="nav-item"><a class="nav-link" data-toggle="collapse" data-target=".navbar-collapse.show" onclick="$vm.nav_load_module('admin');"><i class="fa fa-eye"></i> Admin</a></li>
+                <li><a class="nav-link" onclick="$vm.nav_click_process('vm_signinout');" name=signinout><i class="fa fa-user"></i> Sign In/Out</a></li>
+            </ul>
+            <!--			<form id=form__ID class="form-inline my-2 my-lg-0">
+				<input id=vm_system_search class="form-control mr-sm-2" type="text" placeholder="Search modules..." aria-label="Search modules..." />
+			</form>
+        -->
+        </div>
+    </nav>
+    <script>
+        //---------------------------------------------
+        if($vm.user=='guest'){
+            $('a[name=signinout]').html('<i class="fa fa-user"></i> Sign In')
+            $('#username__ID').text('');
+        }
+        else{
+            $('a[name=signinout]').html('<i class="fa fa-user"></i> Sign Out')
+            $('#username__ID').text('Signed in as '+ $vm.user);
+        }
+        //---------------------------------------------
+    </script>
+    <style>
+        #header__ID{
+            /*background: rgba(229,180,131,0.8);*/
+            background: rgba(112,135,147,0.8);
+            color: #1F3F4E;
+        }
+        #header__ID a{
+            cursor:pointer;
+        }
+        #navbars__ID{
+	        padding-top:30px;
+        }
+        .large_logo__ID{
+            padding-left:30px;
+        }
+        .large_logo_large_label__ID{
+            font-size:140%;
+        }
+        .large_logo_small_label__ID{
+            font-size:100%;
+        }
+        .large_logo_extra_small_label__ID{
+            font-size:40%;
+        }
+        .small_logo__ID{
+            color:#fff;
+        }
+        #navbars__ID{
+            padding-left:50px;
+        }
+        #form__ID{
+	        padding-right:80px;
+        }
+		@media screen and (max-width:768px){
+			#nav__ID{
+                background: rgba(143,118,116,0.8);
+			}
+	        #form__ID{
+		        padding-right:0px;
+	        }
+		}
+    </style>
+</div>

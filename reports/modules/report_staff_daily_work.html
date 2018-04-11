@@ -1,0 +1,72 @@
+<section>
+      VmInclude:__CURRENT_PATH__/grid/grid.v3.html
+</section>
+<script>
+ function F__ID(){
+    //------------------------
+    VmInclude:__COMPONENT__/grid/grid.v3.js
+    //-------------------------------------
+    var prefix=$vm.module_list[$vm.vm['__ID'].name].prefix; if(prefix==undefined) prefix="";
+        //-------------------------------------
+        _fields="Staff,Mins|work_minutes, Hrs:Mins|work_hours,Allocated|alloc_minutes,Gap Mins|Gap";
+        //_fields+=",Submit Date|DateTime,Submitted by|Author,_Delete";
+        //-------------------------------------
+        $('#aquery__ID').on('click',function(){ $("#title__ID").text('Staff - Daily Work Duration');$('#help__ID').html(help); _set_req(); _request_data();  })
+        //-------------------------------------
+        var staff_list_tid=$vm.module_list[prefix+'staff_list'].table_id;
+        var task_list_tid=$vm.module_list[prefix+'task_list'].table_id;
+        var timing_tid=$vm.module_list[prefix+'timing_module'].table_id;
+        //-------------------------------------
+        $('#add_search__ID').append("<span>&nbsp;Date:</span> <input  class='form-control form-control-sm' type=text id=t1__ID placeholder='' style='width:100px;padding-left:3px' />");
+        //-------------------------------------
+        var today = new Date();
+        $('#t1__ID').datepicker({dateFormat:'dd/mm/yy'});
+        $('#t1__ID').val($.datepicker.formatDate('dd/mm/yy', today));
+        //-------------------------------------
+        _set_req=_set_req_export=function(){
+            var sql="with staff_list as (select Staff=S1 from [TABLE-"+staff_list_tid+"]) "
+            sql+=",task as (select time1=sum(V1),alloc_minutes=sum(V3),TStaff=S1 from [TABLE-"+_db_pid+"] where DT1=@T1 group by S1) ";
+            sql+=",timing as (select time2=sum(V1),S1 from [TABLE-"+timing_tid+"] where DT1=@T1 group by S1) "
+            sql+="select alloc_minutes,work_minutes=isnull(time1,0)+isnull(time2,0),Staff from staff_list left join task on Staff=TStaff left join timing on TStaff=S1"
+            _req={cmd:'query_records',sql:sql,t1:$('#t1__ID').val()}
+        }
+        //-------------------------------------
+        _data_process=function(){
+            var total_time=0;
+            var total_alloc_time=0;
+            for(var i=0;i<_records.length;i++){
+                total_time=parseInt(_records[i].work_minutes);
+                _records[i].work_hours=Math.floor(total_time/60)+':'+((total_time%60<10)?"0":"")+total_time%60;
+                total_alloc_time=parseInt(_records[i].alloc_minutes);
+                //_records[i].alloc_hours=Math.floor(total_alloc_time/60)+':'+((total_alloc_time%60<10)?"0":"")+total_alloc_time%60;
+                _records[i].Gap=total_alloc_time-total_time;
+            }
+        }
+        //-------------------------------------
+        var _request_data_export=function(){
+            $VmAPI.request({data:_req,callback:function(res){
+                //_records=data_process(res.records);
+                _export_data(_filename);
+            }})
+        }
+        //-------------------------------------
+        var help='<div class="container">\
+                <div class="row">\
+                    <div class="col-sm-2 text-content text-left">\
+                        <h4><i class="fa fa-search"></i> = Search </h4>\
+                        <p>Updates the result based on selected criteria<br>\
+                        </p>\
+                        <br>\
+                    </div>\
+                    <div class="col-sm-2 text-content text-left">\
+                        <h4><i class="fa fa-download"></i> = Export</h4>\
+                        <p>Exporting the tax invoice list to excel format (.csv)</p>\
+                        <br>\
+                    </div>\
+                </div>\
+            </div>'
+     }
+    </script>
+    <style>
+        VmInclude:__COMPONENT__/grid/grid.v3.css
+    </style>

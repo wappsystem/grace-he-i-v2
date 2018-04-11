@@ -1,7 +1,13 @@
 var vm_init=function(){
+	$vm.start_time=new Date().getTime();
 	//check and clear localstorage
 	var data=''; for(var key in window.localStorage){ if(window.localStorage.hasOwnProperty(key)){ data+=window.localStorage[key]; }}
 	if(data.length>3000000) localStorage.clear();
+	if(window.location.href.indexOf('?clearcache=1')!=-1){
+		localStorage.clear();
+		alert("Cache is cleard!");
+		return;
+	}
 	//set name space
 	$VmAPI={};$vm.module_list={};$vm.config_list={}
 	//--------------------------------------------------------
@@ -20,7 +26,7 @@ var vm_init=function(){
 	$vm.version=$vm.ver[0];
 	//--------------------------------------------------------
 	var load_config_and_init=function(){
-		var url=$vm.hosting_path+"/configurations/index.json";
+		var url=$vm.hosting_path+"/index.json";
 		var ver=localStorage.getItem(url+"_ver");
 		var txt=localStorage.getItem(url+"_txt");
 		//------------------------------------------
@@ -47,8 +53,7 @@ var vm_init=function(){
 		//--------------------------------------------------------
 		$vm.app_config=config;
 		//--------------------------------------------------------
-		$vm.library_path=config.library_path;
-		$vm.parts_path=config.parts_path;
+		$vm.parts_path="https://vmiis.github.io/component";
 		$vm.image_path=config.image_path;
 		if(window.location.hostname=='127.0.0.1' || window.location.hostname=='localhost'){
 			$vm.library_path =window.location.protocol+'//'+window.location.host;
@@ -58,6 +63,10 @@ var vm_init=function(){
 			if(window.location.toString().indexOf('database=production')!=-1){
 				$vm.server          ='production';
 				$VmAPI.api_base     =config.api_path_production;
+			}
+			else if(window.location.toString().indexOf('database=woolcock')!=-1){
+				$vm.server          ='production';
+				$VmAPI.api_base     =config.api_path_woolcock;
 			}
 			else{
 				$vm.server          ='development';
@@ -82,7 +91,10 @@ var vm_init=function(){
 	//load vm framework, vm api and first module
 	var load_vmapi   =function(){ load_js($vm.url('https://vmiis.github.io/api/distribution/vmapi.min.js'),load_vm);	}
 	var load_vm      =function(){ load_js($vm.url('https://vmiis.github.io/framework/distribution/vmframework.min.js'),init);}
-	var init         =function(){ $vm.init_v3({callback:function(){$vm.load_first_module_to_body({url:'/modules/layout/main.html',callback:last});}})}
+	var init         =function(){
+		$vm.init_v3({callback:function(){$vm.init_status=1;}})
+		$vm.load_first_module_to_body({url:'/layout/main.html',callback:last});
+	}
 	//--------------------------------------------------------
 	var load_js=function(url,next){
 		//this is js loader
@@ -104,82 +116,85 @@ var vm_init=function(){
 	//--------------------------------------------------------
 	$vm.url=function(text){
 		//replace some text in old modules to the correct ones
+		text=text.replace(/__HOST__\//g,$vm.hosting_path+'/');
+		text=text.replace(/__VER__/g,$vm.ver[0]);
 		text=text.replace(/__BASE__\/vmiis\/Common-Code\//g,'__COMPONENT__/');
 		text=text.replace(/__LIB__\/vmiis\/Common-Code\//g,'__COMPONENT__/');
 		text=text.replace(/__BASE__\/vmiis\/common-code\//g,'__COMPONENT__/');
 		text=text.replace(/__LIB__\/vmiis\/common-code\//g,'__COMPONENT__/');
-		text=text.replace(/__BASE__\//g,$vm.library_path+'/');
-		text=text.replace(/__LIB__\//g,$vm.library_path+'/');
 		text=text.replace(/__PARTS__\//g,'https://vmiis.github.io/component/');
 		text=text.replace(/__COMPONENT__\//g,'https://vmiis.github.io/component/');
-		text=text.replace(/__HOST__\//g,$vm.hosting_path+'/');
-		text=text.replace(/__VER__/g,$vm.ver[0]);
-		text=text.replace(/__IMAGE__\//g,$vm.image_path+'/');
+		text=text.replace(/https:\/\/vmiis.github.io\/modular-distributed-web-application\//g,'https://www.vmiis.com/');
 		if(window.location.hostname=='127.0.0.1' || window.location.hostname=='localhost'){
 			//use local version
-            text=text.replace(/https:\/\/wappsystem.github.io/g,window.location.protocol+'//'+window.location.host+'/wappsystem');
-			text=text.replace(/https:\/\/woolcock-imr.github.io/g,window.location.protocol+'//'+window.location.host+'/woolcock-imr');
-			text=text.replace(/https:\/\/rt.woolcock.org.au\/github\/woolcock-imr/g,window.location.protocol+'//'+window.location.host+'/woolcock-imr');
 			text=text.replace(/https:\/\/cbs.wappsystem.com\/dev\/github/g,window.location.protocol+'//'+window.location.host);
 			text=text.replace(/https:\/\/cbs.wappsystem.com\/pro\/github/g,window.location.protocol+'//'+window.location.host);
-			text=text.replace(/https:\/\/image.datalinkedin.com/g,window.location.protocol+'//'+window.location.host+'/vmiis/images');
+			//text=text.replace(/https:\/\/distributed-modules.vmiis.com/g,window.location.protocol+'//'+window.location.host+'/vmiis/distributed-modules');
+
 			//do not use local system files
 			text=text.replace(/http:\/\/127.0.0.1:8000\/vmiis\/api/g,'https://vmiis.github.io/api');
 			text=text.replace(/http:\/\/127.0.0.1:8000\/vmiis\/framework/g,'https://vmiis.github.io/framework');
-			text=text.replace(/http:\/\/127.0.0.1:8000\/vmiis\/parts/g,'https://vmiis.github.io/parts');
+			text=text.replace(/http:\/\/127.0.0.1:8000\/vmiis\/component/g,'https://vmiis.github.io/component');
 			text=text.replace(/http:\/\/127.0.0.1:8000\/vmiis\/modules/g,'https://vmiis.github.io/modules');
+
+			text=text.replace(/https:\/\/woolcock-imr.github.io/g,					window.location.protocol+'//'+window.location.host+'/woolcock-imr');
+			text=text.replace(/https:\/\/volunteer-database.rt.org.au/g,			window.location.protocol+'//'+window.location.host+'/woolcock-imr/volunteer-database-2');
+			text=text.replace(/https:\/\/volunteer-database-management.rt.org.au/g,	window.location.protocol+'//'+window.location.host+'/woolcock-imr/volunteer-database-management-2');
+			text=text.replace(/https:\/\/wappsystem.github.io/g,					window.location.protocol+'//'+window.location.host+'/wappsystem');
+
 		}
 		if(window.location.toString().indexOf('_d=1')!=-1){
 			//use local system files
-			text=text.replace(/https:\/\/vmiis.github.io\/api/g,'http://127.0.0.1:8000/vmiis/api');
-			text=text.replace(/https:\/\/vmiis.github.io\/framework/g,'http://127.0.0.1:8000/vmiis/framework');
-			text=text.replace(/https:\/\/vmiis.github.io\/parts/g,'http://127.0.0.1:8000/vmiis/component');
-			text=text.replace(/https:\/\/vmiis.github.io\/component/g,'http://127.0.0.1:8000/vmiis/component');
-			text=text.replace(/https:\/\/vmiis.github.io\/modules/g,'http://127.0.0.1:8000/vmiis/modules');
+			var host=window.location.protocol+'//'+window.location.host;
+			text=text.replace(/https:\/\/vmiis.github.io\/api/g,host+'/vmiis/api');
+			text=text.replace(/https:\/\/vmiis.github.io\/framework/g,host+'/vmiis/framework');
+			text=text.replace(/https:\/\/vmiis.github.io\/component/g,host+'/vmiis/component');
+			text=text.replace(/https:\/\/vmiis.github.io\//g,host+'/vmiis/applications/');
 		}
 		if(window.location.toString().indexOf('_d=2')!=-1){
 			//use latest unstable version (master branch, not gh-pages branch)
 			text=text.replace(/https:\/\/vmiis.github.io\/api/g,'https://raw.githubusercontent.com/vmiis/api/master');
 			text=text.replace(/https:\/\/vmiis.github.io\/framework/g,'https://raw.githubusercontent.com/vmiis/framework/master');
-			text=text.replace(/https:\/\/vmiis.github.io\/parts/g,'https://raw.githubusercontent.com/vmiis/parts/master');
+			text=text.replace(/https:\/\/vmiis.github.io\/component/g,'https://raw.githubusercontent.com/vmiis/component/master');
 			text=text.replace(/https:\/\/vmiis.github.io\/modules/g,'https://raw.githubusercontent.com/vmiis/modules/master');
 			text=text.replace(/http:\/\/127.0.0.1:8000\/vmiis\/api/g,'https://raw.githubusercontent.com/vmiis/api/master');
 			text=text.replace(/http:\/\/127.0.0.1:8000\/vmiis\/framework/g,'https://raw.githubusercontent.com/vmiis/framework/master');
-			text=text.replace(/http:\/\/127.0.0.1:8000\/vmiis\/parts/g,'https://raw.githubusercontent.com/vmiis/parts/master');
+			text=text.replace(/http:\/\/127.0.0.1:8000\/vmiis\/component/g,'https://raw.githubusercontent.com/vmiis/component/master');
 			text=text.replace(/http:\/\/127.0.0.1:8000\/vmiis\/modules/g,'https://raw.githubusercontent.com/vmiis/modules/master');
 		}
+		text=text.replace(/https:\/\/woolcock-imr.github.io\/sfix\//g,'https://sfix.rt.org.au/');
+		text=text.replace(/https:\/\/woolcock-imr.github.io\/sfix\|/g,'https://sfix.rt.org.au|');
+		text=text.replace(/https:\/\/woolcock-imr.github.io\/sfix-online-questionnaire\//g,'https://sfix-online-questionnaire.rt.org.au/');
+		text=text.replace(/https:\/\/woolcock-imr.github.io\/sfix-online-questionnaire\|/g,'https://sfix-online-questionnaire.rt.org.au|');
+		//text=text.replace(/https:\/\/woolcock-imr.github.io\/volunteer-database-management-2\//g,'https://volunteer-database-management.rt.org.au/');
+		//text=text.replace(/https:\/\/woolcock-imr.github.io\/volunteer-database-management-2\|/g,'https://volunteer-database-management.rt.org.au|');
 		return text;
 	}
 	//--------------------------------------------------------
 	var last=function(){
-		//at last point we will load some modules for ready to use
-        //-------------------------------------
+		$('head').append("<link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css'>");
+        $('head').append("<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'>");
+        $('head').append("<link rel='stylesheet' href='https://ajax.aspnetcdn.com/ajax/jquery.ui/1.12.1/themes/redmond/jquery-ui.css'>");
+        //$('head').append("<link rel='stylesheet' href='https://www.w3schools.com/w3css/4/w3.css'>");
+        $.getScript('https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js',function(){$vm.js_popper=1;});
+        $.getScript('https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js',function(){$vm.js_bootstrap=1;});
+		$.getScript('https://ajax.aspnetcdn.com/ajax/jquery.ui/1.12.1/jquery-ui.min.js',function(){$vm.js_jquery_ui=1;});
+		$.getScript('https://apis.google.com/js/plusone.js');
+        $.getScript('https://ajax.aspnetcdn.com/ajax/jquery.validate/1.14.0/jquery.validate.min.js');
+        $.getScript('https://sdk.amazonaws.com/js/aws-sdk-2.1.34.min.js');
+		$.getScript('https://www.gstatic.com/charts/loader.js',function(){
+			google.charts.load('current', {packages: ['corechart']});
+		});
+		//-------------------------------------
         $vm.module_list['_system_export_dialog_module']={table_id:'',url:'__COMPONENT__/dialog/export_dialog_module.html'};
         $vm.load_module_by_name('_system_export_dialog_module','',{})
         //-------------------------------------
         $vm.module_list['_system_import_dialog_module']={table_id:'',url:'__COMPONENT__/dialog/import_dialog_module.html'};
         $vm.load_module_by_name('_system_import_dialog_module','',{})
-        //-------------------------------------
-		setTimeout(function (){
-	        $.ajaxSetup({ cache: true });
-			$('head').append("<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'>");
-			$.getScript('https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js');
-
-            $.getScript('https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js');
-            $.getScript('https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js');
-
-	        $.getScript('https://ajax.aspnetcdn.com/ajax/jquery.validate/1.14.0/jquery.validate.min.js');
-	        $.getScript('https://sdk.amazonaws.com/js/aws-sdk-2.1.34.min.js');
-			$.getScript('https://www.gstatic.com/charts/loader.js',function(){
-				google.charts.load('current', {packages: ['corechart']});
-			});
-			(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-			(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-			m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-			})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-			ga('create', 'UA-105358394-1', 'auto');
-			ga('send', 'pageview');
-	    }, 10);
+		//-------------------------------------
+		$vm.module_list['uploading_file_dialog_module']={table_id:'',url:'__COMPONENT__/dialog/uploading_file_dialog_module.html'};
+        $vm.load_module_by_name('_system_import_dialog_module','',{})
+		//-------------------------------------
 	}
 	//********************************************************
 	load_config_and_init();
