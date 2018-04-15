@@ -10,8 +10,10 @@
         _fields="_Form,_Hidden|job_type_uid,Job Type|job_type,Task|Task,Allocated Hours|Hours,Allocated Minutes|Minutes,Task_Group,Task_Type";
         _fields+=",Submit Date|DateTime,Submitted by|Author,_Delete";
         //-------------------------------------
+        var prefix=$vm.module_list[$vm.vm['__ID'].name].prefix; if(prefix==undefined) prefix="";
+        //-------------------------------------
         //input needed in module input variables
-        var job_type_pid=$vm.module_list['job_type_list'].table_id;
+        var job_type_pid=$vm.module_list[prefix+'job_type_list'].table_id;
         //-------------------------------------
         $("#title__ID").text('Task List');
         //-------------------------------------

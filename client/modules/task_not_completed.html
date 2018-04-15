@@ -7,19 +7,19 @@
         VmInclude:__COMPONENT__/grid/grid.v3.js
         VmInclude:__COMPONENT__/style/ease-in-out.2.js
         //-------------------------------------
-//        Vm Include:__BASE__/wappsystem/grace-he-i/Modules/Control_panels/job_sub.js
+        var prefix=$vm.module_list[$vm.vm['__ID'].name].prefix; if(prefix==undefined) prefix="";
         //-------------------------------------
         _fields="_Form,Application ID|job_uid,_Hidden|job_type_uid,File_Name,Job|job_type,_Documents,Task ID|Task_id,Staff,_Hidden|Task_uid,Task,Group|Task_Group,Type|Task_Type,Status,Colour,Urgent,Notes,_Notes_Admin,Notes_Adm,Assigned Date|Assigned_Date,Date_Completed,Due_Date,Alloc. Minutes|Minutes,Total Duration|Total_Duration,Time gap|Time_gap";
         _fields_e="File_Name,Job|job_type,Task ID|UID,Staff,Task,Type|Task_Type,Status,Colour,Notes,Notes_Admin,Assigned Date|Assigned_Date,Date_Completed,Due_Date,Alloc. Minutes|Minutes,Total Duration|Total_Duration,Time gap|Time_gap";
         _fields+=",Submit Date|DateTime,Submitted by|Author,_Delete";
         //-------------------------------------
-        var task_tid=$vm.module_list['task_record'].table_id;
-        var job_tid=$vm.module_list['scheduler_record'].table_id;
-        var job_status_list_tid=$vm.module_list['job_status_list'].table_id;
-        var task_list_tid=$vm.module_list['task_list'].table_id;
-        var staff_list_tid=$vm.module_list['staff_list'].table_id;
-        var notes_admin_tid=$vm.module_list['admin_notes'].table_id;
-        var prefix=_mlist[$vm.vm['__ID'].name].prefix; if(prefix==undefined) prefix="";
+        var task_tid=$vm.module_list[prefix+'task_record'].table_id;
+        var job_tid=$vm.module_list[prefix+'scheduler_record'].table_id;
+        var job_status_list_tid=$vm.module_list[prefix+'job_status_list'].table_id;
+        var task_list_tid=$vm.module_list[prefix+'task_list'].table_id;
+        var staff_list_tid=$vm.module_list[prefix+'staff_list'].table_id;
+        var notes_admin_tid=$vm.module_list[prefix+'admin_notes'].table_id;
+        //var prefix=_mlist[$vm.vm['__ID'].name].prefix; if(prefix==undefined) prefix="";
         var job_uid='';
         var job_type='';
         var job_type_uid='';

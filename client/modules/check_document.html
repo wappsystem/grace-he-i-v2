@@ -6,9 +6,11 @@
         //-------------------------------------
         VmInclude:__COMPONENT__/grid/grid.v3.js
         VmInclude:__COMPONENT__/style/ease-in-out.2.js
+        //-------------------------------------
+        var prefix=$vm.module_list[$vm.vm['__ID'].name].prefix; if(prefix==undefined) prefix="";
     //------------------------
-    var documents_tid=$vm.module_list['documents'].table_id;
-    var prefix=_mlist[$vm.vm['__ID'].name].prefix; if(prefix==undefined) prefix="";
+    var documents_tid=$vm.module_list[prefix+'documents'].table_id;
+    //var prefix=_mlist[$vm.vm['__ID'].name].prefix; if(prefix==undefined) prefix="";
     //------------------------
     _fields="_Hidden|ID,Required Documents|req_doc,Uploaded Documents|uploaded_docs,Checked|B1,_Upload_Document";
     //-------------------------------------
@@ -73,7 +75,7 @@
                     td.html(html);
                     td.find('u').on('click',function(){
                         $vm.load_module_by_name(prefix+'documents',$vm.root_layout_content_slot,{applicant_uid:applicant_uid,file_name:File_Name,document_type:_records[I].req_doc});
-                        //$vm.load_module_by_name($vm.module_list[_app_id+'check_document'].var.document_module,$vm.root_layout_content_slot,{applicant_uid:applicant_uid,file_name:File_Name,document_type:_records[I].req_doc});
+                        //$vm.load_module_by_name($vm.module_list[prefix+_app_id+'check_document'].var.document_module,$vm.root_layout_content_slot,{applicant_uid:applicant_uid,file_name:File_Name,document_type:_records[I].req_doc});
                     })
             break;
         }

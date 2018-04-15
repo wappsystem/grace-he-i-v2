@@ -47,11 +47,13 @@
         //----------------------------------
         VmInclude:__COMPONENT__/grid/form.v3.js
 		VmInclude:__COMPONENT__/grid/grid_item_a.v3.js
+        //-------------------------------------
+        var prefix=$vm.module_list[$vm.vm['__ID'].name].prefix; if(prefix==undefined) prefix="";
         //----------------------------------
-        var timing_tid=$vm.module_list['timing_module'].table_id;
-        var task_tid=$vm.module_list['task_record'].table_id;
-        var application_tid=$vm.module_list['scheduler_record'].table_id;
-        var job_status_list_tid=$vm.module_list['job_status_list'].table_id;
+        var timing_tid=$vm.module_list[prefix+'timing_module'].table_id;
+        var task_tid=$vm.module_list[prefix+'task_record'].table_id;
+        var application_tid=$vm.module_list[prefix+'scheduler_record'].table_id;
+        var job_status_list_tid=$vm.module_list[prefix+'job_status_list'].table_id;
         //---------------------------------------------
         $('#D__ID').on('load',function(){
              $("#title__ID").text('Task - Timing');$('#help__ID').html(help);

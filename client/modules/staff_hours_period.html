@@ -44,15 +44,39 @@
                     td.find('u').on('click',function(){
                         var sql="";
                         sql+="with timing as (select Total_Duration=V1,PUID from [TABLE-"+timing_tid+"] where DT2>=@t1 and Dt2<=@t2 ) "
-                        sql+=",duration as (select Total_Duration=sum(Total_Duration) from [TABLE-"+task_tid+"] join timing on UID=timing.PUID where S1=@s1 group by S2) "
-                        sql+=" select Total_Duration=Total_Duration/60 from duration"
+                        sql+=",duration as (select S2,Total_Duration=sum(Total_Duration) from [TABLE-"+task_tid+"] join timing on UID=timing.PUID where S1=@s1 group by S2) "
+                        sql+=" select S2,Total_Duration=Total_Duration/60 from duration"
                         var req1={cmd:'query_records',sql:sql,t1:_records[I].Start_date,t2:_records[I].End_date,s1:_records[I].Staff}
                         $VmAPI.request({data:req1,callback:function(res){
-                              if(res.records.length>0){
-                                  for(var i=0;i<res.records.length;i++)
-                                  _set_value((parseFloat(res.records[i].Total_Duration)).toFixed(1),records,I,'Total_Duration');
-                              }
-                              _render(I)
+                            var total_real=0;
+                                if(res.records.length>0){
+                                  for(var i=0;i<res.records.length;i++){
+                                      switch(res.records[i].S2){
+                                          case 'Admin':
+                                            _set_value(res.records[i].Total_Duration,records,I,'Admin');
+                                              total_real+=parseFloat(res.records[i].Total_Duration)
+                                              break;
+                                          case 'Accounting':
+                                              _set_value(res.records[i].Total_Duration,records,I,'Accounting');
+                                              total_real+=parseFloat(res.records[i].Total_Duration)
+                                              break;
+                                              case 'Normal_School':
+                                              _set_value(res.records[i].Total_Duration,records,I,'School');
+                                              total_real+=parseFloat(res.records[i].Total_Duration)
+                                              break;
+                                          case 'Normal_Visa':
+                                              _set_value(res.records[i].Total_Duration,records,I,'Visa');
+                                              total_real+=parseFloat(res.records[i].Total_Duration)
+                                              break;
+                                          case 'Other':
+                                                _set_value(res.records[i].Total_Duration,records,I,'Other');
+                                                total_real+=parseFloat(res.records[i].Total_Duration)
+                                              break;
+                                          }
+                                  }
+                                  _set_value(total_real.toFixed(1),records,I,'Total_Duration');
+                                }
+                                _render(I)
                         }});
                     });
                     break;

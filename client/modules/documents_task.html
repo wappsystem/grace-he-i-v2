@@ -8,12 +8,14 @@
         VmInclude:__COMPONENT__/style/ease-in-out.2.js
         VmInclude:__CURRENT_PATH__/client_sub.js
         //-------------------------------------
+        var prefix=$vm.module_list[$vm.vm['__ID'].name].prefix; if(prefix==undefined) prefix="";
+        //-------------------------------------
         _fields="_Form,File Name|job,Document,Last Modified|lastModified,Size,Description,Type,Checked";
         _fields+=",Submit Date|DateTime,Submitted by|Author,_Delete";
         //-------------------------------------
-        var client_tid=$vm.module_list['client'].table_id;
-        var document_type_list_tid=$vm.module_list['document_type_list'].table_id;
-        var document_check_tid=$vm.module_list['document_check_list'].table_id;
+        var client_tid=$vm.module_list[prefix+'client'].table_id;
+        var document_type_list_tid=$vm.module_list[prefix+'document_type_list'].table_id;
+        var document_check_tid=$vm.module_list[prefix+'document_check_list'].table_id
         //-------------------------------------
         $('#D__ID').on('show',function(){
             applicant_uid=$vm.vm['__ID'].op.applicant_uid;

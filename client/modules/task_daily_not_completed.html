@@ -191,7 +191,6 @@
         }
         //-------------------------------------
         _before_submit=function(record,dbv){
-alert(record.Total_Duration)
             if(record.Total_Duration!=='' && record.Minutes!=='' ) {
                 record.Time_gap=parseInt(record.Minutes)-parseInt(record.Total_Duration);
                 dbv.V1=record.Time_gap;
