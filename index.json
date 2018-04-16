@@ -5,6 +5,6 @@
     "panels":{
 		"website":    {"url":"","modules":["website/index.json"]},
         "education":  {"url":"education/panel.html","modules":["client/index.json","setup/index.json","reports/index.json","invoice/index.json"]},
-        "admin":      {"url":"admin/panel.html","modules":["client/index.json","setup/index.json","reports/index.json","invoice/index.json"]}
+        "admin":      {"url":"admin/panel.html","modules":["client/index.json","setup/index.json","reports/index.json"]}
 	}
 }

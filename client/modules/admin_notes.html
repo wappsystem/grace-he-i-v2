@@ -1,14 +1,10 @@
 <section id=form_container__ID>
 	<div id=header__ID>
-		Appointment
+		Admin Notes
 	</div>
 	<form id=F__ID>
 		<div class="container">
-			<div class="row row__ID"><div class="col-sm col-lg-3">Appointment Date</div><div class="col-sm"><input type="text" placeholder='dd/mm/yyyy' id=Date__ID class="form-control" name="Date" required /></div><div class="col-sm"></div></div>
-			<div class="row row__ID"><div class="col-sm col-lg-3">Name</div><div class="col-sm"><input type="text" placeholder=First class="form-control" name="First_Name" required /></div><div class="col-sm"><input type="text" placeholder=Last class="form-control" name="Last_Name" required /></div></div>
-			<div class="row row__ID"><div class="col-sm col-lg-3">Time</div><div class="col-sm"><input type="text" placeholder='hh:mm' pattern="([01]?[0-9]|2[0-3]):[0-5][0-9]" class="form-control" name="Time" required /></div><div class="col-sm"></div></div>
-			<div class="row row__ID"><div class="col-sm col-lg-3">Phone</div><div class="col-sm"><input type="text" class="form-control" name="Phone" required /></div><div class="col-sm"></div></div>
-
+			<div class="row row__ID"><div class="col-sm col-lg-3"></div><textarea  name="Notes_Admin" id=Notes_Admin__ID style='width:100%' ></textarea></div><div class="col-sm"></div></div>
             <div style='padding:6px 10px'>
     		     <button id=submit__ID type="submit" class="btn btn-secondary">Submit</button>
             </div>
@@ -17,15 +13,33 @@
 </section>
 <script>
     function F__ID(){
+    	//-------------------------------------
+        var prefix=$vm.module_list[$vm.vm['__ID'].name].prefix; if(prefix==undefined) prefix="";
         //-------------------------------------
-        $('#Date__ID').datepicker({format: "dd/mm/yyyy", autoclose: true});
+        var notes_admin_tid=$vm.module_list[prefix+'admin_notes'].table_id;
+        var task_uid='';
+		var rid=undefined;
         //-------------------------------------
         $('#D__ID').on('load',function(){
             $('#F__ID')[0].reset();
             $('#submit__ID').show();
-			var record=$vm.vm['__ID'].op.record;
+			_set_req()
+			var record=$('#Notes_Admin__ID').val();
 			$vm.deserialize(record,'#F__ID');
         })
+		//-------------------------------------
+        _set_req=function(){
+			task_uid=$vm.vm['__ID'].op.task_uid;
+            var sql="select ID,Notes_Admin=JSON_VALUE(Information,'$.Notes_Admin') from [TABLE-"+notes_admin_tid+"] where PUID=@I2 ";
+            _req={cmd:"query_records",sql:sql,i2:task_uid};
+            $VmAPI.request({data:_req,callback:function(res){
+                if(res.records.length>0){
+                    $('#Notes_Admin__ID').val(res.records[0].Notes_Admin);
+					rid=res.records[0].ID
+                }
+                else {$('#Notes_Admin__ID').val('');rid=undefined;}
+            }});
+        }
         //-------------------------------------
 		$('#F__ID').submit(function(event){
 			//--------------------------------------------------------
@@ -34,15 +48,16 @@
 			//--------------------------------------------------------
             var data=$vm.serialize('#F__ID');
 			var dbv={
-                V3:$vm.module_list[$vm.vm['__ID'].name].v3
+                PUID:task_uid
             }
 			//--------------------------------------------------------
             var db_pid=$vm.module_list[$vm.vm['__ID'].name].table_id;
-            var rid=undefined; if($vm.vm['__ID'].op.record!=undefined) rid=$vm.vm['__ID'].op.record.ID;
+            //var rid=undefined; if($vm.vm['__ID'].op.record!=undefined) rid=$vm.vm['__ID'].op.record.ID;
 			var req={cmd:"add_json_record",db_pid:db_pid,data:data,dbv:dbv};
 			if(rid!=undefined) req={cmd:"modify_json_record",rid:rid,db_pid:db_pid,data:data,dbv:dbv};
             $VmAPI.request({data:req,callback:function(res){
-                $vm.alert('Your data has been successfully submitted');
+				window.history.back(-1);
+				//$vm.alert('Your data has been successfully submitted');
             }});
 			//--------------------------------------------------------
 		})
@@ -78,7 +93,7 @@
     	font-size: 15px;
     	line-height: 1.5;
 		color: #fff;
-        background-color: #596d19;
+        background-color: rgba(112,135,147,1);
 	}
 	#form_container__ID .row__ID{
 		padding:6px 10px;
