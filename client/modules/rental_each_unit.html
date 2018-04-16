@@ -19,10 +19,10 @@
         _cell_render=function(records,I,field,td,set_value,source){
             switch(field){
                 case 'rent_paid_date':
-                    VmInclude:__BASE__/vmiis/Common-Code/grid/field_date.js
+                    VmInclude:__COMPONENT__/grid/field_date.js
                     break;
                 case 'Attachment':
-                    VmInclude:__BASE__/vmiis/Common-Code/grid/field_file.js
+                    VmInclude:__COMPONENT__/grid/field_file.js
                 break;
             }
         }

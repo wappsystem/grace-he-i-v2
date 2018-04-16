@@ -32,11 +32,11 @@
                 case 'Staff':
                     var sql="with tb as (select name=JSON_VALUE(Information,'$.Staff'),value2=uid from [TABLE-"+staff_list_tid+"])";
                     sql+=" select top 10 name,value=name,value2 from tb where Name like '%'+@S1+'%' ";
-                    VmInclude:__BASE__/vmiis/Common-Code/grid/field_auto.js
+                    VmInclude:__COMPONENT__/grid/field_auto.js
                     break;
                 case 'Start_date':
                 case 'End_date':
-                    VmInclude:__BASE__/vmiis/Common-Code/grid/field_date.js
+                    VmInclude:__COMPONENT__/grid/field_date.js
                     break;
                 case '_Calculate':
                     records[I].vm_custom[field]=true;
