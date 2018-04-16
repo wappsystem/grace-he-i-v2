@@ -1,11 +1,10 @@
 <section>
-      VmInclude:__CURRENT_PATH__/grid/grid.v3.html
+      VmInclude:__CURRENT_PATH__/grid/grid.aquery.v3.html
 </section>
 <script>
     function F__ID(){
         //-------------------------------------
         VmInclude:__COMPONENT__/grid/grid.v3.js
-//        Vm Include:__BASE__/wappsystem/grace-he-i/Modules/Control_panels/job_sub.js
         //-------------------------------------
         var prefix=$vm.module_list[$vm.vm['__ID'].name].prefix; if(prefix==undefined) prefix="";
         //-------------------------------------
@@ -17,7 +16,7 @@
         $('#new__ID').hide();
         $('#add_search__ID').append("<span>Date:</span> <input  class='form-control form-control-sm' type=text id=t1__ID placeholder='' style='width:100px;padding-left:3px' /><select class='form-control form-control-sm' id=staff__ID></select>")
         //-------------------------------------
-        $('#query__ID').on('click',function(){ $("#title__ID").text('Daily - Tasks not completed up to selected date');$('#help__ID').html(help); _set_req(); _request_data();  })
+        $('#aquery__ID').on('click',function(){ $("#title__ID").text('Daily - Tasks not completed');$('#help__ID').html(help); _set_req(); _request_data();  })
         //-------------------------------------
         var task_tid=$vm.module_list[prefix+'task_record'].table_id;
         var job_tid=$vm.module_list[prefix+'scheduler_record'].table_id;
@@ -25,7 +24,7 @@
         var task_list_tid=$vm.module_list[prefix+'task_list'].table_id;
         var staff_list_tid=$vm.module_list[prefix+'staff_list'].table_id;
         var notes_admin_tid=$vm.module_list[prefix+'admin_notes'].table_id;
-        var timing_tid=$vm.module_list[prefix+'timing_module'].table_id;
+        //var timing_tid=$vm.module_list[prefix+'timing_module'].table_id;
         //-------------------------------------
         var $List=$('#staff__ID');
         $List.append(  $('<option>All</option>').val('').html(''))
@@ -47,8 +46,8 @@
         //-------------------------------------
         _set_req=_set_req_export=function(){
             var sql="with task as (select Information,V3,applicant_uid=GUID,UID,ID from [TABLE-"+_db_pid+"-@S1] where S1 like '%'+@S2+'%' and DT1<=@T1 and B1='false'  )"
-            sql+=",timing as (select Total_Duration=sum(V1),PUID from [TABLE-"+timing_tid+"] group by PUID)"
-            sql+="select Information,Total_Duration,Time_gap=V3-Total_Duration,applicant_uid,UID,ID from task left join timing on UID=PUID"
+            //sql+=",timing as (select Total_Duration=sum(V1),PUID from [TABLE-"+timing_tid+"] group by PUID)"
+            sql+="select Information,UID,ID from task "
             _req={cmd:'query_records',sql:sql,t1:$('#t1__ID').val(),s1:'"'+$('#keyword__ID').val()+'"',s2:$('#staff__ID').val()}
         }
         //-------------------------------------
@@ -57,7 +56,7 @@
             for(var i=0;i<_records.length;i++){
                 total_time+=parseInt(_records[i].Minutes);
             }
-            $('#alloc_time__ID').html(' - Allocated Time Left: <b>'+total_time+'</b> mins ('+Math.floor(total_time/60)+' hours '+total_time%60+' mins)' )
+            $("#title__ID").text('Daily - Tasks not completed - Allocated Time Left: '+total_time+' mins ('+Math.floor(total_time/60)+' hours '+total_time%60+' mins)' )
         }
         //-------------------------------------
         _cell_render=function(records,I,field,td,set_value,source){
@@ -83,11 +82,6 @@
                     records[I].vm_readonly[field]=true;
                     td.css('color','#888');
                     break;
-/*
-                case 'Assigned_Date':
-                    VmInclude:__BASE__/vmiis/Common-Code/grid/field_date.js
-                    break;
-*/
                 case 'Urgent':
                     //records[I].vm_readonly[field]=true;
                     td.html('');
@@ -98,16 +92,6 @@
                     td.html('');
                     td.css('background-color',records[I].Colour);
                     break;
-/*
-                case 'StartTime':
-                case 'EndTime':
-                    td.on('dblclick',function(){
-                        var currentdate= new Date();
-                        var html=((currentdate.getHours() < 10)?"0":"") + currentdate.getHours()+":"+((currentdate.getMinutes() < 10)?"0":"")+ currentdate.getMinutes();
-                        td.html(html)
-                    })
-                    break;
-*/
                 case 'Status':
                     var sql="with tb as (select name=JSON_VALUE(Information,'$.Job_status'),value3=JSON_VALUE(Information,'$.Colour'),value2=uid from [TABLE-"+job_status_list_tid+"])";
                     sql+=" select top 10 name,value=name,value2,value3 from tb where Name like '%'+@S1+'%' ";
@@ -195,9 +179,9 @@
                 record.Time_gap=parseInt(record.Minutes)-parseInt(record.Total_Duration);
                 dbv.V1=record.Time_gap;
             }
-            else dbv.V1=0;
+            else {dbv.V1=0;record.Time_gap='';}
+            if(record.Total_Duration!=='') dbv.V2=record.Total_Duration; else {dbv.V2=0;record.Total_Duration=''}
             if(record.Assigned_Date!=='') dbv.DT1=record.Assigned_Date;
-            if(record.Total_Duration!=='') dbv.V2=record.Total_Duration; else dbv.V2=0;
             if(record.Status!=='') dbv.S3=record.Status;
             if(record.Status=='Completed') dbv.B1='1';else dbv.B1='0';
         };

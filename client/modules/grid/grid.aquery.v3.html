@@ -1,0 +1,57 @@
+<section>
+	<div id=toolbar__ID class="navbar navbar-default">
+		<div id=row_1__ID class="col-sm _col-lg-3 form-inline">
+			<a class="col-"><button type="button" class='btn btn-info btn-sm ' data-toggle="collapse" data-target="#help__ID" title="Help - Intructions" ><i class="fa fa-info"></i></button></a>
+	    	<button id=new__ID  type=button class='btn btn-secondary btn-sm' title='Add New'><i class="fa fa-plus"></i></button>
+	    	<button id=save__ID type=button class='btn btn-secondary btn-sm' title='Save Change'><i class="fa fa-upload" ></i></button>
+			<div id=add_search__ID><input id=keyword__ID type="text" placeholder="keyword" class="form-control form-control-sm" style="width: 150px; display:inline-block;"></div>
+			<button id=aquery__ID type=button class="btn btn-secondary btn-sm" title='Search for keyword'><i class="fa fa-search" ></i></button>
+		</div>
+		<div class="col-sm _col-lg-3 form-inline">
+	            Page Size:
+	            <select id=page_size__ID class="form-control form-control-sm" style='margin-right:20px;display:inline-block;width:auto;'><option>30</option><option>50</option><option>100</option><option>200</option></select>
+	            <span id=I__ID style="display:none">0</span><span id=A__ID></span>
+	            <button id=p__ID type=button class="btn btn-secondary btn-sm" title="Previous page"><i class="fa fa-arrow-left"></i></button>
+	            <button id=n__ID type=button class="btn btn-secondary btn-sm" title="Next page"><i class="fa fa-arrow-right"></i></button>
+		</div>
+		<div class="d-none d-lg-inline-block col-lg-4 form-inline">
+				Start page:	<input id=start__ID type=text class="form-control form-control-sm" style="width:45px; display:inline-block;" />
+	            Num of page: <input id=num__ID type=text class="form-control form-control-sm" style="width:45px; display:inline-block;" />
+				<button id=export__ID type=button class="btn btn-secondary btn-sm" title=Export><i class="fa fa-download" ></i></button>
+		</div>
+		<span id=elapsed__ID style='float:right;display:none' ></span>
+    </div>
+	<div id=title__ID class="h6 text-left"></div>
+	<div id=help__ID class="collapse"></div>
+    <div id=table__ID>
+        <table id=grid__ID></table>
+    </div>
+</section>
+<style>
+	#toolbar__ID{
+		background-color:#ccc;
+		padding:5px 0px;
+		margin-bottom:0px;
+		overflow:hidden
+	}
+	#toolbar__ID *{
+		margin-right:3px;
+	}
+	@media screen and (max-width:768px){
+		#toolbar__ID{
+			padding: 3px 0;
+		}
+		#toolbar__ID div{
+			padding-left:3px;
+		}
+		#row_1__ID{
+			padding-bottom: 3px;
+		}
+	}
+	#title__ID{
+		margin:0.3rem;
+	}
+	#help_botton__ID,#new__ID,#save__ID,#query__ID,#p__ID,#n__ID,#export__ID{
+		cursor: pointer;
+	}
+</style>

@@ -1,0 +1,75 @@
+<section id=form_container__ID>
+	<form id=F__ID>
+        <div class="container">
+            	Notes<br><br>
+                <hr style='border-top:1px solid #727b84;'></hr>
+            <div class="row row__ID">
+                <div class="col-sm-12 control-group">
+                    <textarea  name="Notes_Admin" id=Notes_Admin__ID style='width:100%' ></textarea>
+                </div>
+            </div>
+            <hr style='border-top:1px solid #727b84;'></hr>
+			<br>
+    		<button id=submit__ID type="submit" class="btn btn-secondary">Submit</button>
+    	</div>
+    </form>
+</section>
+<script>
+    function F__ID(){
+        //-------------------------------------
+        VmInclude:__COMPONENT__/grid/form.v3.js
+        VmInclude:__COMPONENT__/style/ease-in-out.2.js
+		//-------------------------------------
+        var prefix=$vm.module_list[$vm.vm['__ID'].name].prefix; if(prefix==undefined) prefix="";
+        //-------------------------------------
+        var notes_admin_tid=$vm.module_list[prefix+'admin_notes'].table_id;
+        var task_uid='';
+        //-------------------------------------
+        $('#D__ID').on('load',function(){
+            //$('#F__ID')[0].reset();
+            task_uid=$vm.vm['__ID'].op.task_uid;
+            _set_req();
+        })
+        //-------------------------------------
+        _set_req=function(){
+            var sql="select Notes_Admin=JSON_VALUE(Information,'$.Notes_Admin') from [TABLE-"+_db_pid+"] where PUID=@I2 ";
+            _req={cmd:"query_records",sql:sql,i2:task_uid};
+            $VmAPI.request({data:_req,callback:function(res){
+                if(res.records.length>0){
+                    $('#Notes_Admin__ID').val(res.records[0].Notes_Admin);
+                }
+                else {$('#Notes_Admin__ID').val('');alert(1)}
+            }});
+        }
+        //-------------------------------------
+        $('#submit__ID').on('click',function(){
+            var record={}
+            record.Notes_Admin=$('#Notes_Admin__ID').val();
+            var dbv={};
+            dbv.PUID=task_uid;
+        })
+        //----------------------------------
+    }
+</script>
+<style>
+#D__ID{
+    height:100%;
+    overflow: auto;
+    animation: vm_module_fadein 1.0s;
+    background: rgba(151,164,181,0.95);
+}
+#form_container__ID{
+    padding-top:50px;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+
+    font-family: Verdana,sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    color: #000;
+}
+#form_container__ID .row__ID{
+    padding:6px 0;
+}
+</style>
