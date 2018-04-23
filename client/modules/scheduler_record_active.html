@@ -33,11 +33,11 @@
         $('#D__ID').on('back',function(){ $("#title__ID").text('Active Jobs');$('#help__ID').html(help);_set_req(); _request_data();  })
         //-------------------------------------
         var _set_req=_set_req_export=function(){
-            var sql="with tb as (select Information,job_type=S2,B1,ID,UID,PUID,DateTime,Author,RowNum=row_number() over (order by ID DESC) from [TABLE-"+_db_pid+"-@S1] where (S1='Processing' or S1='Incomplete'))";
+            var sql="with tb as (select Information,DT2,job_type=S2,B1,ID,UID,PUID,DateTime,Author,RowNum=row_number() over (order by ID DESC) from [TABLE-"+_db_pid+"-@S1] where (S1='Processing' or S1='Incomplete'))";
             sql+=",tb_task as (select task_puid=PUID,task_nd=count(ID) from [TABLE-"+task_tid+"] where B1=0 group by PUID)";
             sql+="select Tasks_Done=case when task_nd>0 then '-' ELSE 'DONE' END,Information,B1,ID,UID,PUID,DateTime,Author,RowNum from tb";
             sql+=" left join tb_task on UID=task_puid ";
-            sql+=" where RowNum between @I6 and @I7";
+            sql+=" where RowNum between @I6 and @I7 order by DT2";
             var sql_n="select count(ID) from [TABLE-"+_db_pid+"-@S1]";
             _req={cmd:'query_records',db_pid:_db_pid,sql:sql,sql_n:sql_n,s1:'"'+$('#keyword__ID').val()+'"',I:$('#I__ID').text(),page_size:$('#page_size__ID').val()}
         }
