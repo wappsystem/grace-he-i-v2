@@ -27,6 +27,7 @@
         "scheduler_record_admin":	        {"table_id":"20007387","url":"client/modules/scheduler_record_admin.html"},
         "scheduler_record_de":	            {"table_id":"20007387","url":"client/modules/scheduler_record_de.html"},
         "scheduler_record_not_completed":   {"table_id":"20007387","url":"client/modules/scheduler_record_not_completed.html"},
+        "scheduler_record_active":          {"table_id":"20007387","url":"client/modules/scheduler_record_active.html"},
         "task_record":	                    {"table_id":"20007386","url":"client/modules/task_record.html"},
         "task_record_form":	                {"table_id":"20007386","url":"client/modules/task_record.form.html"},
         "task_record_admin":	            {"table_id":"20011124","url":"client/modules/task_record_admin.html"},

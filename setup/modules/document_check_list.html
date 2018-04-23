@@ -80,6 +80,7 @@
             dbv.PPID=job_type_pid;
             dbv.GPID=task_list_tid;
             if(record.Document!=='') dbv.S1=record.Document;
+            if(record.job_type!=='') dbv.S2=record.job_type;
             if(record.job_type_uid!==undefined) dbv.PUID=record.job_type_uid;
             if(record.Task_uid!==undefined) dbv.GUID=record.Task_uid;
             return true;

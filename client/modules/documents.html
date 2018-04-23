@@ -120,7 +120,7 @@
             dbv.PPID=job_tid;
             if(record.job_uid!==undefined) dbv.PUID=record.job_uid;
             if(record.Type!=='') dbv.S1=record.Type;
-            if(record.Checked=='1') dbv.B1='1';
+            if(record.Checked=='1') dbv.B1='1';  else dbv.B1='0';
             return true;
         };
         //-------------------------------------
