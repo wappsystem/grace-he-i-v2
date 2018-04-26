@@ -48,7 +48,9 @@
             var sql="with task as (select Information,V3,applicant_uid=GUID,UID,ID from [TABLE-"+_db_pid+"-@S1] where S1 like '%'+@S2+'%' and DT1<=@T1 and B1='false'  )"
             //sql+=",timing as (select Total_Duration=sum(V1),PUID from [TABLE-"+timing_tid+"] group by PUID)"
             sql+="select Information,UID,ID from task "
-            _req={cmd:'query_records',sql:sql,t1:$('#t1__ID').val(),s1:'"'+$('#keyword__ID').val()+'"',s2:$('#staff__ID').val()}
+            var staff=$vm.user;
+            if( $vm.user=='grace') staff= $('#staff__ID').val();
+            _req={cmd:'query_records',sql:sql,t1:$('#t1__ID').val(),s1:'"'+$('#keyword__ID').val()+'"',s2:staff}
         }
         //-------------------------------------
         _data_process=function(){

@@ -66,12 +66,13 @@
                 _fields+=",Submit Date|DateTime,Submitted by|Author,_Delete";
 
                 sql="with job as (select job_uid=UID from [FORM-"+job_tid+"] "+job_where+" )";
-                sql+=",task as (select ID,Task_id=UID,UID,PUID,S3,Information,DateTime,Author,RowNum=row_number() over (order by ID DESC) from [TABLE-"+_db_pid+"-@S1] join job on PUID=job_uid)";
+                sql+=",task as (select ID,Task_id=UID,UID,PUID,S3,Information,DateTime,Author,RowNum=row_number() over (order by ID DESC) from [TABLE-"+_db_pid+"-@S1] join job on PUID=job_uid  where S1 like '%'+@S2+'%' )";
                 sql+="select ID,S3,Task_id,UID,Information,DateTime,Author,RowNum,dirty=0, valid=1 from task where RowNum between @I6 and @I7";
                 sql_n="with job as (select job_uid=UID from [TABLE-"+job_tid+"] "+job_where+" )";
                 sql_n+=" select count(ID) from [TABLE-"+_db_pid+"-@S1] join job on PUID=job_uid";
             }
-            _req={cmd:'query_records',sql:sql,sql_n:sql_n,s1:'"'+$('#keyword__ID').val()+'"',I:$('#I__ID').text(),page_size:$('#page_size__ID').val()}
+            var staff=$vm.user;
+            _req={cmd:'query_records',sql:sql,sql_n:sql_n,s1:'"'+$('#keyword__ID').val()+'"',I:$('#I__ID').text(),page_size:$('#page_size__ID').val(),s2:staff}
         }
         //-------------------------------------
         _data_process=function(){
@@ -112,30 +113,40 @@
                     td.css('background-color',records[I].Colour);
                     break;
                 case 'Staff':
-                    var sql="with tb as (select name=JSON_VALUE(Information,'$.Staff'),value2=uid from [TABLE-"+staff_list_tid+"])";
-                    sql+=" select top 10 name,value=name,value2 from tb where Name like '%'+@S1+'%' ";
-                    VmInclude:__COMPONENT__/grid/field_auto.js
+                    if($vm.user=='grace'){
+                        var sql="with tb as (select name=JSON_VALUE(Information,'$.Staff'),value2=uid from [TABLE-"+staff_list_tid+"])";
+                        sql+=" select top 10 name,value=name,value2 from tb where Name like '%'+@S1+'%' ";
+                        VmInclude:__COMPONENT__/grid/field_auto.js
+                    }
+                    else{
+                        records[I].vm_readonly[field]=true;
+                    }
                     break;
                 case 'Task':
-                    var sql="with tb as (select name=JSON_VALUE(Information,'$.Task'),value5=JSON_VALUE(Information,'$.Task_Group'),value4=JSON_VALUE(Information,'$.Task_Type'),value3=JSON_VALUE(Information,'$.Hours')+':'+JSON_VALUE(Information,'$.Minutes'),value2=uid from [TABLE-"+task_list_tid+"] where PUID="+job_type_uid+")";
-                    sql+=" select top 10 name,value=name,value2,value3,value4,value5 from tb where Name like '%'+@S1+'%' ";
-                    td.autocomplete({
-                        minLength:0,
-                        source:function(request,response){
-                            $VmAPI.request({data:{cmd:'auto',s1:request.term,sql:sql,minLength:0},callback:function(res){
-                                response($vm.autocomplete_list(res.table));
-                            }});
-                        },
-                        select: function(event,ui){
-                            var mns=ui.item.value3.split(':');
-                            var mins=60*parseInt(mns[0])+parseInt(mns[1]);
-                            records[I]['Task_uid']=ui.item.value2;
-                            records[I]['Minutes']=mins;
-                            records[I]['Task_Type']=ui.item.value4;
-                            records[I]['Task_Group']=ui.item.value5;
-                        }
-                    })
-                    td.focus(function(){td.autocomplete("search","");});
+                    if($vm.user=='grace'){
+                        var sql="with tb as (select name=JSON_VALUE(Information,'$.Task'),value5=JSON_VALUE(Information,'$.Task_Group'),value4=JSON_VALUE(Information,'$.Task_Type'),value3=JSON_VALUE(Information,'$.Hours')+':'+JSON_VALUE(Information,'$.Minutes'),value2=uid from [TABLE-"+task_list_tid+"] where PUID="+job_type_uid+")";
+                        sql+=" select top 10 name,value=name,value2,value3,value4,value5 from tb where Name like '%'+@S1+'%' ";
+                        td.autocomplete({
+                            minLength:0,
+                            source:function(request,response){
+                                $VmAPI.request({data:{cmd:'auto',s1:request.term,sql:sql,minLength:0},callback:function(res){
+                                    response($vm.autocomplete_list(res.table));
+                                }});
+                            },
+                            select: function(event,ui){
+                                var mns=ui.item.value3.split(':');
+                                var mins=60*parseInt(mns[0])+parseInt(mns[1]);
+                                records[I]['Task_uid']=ui.item.value2;
+                                records[I]['Minutes']=mins;
+                                records[I]['Task_Type']=ui.item.value4;
+                                records[I]['Task_Group']=ui.item.value5;
+                            }
+                        })
+                        td.focus(function(){td.autocomplete("search","");});
+                    }
+                    else{
+                        records[I].vm_readonly[field]=true;
+                    }                    
                     break;
                 case 'Status':
                     var sql="with tb as (select name=JSON_VALUE(Information,'$.Job_status'),value3=JSON_VALUE(Information,'$.Colour'),value2=uid from [TABLE-"+job_status_list_tid+"])";
