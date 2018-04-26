@@ -1,10 +1,10 @@
 {
 	"api_path_development":"https://cbs.wappsystem.com/dev/",
 	"api_path_production":"https://cbs.wappsystem.com/pro/",
-	"default_production":"No",
+	"default_production":"Yes",
     "panels":{
 		"website":    {"url":"","modules":["website/index.json"]},
-        "education":  {"url":"education/panel.html","modules":["client/index.json","setup/index.json","reports/index.json","invoice/index.json"]},
-        "admin":      {"url":"admin/panel.html","modules":["client/index.json","setup/index.json","reports/index.json"]}
+        "education":  {"url":"education/panel.html","modules":["client/index.json","setup/index.json","reports/index.json"]},
+        "admin":      {"url":"admin/panel.html","table_id":"20001000","modules":["client/index.json","setup/index.json","reports/index.json"]}
 	}
 }

@@ -62,6 +62,7 @@
     $List1.val();
     //-------------------------------------
     _set_req=_set_req_export=function(){
+        if( $vm.user!='grace') $('#staff__ID').val($vm.user);
         var sql="select Information from [TABLE-"+_db_pid+"] where convert(date,DT2)>=@T1 and convert(date,DT2)<=@T2 and S1 like '%'+@S1+'%' and S2 like '%'+@S2+'%' and S3 like '%'+@S3+'%' ";
         _req={cmd:'query_records',sql:sql,t1:$('#t1__ID').val(),t2:$('#t2__ID').val(),s1:$('#staff__ID').val(),s2:$('#type__ID').val(),s3:$('#status__ID').val()}
     }

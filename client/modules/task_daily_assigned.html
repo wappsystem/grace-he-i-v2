@@ -44,6 +44,7 @@
         //-------------------------------------
         _set_req=_set_req_export=function(){
             var sql="select Information,applicant_uid=GUID,Task_id=UID,UID,ID from [TABLE-"+_db_pid+"-@S1] where S1 like '%'+@S2+'%' and DT1=@T1 "
+            if( $vm.user!='grace') $('#staff__ID').val($vm.user);
             _req={cmd:'query_records',sql:sql,t1:$('#t1__ID').val(),s1:'"'+$('#keyword__ID').val()+'"',s2:$('#staff__ID').val()}
         }
         //-------------------------------------
