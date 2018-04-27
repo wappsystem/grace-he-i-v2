@@ -24,7 +24,7 @@
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item"><a class="nav-link" data-toggle="collapse" data-target=".navbar-collapse.show" onclick="$vm.nav_load_module('website_home');"><i class="fa fa-home"></i> Home</a></li>
                 <li class="nav-item"><a class="nav-link" data-toggle="collapse" data-target=".navbar-collapse.show" onclick="$vm.nav_load_module('education');"><i class="fa fa-tasks"></i> Eduaction &amp; Immigration</a></li>
-                <li id="admin__ID" class="nav-item" style='display:none'><a class="nav-link" data-toggle="collapse" data-target=".navbar-collapse.show" onclick="$vm.nav_load_module('admin');"><i class="fa fa-eye"></i> Admin</a></li>
+                <li id="admin__ID" class="nav-item" ><a class="nav-link" data-toggle="collapse" data-target=".navbar-collapse.show" onclick="$vm.nav_load_module('admin');"><i class="fa fa-eye"></i> Admin</a></li>
                 <li><a class="nav-link" onclick="$vm.nav_click_process('vm_signinout');" name=signinout><i class="fa fa-user"></i> Sign In/Out</a></li>
             </ul>
             <!--			<form id=form__ID class="form-inline my-2 my-lg-0">
@@ -33,18 +33,22 @@
         -->
         </div>
     </nav>
+</div>
     <script>
         //---------------------------------------------
         if($vm.user=='guest'){
             $('a[name=signinout]').html('<i class="fa fa-user"></i> Sign In')
             $('#username__ID').text('');
+            $('#admin__ID').hide();
         }
         else{
             $('a[name=signinout]').html('<i class="fa fa-user"></i> Sign Out')
             $('#username__ID').text('Signed in as '+ $vm.user);
+            if($vm.user=='grace') $('#admin__ID').show();
+            else $('#admin__ID').hide();
         }
         //---------------------------------------------
-        if($vm.user=='grace') $('#admin__ID').show();
+
     </script>
     <style>
         #header__ID{
@@ -88,4 +92,3 @@
 	        }
 		}
     </style>
-</div>
