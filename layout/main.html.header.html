@@ -25,29 +25,50 @@
                 <li class="nav-item"><a class="nav-link" data-toggle="collapse" data-target=".navbar-collapse.show" onclick="$vm.nav_load_module('website_home');"><i class="fa fa-home"></i> Home</a></li>
                 <li class="nav-item"><a class="nav-link" data-toggle="collapse" data-target=".navbar-collapse.show" onclick="$vm.nav_load_module('education');"><i class="fa fa-tasks"></i> Eduaction &amp; Immigration</a></li>
                 <li id="admin__ID" class="nav-item" ><a class="nav-link" data-toggle="collapse" data-target=".navbar-collapse.show" onclick="$vm.nav_load_module('admin');"><i class="fa fa-eye"></i> Admin</a></li>
-                <li><a class="nav-link" onclick="$vm.nav_click_process('vm_signinout');" name=signinout><i class="fa fa-user"></i> Sign In/Out</a></li>
+
+                <li class="nav-item" id=signout__ID style='display:none'><a class="nav-link" onclick=$vm.nav_signout() ><i class="fa fa-user"></i> Sign Out</a></li>
+                <li class="nav-item dropdown" id=signin__ID><a class="nav-link" onclick="$vm.nav_wappsystem_signin();">Sign In</a>
             </ul>
-            <!--			<form id=form__ID class="form-inline my-2 my-lg-0">
-				<input id=vm_system_search class="form-control mr-sm-2" type="text" placeholder="Search modules..." aria-label="Search modules..." />
-			</form>
-        -->
         </div>
     </nav>
-</div>
     <script>
         //---------------------------------------------
-        if($vm.user=='guest'){
-            $('a[name=signinout]').html('<i class="fa fa-user"></i> Sign In')
-            $('#username__ID').text('');
-            $('#admin__ID').hide();
-        }
-        else{
-            $('a[name=signinout]').html('<i class="fa fa-user"></i> Sign Out')
-            $('#username__ID').text('Signed in as '+ $vm.user);
-            if($vm.user=='grace') $('#admin__ID').show();
-            else $('#admin__ID').hide();
-        }
+		var init_loop=setInterval(function (){
+			console.log('init_loop...')
+			if($vm.init_status==1){
+				clearInterval(init_loop);
+				show_user();
+			}
+		},100);
         //---------------------------------------------
+		var show_user=function(){
+			if($vm.user=='guest'){
+				$('#username__ID').text('');
+				$('#signin__ID').show();
+				$('#signout__ID').hide();
+                $('#admin__ID').hide();
+			}
+			else{
+				$('#username__ID').text('Signed in as '+ $vm.user);
+				$('#signin__ID').hide();
+				$('#signout__ID').show();
+                if($vm.user=='grace') $('#admin__ID').show(); else $('#admin__ID').hide();
+			}
+		}
+        //---------------------------------------------
+		if(window.innerWidth <= 800 && window.innerHeight <= 600) {
+			$('#form__ID').parent().prepend($('#form__ID'));
+		}
+		//---------------------------------------------
+		$(".navbar-nav").hide();
+		var navbars_loop=setInterval(function (){
+			if($vm.js_popper==1){
+				clearInterval(navbars_loop);
+				$(".navbar-nav").show();
+                console.log((new Date().getTime()-$vm.start_time).toString()+"---"+"********************** menu is ready ************************");
+			}
+		},100);
+		//------------------------------------
 
     </script>
     <style>
@@ -92,3 +113,4 @@
 	        }
 		}
     </style>
+</div>
