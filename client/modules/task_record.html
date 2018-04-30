@@ -10,7 +10,7 @@
         //-------------------------------------
         var prefix=$vm.module_list[$vm.vm['__ID'].name].prefix; if(prefix==undefined) prefix="";
         //-------------------------------------
-        _fields="_Form,Application ID|job_uid,_Hidden|job_type_uid,File_Name,Job|job_type,_Documents,Task ID|Task_id,Staff,_Hidden|Task_uid,Task,Group|Task_Group,Type|Task_Type,Status,Colour,Urgent,Notes,_Notes_Admin,Notes_Adm,Assigned Date|Assigned_Date,Date_Completed,Due_Date,Alloc. Minutes|Minutes,Total Duration|Total_Duration,Time gap|Time_gap";
+        _fields="_Form,Application ID|job_uid,_Hidden|job_type_uid,File_Name,Job|job_type,_Documents,Task ID|UID,Staff,_Hidden|Task_uid,Task,Group|Task_Group,Type|Task_Type,Status,Colour,Urgent,Notes,_Notes_Admin,Notes_Adm,Assigned Date|Assigned_Date,Date_Completed,Due_Date,Alloc. Minutes|Minutes,Total Duration|Total_Duration,Time gap|Time_gap";
         _fields_e="File_Name,Job|job_type,Task ID|UID,Staff,Task,Type|Task_Type,Status,Colour,Notes,Notes_Admin,Assigned Date|Assigned_Date,Date_Completed,Due_Date,Alloc. Minutes|Minutes,Total Duration|Total_Duration,Time gap|Time_gap";
         _fields+=",Submit Date|DateTime,Submitted by|Author,_Delete";
         //-------------------------------------
@@ -57,8 +57,8 @@
                 sql="with adm as (select ID from [TABLE-"+notes_admin_tid+"])"
                 sql+=",job as (select job_uid=UID from [FORM-"+job_tid+"] "+job_where+" )";
                 sql+=",notes as (select Notes_Adm=JSON_VALUE(Information,'$.Notes_Admin'),note_puid=PUID from [TABLE-"+notes_admin_tid+"] )";
-                sql+=",task as (select ID,Task_id=UID,UID,PUID,S3,Notes_Adm,Information,DateTime,Author,RowNum=row_number() over (order by ID DESC) from [TABLE-"+_db_pid+"-@S1] join job on PUID=job_uid left join notes on UID=note_puid)";
-                sql+="select ID,S3,Task_id,UID,Notes_Adm,Information,DateTime,Author,RowNum,dirty=0, valid=1 from task where RowNum between @I6 and @I7";
+                sql+=",task as (select ID,UID,PUID,S3,Notes_Adm,Information,DateTime,Author,RowNum=row_number() over (order by ID DESC) from [TABLE-"+_db_pid+"-@S1] join job on PUID=job_uid left join notes on UID=note_puid)";
+                sql+="select ID,S3,UID,Notes_Adm,Information,DateTime,Author,RowNum,dirty=0, valid=1 from task where RowNum between @I6 and @I7";
                 sql_n="with job as (select job_uid=UID from [TABLE-"+job_tid+"] "+job_where+" )";
                 sql_n+=" select count(ID) from [TABLE-"+task_tid+"-@S1] join job on PUID=job_uid";
             }
@@ -68,8 +68,8 @@
                 _fields+=",Submit Date|DateTime,Submitted by|Author,_Delete";
 
                 sql="with job as (select job_uid=UID from [FORM-"+job_tid+"] "+job_where+" )";
-                sql+=",task as (select ID,Task_id=UID,UID,PUID,S3,Information,DateTime,Author,RowNum=row_number() over (order by ID DESC) from [TABLE-"+_db_pid+"-@S1] join job on PUID=job_uid where S1 like '%'+@S2+'%' )";
-                sql+="select ID,S3,Task_id,UID,Information,DateTime,Author,RowNum,dirty=0, valid=1 from task where RowNum between @I6 and @I7";
+                sql+=",task as (select ID,UID,PUID,S3,Information,DateTime,Author,RowNum=row_number() over (order by ID DESC) from [TABLE-"+_db_pid+"-@S1] join job on PUID=job_uid where S1 like '%'+@S2+'%' )";
+                sql+="select ID,S3,UID,Information,DateTime,Author,RowNum,dirty=0, valid=1 from task where RowNum between @I6 and @I7";
                 sql_n="with job as (select job_uid=UID from [TABLE-"+job_tid+"] "+job_where+" )";
                 sql_n+=" select count(ID) from [TABLE-"+_db_pid+"-@S1] join job on PUID=job_uid";
             }
@@ -82,7 +82,7 @@
         //-------------------------------------
         _cell_render=function(records,I,field,td,set_value,source){
             switch(field){
-                case 'Task_id':
+                case 'UID':
                 case 'job_type':
                 case 'File_Name':
                 case 'Time_gap':
@@ -297,10 +297,11 @@
         }
         //-------------------------------------
         _before_submit=function(record,dbv){
+            alert(record.Minutes)
             dbv.PPID=job_tid;
             if(record.job_uid!==undefined) dbv.PUID=record.job_uid;
             if(applicant_uid!==undefined) dbv.GUID=applicant_uid;
-            if(record.Minutes!=='') dbv.V3=parseInt(record.Minutes || 0).toString();
+            if(record.Minutes!=='' && record.Minutes!==NaN ) dbv.V3=parseInt(record.Minutes || 0).toString();
             if(record.Assigned_Date!=='') dbv.DT1=record.Assigned_Date;
             if(record.Due_Date!=='') dbv.DT2=record.Due_Date;
             if(record.Staff!=='') dbv.S1=record.Staff;
