@@ -128,7 +128,7 @@
                 case 'Task':
                     if($vm.user=='grace'){
                         var sql="with tb as (select name=JSON_VALUE(Information,'$.Task'),value5=JSON_VALUE(Information,'$.Task_Group'),value4=JSON_VALUE(Information,'$.Task_Type'),value3=JSON_VALUE(Information,'$.Hours')+':'+JSON_VALUE(Information,'$.Minutes'),value2=uid from [TABLE-"+task_list_tid+"] where PUID="+job_type_uid+")";
-                        sql+=" select top 10 name,value=name,value2,value3,value4,value5 from tb where Name like '%'+@S1+'%' ";
+                        sql+=" select top 20 name,value=name,value2,value3,value4,value5 from tb where Name like '%'+@S1+'%' ";
                         td.autocomplete({
                             minLength:0,
                             source:function(request,response){
