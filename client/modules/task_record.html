@@ -48,7 +48,7 @@
         //-------------------------------------
         _set_req=_set_req_export=function(){
             var job_where="";
-            if(job_uid!==undefined){
+            if(job_uid!==undefined && job_uid!==''){
                 job_where=" where uid="+job_uid;
             }
             var sql="";
