@@ -297,7 +297,6 @@
         }
         //-------------------------------------
         _before_submit=function(record,dbv){
-            alert(record.Minutes)
             dbv.PPID=job_tid;
             if(record.job_uid!==undefined) dbv.PUID=record.job_uid;
             if(applicant_uid!==undefined) dbv.GUID=applicant_uid;
