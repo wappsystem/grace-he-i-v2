@@ -23,8 +23,8 @@ _set_req=_set_req_export=function(){
 //-------------------------------------
 _set_req_export=function(){
 /*    _fields_e="Applicant ID|clientUID,client,"+_task_fields
-    var sql="with client as (select Site=S1,clientUID=UID,sql_client="+_module.var.sql_client+",RowNum=row_number() over (order by ID DESC) from [FORM-"+client_pid+"]"+site_sql_where+" )";
-    sql+=",task as (select ID,UID,PUID,S3,Information,DateTime,Author from [FORM-"+_db_pid+"-@S1])";
+    var sql="with client as (select Site=S1,clientUID=UID,sql_client="+_module.var.sql_client+",RowNum=row_number() over (order by ID DESC) from [TABLE-"+client_pid+"]"+site_sql_where+" )";
+    sql+=",task as (select ID,UID,PUID,S3,Information,DateTime,Author from [TABLE-"+_db_pid+"-@S1])";
     sql+=" select ID,clientUID,Site,Information,client=sql_client,DateTime,Author from client left join task on PUID=clientUID";
     _set_from_to();
     if(_from!='0' && _to!='0') sql+=" where RowNum between @I6 and @I7";

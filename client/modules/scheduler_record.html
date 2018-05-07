@@ -14,7 +14,7 @@
         _fields+=",Account Alloc.|Account_Allocated,Account Real|Account_Real,Account Gap|Account_Gap";
         _fields+=",School Alloc.|School_Allocated,School Real|School_Real,School Gap|School_Gap";
         _fields+=",Visa Alloc.|Visa_Allocated,Visa Real|Visa_Real,Visa Gap|Visa_Gap";
-        _fields_e="Client ID|applicant_uid,Client|applicant,Application ID|UID,File name|File_Name,Assigned Date|Assigned_Date,Due Date|Due_Date,Job Type|job_type,Status,Colour";
+        _fields_e="Client ID|applicant_uid,Client|applicant,Application ID|app_id,File name|File_Name,Assigned Date|Assigned_Date,Due Date|Due_Date,Job Type|job_type,Status,Colour";
         _fields_e+=",Alloc.|Total_Allocated,Real|Total_Real,Gap|Total_Gap,Admin Alloc.|Admin_Allocated,Admin Real|Admin_Real,Admin Gap|Admin_Gap"
         _fields_e+=",Account Alloc.|Account_Allocated,Account Real|Account_Real,Account Gap|Account_Gap";
         _fields_e+=",School Alloc.|School_Allocated,School Real|School_Real,School Gap|School_Gap";
@@ -47,7 +47,7 @@
                         $vm.load_module_by_name(prefix+'documents_job',$vm.root_layout_content_slot,{
                         //$vm.load_module_by_name($vm.module_list[_app_id+'scheduler_record'].var.document_module_job,$vm.root_layout_content_slot,{
                             applicant_uid:_records[I].applicant_uid,
-                            job_uid:_records[I].UID,
+                            job_uid:_records[I].app_id,
                             job:_records[I].File_Name,
                             job_type:_records[I].job_type,
                             job_type_uid:_records[I].job_type_uid});
@@ -134,12 +134,12 @@
                     break;
                 case '_Task':
                     records[I].vm_custom[field]=true;
-                    if(_records[I].UID===undefined) return;
+                    if(_records[I].app_id===undefined) return;
                     td.html("<u style='cursor:pointer'>Task..</u>");
                     td.find('u').on('click',function(){
                         $vm.load_module_by_name(prefix+'task_record',$vm.root_layout_content_slot,{
                             rid:_records[I].ID,
-                            job_uid:_records[I].UID,
+                            job_uid:_records[I].app_id,
                             job_type_uid:_records[I].job_type_uid,
                             job_type:_records[I].job_type,
                             applicant_uid:_records[I].applicant_uid,
@@ -155,7 +155,7 @@
                     td.find('u').on('click',function(){
                         $vm.load_module_by_name(prefix+'task_not_completed',$vm.root_layout_content_slot,{
                         //$vm.load_module_by_name(_module.var.task_module_not_done,$vm.root_layout_content_slot,{
-                            rid:_records[I].ID,job_uid:_records[I].UID,job_type_uid:_records[I].job_type_uid,
+                            rid:_records[I].ID,job_uid:_records[I].app_id,job_type_uid:_records[I].job_type_uid,
                             job_type:_records[I].job_type,applicant_uid:_records[I].applicant_uid,
                             applicant:_records[I].applicant,filename:_records[I].File_Name
                         });
@@ -168,7 +168,7 @@
                     td.find('u').on('click',function(){
                         $vm.load_module_by_name(prefix+'check_document',$vm.root_layout_content_slot,{
                         //$vm.load_module_by_name(_module.var.check_document_module,$vm.root_layout_content_slot,{
-                            rid:_records[I].ID,job_uid:_records[I].UID,job_type_uid:_records[I].job_type_uid,
+                            rid:_records[I].ID,job_uid:_records[I].app_id,job_type_uid:_records[I].job_type_uid,
                             job_type:_records[I].job_type,applicant_uid:_records[I].applicant_uid,
                             applicant:_records[I].applicant,filename:_records[I].File_Name
                         });
