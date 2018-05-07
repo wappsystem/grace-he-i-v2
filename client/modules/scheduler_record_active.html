@@ -9,12 +9,12 @@
         //-------------------------------------
         var prefix=$vm.module_list[$vm.vm['__ID'].name].prefix; if(prefix==undefined) prefix="";
         //-------------------------------------
-        _fields="_Form,_Task,_Task_Not_Done,_Tasks_Done,_Documents,_Hidden|UID,Client ID|applicant_uid,Client|applicant,Application ID|UID,File Name|File_Name,Assigned Date|Assigned_Date,Due_Date,_Hidden|job_type_uid,Job Type|job_type,Status,Colour,_Check_Documents,Document_Done,_Calculate"
+        _fields="_Form,_Task,_Task_Not_Done,_Tasks_Done,_Documents,_Hidden|UID,Client ID|applicant_uid,Client|applicant,Application ID|app_id,File Name|File_Name,Assigned Date|Assigned_Date,Due_Date,_Hidden|job_type_uid,Job Type|job_type,Status,Colour,_Check_Documents,Document_Done,_Calculate"
         _fields+=",Alloc.|Total_Allocated,Real|Total_Real,Gap|Total_Gap,Admin Alloc.|Admin_Allocated,Admin Real|Admin_Real,Admin Gap|Admin_Gap"
         _fields+=",Account Alloc.|Account_Allocated,Account Real|Account_Real,Account Gap|Account_Gap";
         _fields+=",School Alloc.|School_Allocated,School Real|School_Real,School Gap|School_Gap";
         _fields+=",Visa Alloc.|Visa_Allocated,Visa Real|Visa_Real,Visa Gap|Visa_Gap";
-        _fields_e="Client ID|applicant_uid,Client|applicant,Application ID|UID,File name|File_Name,Assigned Date|Assigned_Date,Due Date|Due_Date,Job Type|job_type,Status,Colour";
+        _fields_e="Client ID|applicant_uid,Client|applicant,Application ID|app_id,File name|File_Name,Assigned Date|Assigned_Date,Due Date|Due_Date,Job Type|job_type,Status,Colour";
         _fields_e+=",Alloc.|Total_Allocated,Real|Total_Real,Gap|Total_Gap,Admin Alloc.|Admin_Allocated,Admin Real|Admin_Real,Admin Gap|Admin_Gap"
         _fields_e+=",Account Alloc.|Account_Allocated,Account Real|Account_Real,Account Gap|Account_Gap";
         _fields_e+=",School Alloc.|School_Allocated,School Real|School_Real,School Gap|School_Gap";
@@ -33,7 +33,7 @@
         $('#D__ID').on('back',function(){ $("#title__ID").text('Active Jobs');$('#help__ID').html(help);_set_req(); _request_data();  })
         //-------------------------------------
         var _set_req=_set_req_export=function(){
-            var sql="with tb as (select Information,DT2,job_type=S2,B1,ID,UID,PUID,DateTime,Author,RowNum=row_number() over (order by ID DESC) from [TABLE-"+_db_pid+"-@S1] where (S1='Processing' or S1='Incomplete'))";
+            var sql="with tb as (select Information,DT2,job_type=S2,B1,ID,UID,PUID,DateTime,Author,RowNum=row_number() over (order by ID DESC) from [TABLE-"+_db_pid+"-@S1] where (S1='Processing/Incomplete' or S1='Urgent'))";
             sql+=",tb_task as (select task_puid=PUID,task_nd=count(ID) from [TABLE-"+task_tid+"] where B1=0 group by PUID)";
             sql+="select _Tasks_Done=case when task_nd>0 then '-' ELSE 'DONE' END,Information,B1,ID,UID,PUID,DateTime,Author,RowNum from tb";
             sql+=" left join tb_task on UID=task_puid ";
@@ -63,7 +63,7 @@
                         $vm.load_module_by_name(prefix+'documents_job',$vm.root_layout_content_slot,{
                         //$vm.load_module_by_name($vm.module_list[_app_id+'scheduler_record'].var.document_module_job,$vm.root_layout_content_slot,{
                             applicant_uid:_records[I].applicant_uid,
-                            job_uid:_records[I].UID,
+                            job_uid:_records[I].app_id,
                             job:_records[I].File_Name,
                             job_type:_records[I].job_type,
                             job_type_uid:_records[I].job_type_uid});
@@ -156,7 +156,7 @@
                     td.find('u').on('click',function(){
                         $vm.load_module_by_name(prefix+'task_record',$vm.root_layout_content_slot,{
                             rid:_records[I].ID,
-                            job_uid:_records[I].UID,
+                            job_uid:_records[I].app_id,
                             job_type_uid:_records[I].job_type_uid,
                             job_type:_records[I].job_type,
                             applicant_uid:_records[I].applicant_uid,
@@ -172,7 +172,7 @@
                     td.find('u').on('click',function(){
                         $vm.load_module_by_name(prefix+'task_not_completed',$vm.root_layout_content_slot,{
                         //$vm.load_module_by_name(_module.var.task_module_not_done,$vm.root_layout_content_slot,{
-                            rid:_records[I].ID,job_uid:_records[I].UID,job_type_uid:_records[I].job_type_uid,
+                            rid:_records[I].ID,job_uid:_records[I].app_id,job_type_uid:_records[I].job_type_uid,
                             job_type:_records[I].job_type,applicant_uid:_records[I].applicant_uid,
                             applicant:_records[I].applicant,filename:_records[I].File_Name
                         });
@@ -185,7 +185,7 @@
                     td.find('u').on('click',function(){
                         $vm.load_module_by_name(prefix+'check_document',$vm.root_layout_content_slot,{
                         //$vm.load_module_by_name(_module.var.check_document_module,$vm.root_layout_content_slot,{
-                            rid:_records[I].ID,job_uid:_records[I].UID,job_type_uid:_records[I].job_type_uid,
+                            rid:_records[I].ID,job_uid:_records[I].app_id,job_type_uid:_records[I].job_type_uid,
                             job_type:_records[I].job_type,applicant_uid:_records[I].applicant_uid,
                             applicant:_records[I].applicant,filename:_records[I].File_Name
                         });
