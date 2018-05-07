@@ -13,8 +13,8 @@ _set_req=_set_req_export=function(){
         client_where=" where uid="+client_uid;
     }
     var sql="with client as (select clientUID=UID,sql_client="+sql_client+" from [TABLE-"+client_pid+"] "+client_where+" )";
-    sql+=",task as (select ID,UID,PUID,S3,Information,sql_client,DateTime,Author,RowNum=row_number() over (order by ID DESC) from [TABLE-"+_db_pid+"-@S1] join client on PUID=clientUID)";
-    sql+=" select ID,S3,UID,Information,client=sql_client,DateTime,Author,RowNum,dirty=0, valid=1 from task where RowNum between @I6 and @I7";
+    sql+=",job as (select ID,app_id=UID,UID,PUID,S3,Information,sql_client,DateTime,Author,RowNum=row_number() over (order by ID DESC) from [TABLE-"+_db_pid+"-@S1] join client on PUID=clientUID)";
+    sql+=" select ID,S3,UID,Information,app_id,client=sql_client,DateTime,Author,RowNum,dirty=0, valid=1 from job where RowNum between @I6 and @I7";
     var sql_n="with client as (select clientUID=UID from [TABLE-"+client_pid+"] )";
     sql_n+=" select count(ID) from [TABLE-"+_db_pid+"-@S1] join client on PUID=clientUID";
 

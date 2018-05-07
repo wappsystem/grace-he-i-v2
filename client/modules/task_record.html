@@ -10,7 +10,7 @@
         //-------------------------------------
         var prefix=$vm.module_list[$vm.vm['__ID'].name].prefix; if(prefix==undefined) prefix="";
         //-------------------------------------
-        _fields="_Form,Application ID|job_uid,_Hidden|job_type_uid,File_Name,Job|job_type,_Documents,Task ID|UID,Staff,_Hidden|Task_uid,Task,Group|Task_Group,Type|Task_Type,Status,Colour,Urgent,Notes,_Notes_Admin,Notes_Adm,Assigned Date|Assigned_Date,Date_Completed,Due_Date,Alloc. Minutes|Minutes,Total Duration|Total_Duration,Time gap|Time_gap";
+        _fields="_Form,Application ID|job_uid,_Hidden|job_type_uid,File_Name,Job|job_type,_Documents,Task_ID|Task_uid,Staff,Task,Group|Task_Group,Type|Task_Type,Status,Colour,Urgent,Notes,_Notes_Admin,Notes_Adm,Assigned Date|Assigned_Date,Date_Completed,Due_Date,Alloc. Minutes|Minutes,Total Duration|Total_Duration,Time gap|Time_gap";
         _fields_e="File_Name,Job|job_type,Task ID|UID,Staff,Task,Type|Task_Type,Status,Colour,Notes,Notes_Admin,Assigned Date|Assigned_Date,Date_Completed,Due_Date,Alloc. Minutes|Minutes,Total Duration|Total_Duration,Time gap|Time_gap";
         _fields+=",Submit Date|DateTime,Submitted by|Author,_Delete";
         //-------------------------------------
@@ -57,8 +57,8 @@
                 sql="with adm as (select ID from [TABLE-"+notes_admin_tid+"])"
                 sql+=",job as (select job_uid=UID from [FORM-"+job_tid+"] "+job_where+" )";
                 sql+=",notes as (select Notes_Adm=JSON_VALUE(Information,'$.Notes_Admin'),note_puid=PUID from [TABLE-"+notes_admin_tid+"] )";
-                sql+=",task as (select ID,UID,PUID,S3,Notes_Adm,Information,DateTime,Author,RowNum=row_number() over (order by ID DESC) from [TABLE-"+_db_pid+"-@S1] join job on PUID=job_uid left join notes on UID=note_puid)";
-                sql+="select ID,S3,UID,Notes_Adm,Information,DateTime,Author,RowNum,dirty=0, valid=1 from task where RowNum between @I6 and @I7";
+                sql+=",task as (select ID,task_uid=UID,UID,PUID,S3,Notes_Adm,Information,DateTime,Author,RowNum=row_number() over (order by ID DESC) from [TABLE-"+_db_pid+"-@S1] join job on PUID=job_uid left join notes on UID=note_puid)";
+                sql+="select ID,S3,UID,Notes_Adm,Information,task_uid,DateTime,Author,RowNum,dirty=0, valid=1 from task where RowNum between @I6 and @I7";
                 sql_n="with job as (select job_uid=UID from [TABLE-"+job_tid+"] "+job_where+" )";
                 sql_n+=" select count(ID) from [TABLE-"+task_tid+"-@S1] join job on PUID=job_uid";
             }
@@ -82,7 +82,7 @@
         //-------------------------------------
         _cell_render=function(records,I,field,td,set_value,source){
             switch(field){
-                case 'UID':
+                case 'Task_uid':
                 case 'job_type':
                 case 'File_Name':
                 case 'Time_gap':
