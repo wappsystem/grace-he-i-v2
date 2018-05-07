@@ -49,7 +49,7 @@
             job_type=$vm.vm['__ID'].op.job_type;
             job_type_uid=$vm.vm['__ID'].op.job_type_uid;
             job=$vm.vm['__ID'].op.job;
-            if (job_type_uid==''){$vm.alert('Please select a Job Type before trying to add documents.'); $('#back__ID').click();}
+            if (job_type_uid==''){$vm.alert('Please select a Job Type and SAVE before trying to add documents.'); $('#back__ID').click();}
             else{ $("#title__ID").text('Clients - Applications- Documents');$('#help__ID').html(help); _set_req(); _request_data();}
         })
         //-------------------------------------
