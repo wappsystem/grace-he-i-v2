@@ -9,7 +9,7 @@
         //-------------------------------------
         var prefix=$vm.module_list[$vm.vm['__ID'].name].prefix; if(prefix==undefined) prefix="";
         //-------------------------------------
-        _fields="_Form,Application ID|job_uid,_Hidden|job_type_uid,File_Name,Job|job_type,_Documents,Task ID|UID,Staff,_Hidden|Task_uid,Task,Group|Task_Group,Type|Task_Type,Status,Colour,Urgent,Notes,_Notes_Admin,Notes_Adm,Assigned Date|Assigned_Date,Date_Completed,Due_Date,Alloc. Minutes|Minutes,Total Duration|Total_Duration,Time gap|Time_gap";
+        _fields="_Form,Application ID|job_uid,_Hidden|job_type_uid,File_Name,Job|job_type,_Documents,Staff,Task ID|task_uid,Task,Group|Task_Group,Type|Task_Type,Status,Colour,Urgent,Notes,_Notes_Admin,Notes_Adm,Assigned Date|Assigned_Date,Date_Completed,Due_Date,Alloc. Minutes|Minutes,Total Duration|Total_Duration,Time gap|Time_gap";
         _fields_e="File_Name,Job|job_type,Task ID|UID,Staff,Task,Type|Task_Type,Status,Colour,Notes,Notes_Admin,Assigned Date|Assigned_Date,Date_Completed,Due_Date,Alloc. Minutes|Minutes,Total Duration|Total_Duration,Time gap|Time_gap";
         _fields+=",Submit Date|DateTime,Submitted by|Author,_Delete";
         //-------------------------------------
@@ -62,7 +62,7 @@
             }
             else
             {
-                _fields="_Form,Application ID|job_uid,_Hidden|job_type_uid,File_Name,Job|job_type,_Documents,Task ID|UID,Staff,_Hidden|Task_uid,Task,Type|Task_Type,Status,Colour,Notes,Urgent,Assigned Date|Assigned_Date,Date_Completed,Due_Date,Alloc. Minutes|Minutes,Total Duration|Total_Duration,Time gap|Time_gap";
+                _fields="_Form,Application ID|job_uid,_Hidden|job_type_uid,File_Name,Job|job_type,_Documents,Staff,Task ID|task_uid,Task,Type|Task_Type,Status,Colour,Notes,Urgent,Assigned Date|Assigned_Date,Date_Completed,Due_Date,Alloc. Minutes|Minutes,Total Duration|Total_Duration,Time gap|Time_gap";
                 _fields+=",Submit Date|DateTime,Submitted by|Author,_Delete";
 
                 sql="with job as (select job_uid=UID from [TABLE-"+job_tid+"] "+job_where+" )";
@@ -81,7 +81,7 @@
         _cell_render=function(records,I,field,td,set_value,source){
             switch(field){
                 case 'job_uid':
-                case 'UID':
+                case 'task_uid':
                 case 'job_type':
                 case 'File_Name':
                 case 'Time_gap':
@@ -137,7 +137,7 @@
                             select: function(event,ui){
                                 var mns=ui.item.value3.split(':');
                                 var mins=60*parseInt(mns[0])+parseInt(mns[1]);
-                                records[I]['Task_uid']=ui.item.value2;
+                                records[I]['task_uid']=ui.item.value2;
                                 records[I]['Minutes']=mins;
                                 records[I]['Task_Type']=ui.item.value4;
                                 records[I]['Task_Group']=ui.item.value5;
@@ -195,7 +195,7 @@
                     var html="<u style='cursor:pointer'>Documents..</u>";
                     td.html(html);
                     td.find('u').on('click',function(){
-                        $vm.load_module_by_name(prefix+'documents_task',$vm.root_layout_content_slot,{task_uid:records[I].Task_uid,applicant_uid:applicant_uid,job:File_Name,job_type_uid:job_type_uid});
+                        $vm.load_module_by_name(prefix+'documents_task',$vm.root_layout_content_slot,{task_uid:records[I].task_uid,applicant_uid:applicant_uid,job:File_Name,job_type_uid:job_type_uid});
                         //$vm.load_module_by_name($vm.module_list[_app_id+'scheduler_record'].var.document_module_task,$vm.root_layout_content_slot,{task_uid:records[I].Task_uid,applicant_uid:applicant_uid,job:File_Name,job_type_uid:job_type_uid});
                     })
                     break;
@@ -251,7 +251,7 @@
                         var dbv1={};
                         rd['Task']=res.records[i].S1;
                         rd['Task_Type']=res.records[i].S2;
-                        rd['Task_uid']=res.records[i].UID;
+                        rd['task_uid']=res.records[i].UID;
                         rd['Minutes']=res.records[i].V1;
                         rd['job_type']=job_type;
                         rd['File_Name']=File_Name;
